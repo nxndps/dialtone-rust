@@ -1,0 +1,77 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ * Theme: inkberry
+ * Contains only overrides from base dp theme.
+ */
+
+/* Light mode overrides */
+[data-dt-mode="light"] {
+  color-scheme: light;
+  --dt-shell-base-color-action: oklch(0.3812 0.0902 258.87);
+  --dt-shell-base-color-accent: oklch(0.5318 0.1469 347.37);
+  --dt-shell-base-color-border: oklch(0.1532 0.0705 266.44);
+  --dt-shell-base-color-foreground: oklch(0.1532 0.0705 266.44);
+  --dt-shell-base-color-surface: oklch(0.9292 0.0184 43.22);
+  --dt-avatar-anchor-hue: 347.4;
+  --dt-shell-mention-color-surface-secondary: oklch(0.24 0.15 347);
+  --dt-shell-color-border-default: oklch(0.15 0.07 266 / 0.17);
+  --dt-shell-color-border-subtle: oklch(0.15 0.07 266 / 0.1);
+  --dt-shell-color-foreground-disabled: oklch(0.15 0.07 266 / 0.57);
+  --dt-shell-color-foreground-muted: oklch(0.15 0.07 266 / 0.6);
+  --dt-shell-color-foreground-strong: oklch(0.15 0.07 266);
+  --dt-shell-color-foreground-tertiary: oklch(0.15 0.07 266 / 0.72);
+  --dt-shell-color-foreground-secondary: oklch(0.15 0.07 266 / 0.86);
+  --dt-shell-action-color-background-muted-selected: oklch(0.38 0.09 259 / 0.07);
+  --dt-shell-action-color-background-muted-active: oklch(0.38 0.09 259 / 0.07);
+  --dt-shell-action-color-background-muted-hover: oklch(0.38 0.09 259 / 0.1);
+  --dt-shell-action-color-background-muted-default: oklch(0.38 0.09 259 / 0.05);
+  --dt-shell-action-color-background-secondary-selected: oklch(0.38 0.09 259 / 0.13);
+  --dt-shell-action-color-background-secondary-active: oklch(0.38 0.09 259 / 0.16);
+  --dt-shell-action-color-background-secondary-hover: oklch(0.38 0.09 259 / 0.1);
+  --dt-shell-action-color-background-secondary-default: oklch(0.38 0.09 259 / 0);
+  --dt-shell-action-color-background-primary-selected: oklch(0.38 0.09 259 / 0.13);
+  --dt-shell-action-color-background-primary-active: oklch(0.38 0.09 259 / 0.16);
+  --dt-shell-action-color-background-primary-hover: oklch(0.38 0.09 259 / 0.1);
+  --dt-shell-action-color-background-primary-default: oklch(0.38 0.09 259 / 0);
+  --dt-shell-action-color-foreground-muted-selected: oklch(0.06 0.07 266 / 0.6);
+  --dt-shell-action-color-foreground-muted-hover: oklch(0.09 0.07 266 / 0.6);
+}
+
+/* Dark mode overrides */
+[data-dt-mode="dark"] {
+  color-scheme: dark;
+  --dt-shell-base-color-action: oklch(0.7046 0.087 359.49);
+  --dt-shell-base-color-accent: oklch(0.803 0.0539 11.03);
+  --dt-shell-base-color-border: oklch(0.803 0.0539 11.03);
+  --dt-shell-base-color-foreground: oklch(0.9438 0.0152 54.93);
+  --dt-shell-base-color-surface: oklch(0.2458 0.0709 265.5);
+  --dt-badge-color-border-bulletin-subtle: oklch(0.58 0.24 287 / 0.5);
+  --dt-badge-color-foreground-bulletin-subtle: var(--dt-color-purple-900);
+  --dt-badge-color-background-warning: var(--dt-color-gold-200);
+  --dt-avatar-anchor-hue: 11;
+  --dt-shell-logo-color-star: var(--dt-color-purple-1000);
+  --dt-shell-mention-color-surface-secondary: lch(91.8 6.39 13.2);
+  --dt-shell-color-border-default: oklch(0.8 0.05 11 / 0.18);
+  --dt-shell-color-border-subtle: oklch(0.8 0.05 11 / 0.15);
+  --dt-shell-color-foreground-disabled: oklch(0.94 0.02 54.9 / 0.57);
+  --dt-shell-color-foreground-muted: oklch(0.94 0.02 54.9 / 0.6);
+  --dt-shell-color-foreground-tertiary: oklch(0.94 0.02 54.9 / 0.72);
+  --dt-shell-color-foreground-secondary: oklch(0.94 0.02 54.9 / 0.86);
+  --dt-shell-action-color-background-muted-selected: oklch(0.7 0.09 359 / 0.07);
+  --dt-shell-action-color-background-muted-active: oklch(0.7 0.09 359 / 0.07);
+  --dt-shell-action-color-background-muted-hover: oklch(0.7 0.09 359 / 0.1);
+  --dt-shell-action-color-background-muted-default: oklch(0.7 0.09 359 / 0.05);
+  --dt-shell-action-color-background-secondary-selected: oklch(0.7 0.09 359 / 0.13);
+  --dt-shell-action-color-background-secondary-active: oklch(0.7 0.09 359 / 0.16);
+  --dt-shell-action-color-background-secondary-hover: oklch(0.7 0.09 359 / 0.1);
+  --dt-shell-action-color-background-secondary-default: oklch(0.7 0.09 359 / 0);
+  --dt-shell-action-color-background-primary-selected: oklch(0.7 0.09 359 / 0.13);
+  --dt-shell-action-color-background-primary-active: oklch(0.7 0.09 359 / 0.16);
+  --dt-shell-action-color-background-primary-hover: oklch(0.7 0.09 359 / 0.1);
+  --dt-shell-action-color-background-primary-default: oklch(0.7 0.09 359 / 0);
+  --dt-shell-color-foreground-strong: oklch(1.7 0.02 54.9);
+  --dt-shell-action-color-foreground-muted-selected: oklch(0.38 0.02 54.9 / 0.6);
+  --dt-shell-action-color-foreground-muted-hover: oklch(0.56 0.02 54.9 / 0.6);
+  --dt-badge-color-background-default: var(--dt-color-surface-moderate-opaque);
+}
+

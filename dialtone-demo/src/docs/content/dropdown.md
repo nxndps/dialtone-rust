@@ -1,0 +1,175 @@
+---
+title: Dropdown
+description: Triggerable menu for actions or choices.
+status: ready
+thumb: true
+storybook: https://dialtone.dialpad.com/vue/?path=/story/components-dropdown--default
+figma_url: https://www.figma.com/design/W58r5BkO8qTw3vem9YieJd/DT9-Component-Library--Rebrand-2025-?node-id=10732-69099
+keywords: ["select","menu","picker","d-dropdown","DtDropdown","dt-dropdown"]
+combinator: DtDropdown
+---
+
+## Usage
+
+Use the Dropdown component when you have a list of links or actions that can be performed. Use the [Select Menu](/components/select-menu.md) component to allow the users to choose one option from the list.
+
+- The dropdown component provides accessibility controls when using with List item component.
+- The dropdown has two major pieces that are provided as required named slots: the anchor and the list.
+- The **anchor** slot contains the element that controls the dropdown's visibility.
+- The **list** slot contains a list of items to show as dropdown menu items.
+
+## Variants and Examples
+
+### Default
+
+```vue demo
+<dt-dropdown navigation-type="arrow-keys">
+  <template #anchor="{ attrs }">
+    <dt-button v-bind="attrs">
+      Click to open
+    </dt-button>
+  </template>
+  <template #list="{ close }">
+    <dt-list-item
+      v-for="(item) in items"
+      :key="item.id"
+      role="menuitem"
+      :navigation-type="arrow-keys"
+      @click="close"
+    >
+      {{ item.name }}
+    </dt-list-item>
+  </template>
+</dt-dropdown>
+```
+
+### With Sections and Headings
+
+```vue demo
+<dt-dropdown navigation-type="arrow-keys">
+  <template #anchor="{ attrs }">
+    <dt-button v-bind="attrs">
+      Click to open
+    </dt-button>
+  </template>
+  <template #list="{ close }">
+    <dt-list-item-group
+      heading-class="d-py-50 d-px-100 d-c-default d-fc-tertiary d-label--sm"
+      heading="Menu Heading A"
+    >
+      <dt-list-item
+        role="menuitem"
+        navigation-type="arrow-keys"
+        @click="close"
+      >
+        Menu Item 1
+      </dt-list-item>
+      <dt-dropdown-separator />
+      <dt-list-item
+        role="menuitem"
+        navigation-type="arrow-keys"
+        @click="close"
+      >
+        Menu Item 2
+      </dt-list-item>
+    </dt-list-item-group>
+    <dt-dropdown-separator />
+    <dt-list-item-group
+      heading-class="d-py-50 d-px-100 d-c-default d-fc-tertiary d-label--sm"
+      heading="Menu Heading B"
+    >
+      <dt-list-item
+        role="menuitem"
+        navigation-type="arrow-keys"
+        @click="close"
+      >
+        Menu Item 3
+      </dt-list-item>
+    </dt-list-item-group>
+  </template>
+</dt-dropdown>
+```
+
+### Context Menu
+
+Set `openOnContext=true` to open the menu on right-click (context menu) and disable the default trigger behavior.
+
+```vue demo
+<dt-dropdown navigation-type="arrow-keys" :open-on-context="true">
+  <template #anchor="{ attrs }">
+    <div
+      v-bind="attrs"
+      class="d-ba d-bas-dashed d-w-400 d-py-600 d-ta-center d-bgc-black-300"
+    >
+      Right click to open
+    </div>
+  </template>
+  <template #list="{ close }">
+    <dt-list-item
+      v-for="(item) in items"
+      :key="item.id"
+      role="menuitem"
+      :navigation-type="arrow-keys"
+      @click="close"
+    >
+      {{ item.name }}
+    </dt-list-item>
+  </template>
+</dt-dropdown>
+```
+
+## Content Mode
+
+Dropdown content renders outside the DOM tree. Use the `contentMode` prop to apply color mode (invert, light, dark) to the positioned content. See [Positioned Components](/components/mode-island.html#positioned-components) for details.
+
+```vue demo
+<dt-dropdown content-mode="invert" navigation-type="arrow-keys" placement="bottom-start">
+  <template #anchor="{ attrs }">
+    <dt-button v-bind="attrs" :size="200" kind="muted" importance="outlined">
+      Inverted Dropdown
+      <template #endIcon="{ iconSize }">
+        <dt-icon name="chevron-down" :size="iconSize" />
+      </template>
+    </dt-button>
+  </template>
+  <template #list="{ close }">
+    <dt-list-item role="menuitem" @click="close">Option 1</dt-list-item>
+    <dt-list-item role="menuitem" @click="close">Option 2</dt-list-item>
+    <dt-list-item role="menuitem" @click="close">Option 3</dt-list-item>
+  </template>
+</dt-dropdown>
+<!-- @code -->
+<dt-dropdown content-mode="invert">...</dt-dropdown>
+<dt-dropdown content-mode="dark">...</dt-dropdown>
+<dt-dropdown content-mode="light">...</dt-dropdown>
+```
+
+## Accessibility
+
+A screen reader visible only close button is added by default.
+
+The dropdown menu has a role of "menu" and the list items have a role "menuitem". See [W3C guidelines](https://www.w3.org/WAI/ARIA/apg/#menubutton) for more information.
+
+### List
+
+The Dropdown is rendered with semantic `<ul>` and `<li>`. The list slot is wrapped in `<ul>` element so make sure the items are wrapped in `<li>` element and each item has the menuitem role. It is recommended to use the [List Item component](/components/list-item.md) as it supports all the necessary accessibility props and interactions.
+
+### Focus & Keyboard
+
+A dropdown menu has well defined standard [keyboard interactions](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/examples/menu-button-links/#kbd_label) that it should support. The focus will be set to the the active item on keyboard navigation. `UP` and `DOWN` arrows move the highlighted selection between the list items. `HOME` and `END` keys will jump straight to the first or the last item. Once the beginning or the end of the list is reached the selection will move to the opposite end of the list by default. If you want custom behavior you can pass `onBeginningOfList` and `onEndOfList` methods as props. `A-Z` keys will cycle through items that start with the corresponding letter.
+
+Pressing `ESC` key while the dropdown has focus will emit an **escape** event and will close the menu. When the **highlight** selection changes, a highlight event is emitted with the index of the currently highlighted item. `SPACE` key will open the dropdown if it's closed and select the item when it's pressed on a list item.
+
+<script setup>
+const items = [
+  { name: 'Menu item 1', id: 1 },
+  { name: 'Menu item 2', id: 2 },
+  { name: 'Another menu item 1', id: 3 },
+  { name: 'Menu item 3', id: 4 },
+  { name: 'Another menu item 2', id: 5 },
+];
+</script>
+
+## Vue API
+
+<component-vue-api component-name="dropdown" :also-import="['dropdownseparator']" />

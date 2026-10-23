@@ -1,0 +1,142 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ * Theme: prota-deuter
+ * Contains only overrides from base dp theme.
+ */
+
+/* Light mode overrides */
+[data-dt-mode="light"] {
+  color-scheme: light;
+  --dt-color-surface-info-opaque: oklch(0.76 0.13 258 / 0.5);
+  --dt-color-surface-critical-opaque: oklch(0.78 0.16 345 / 0.25);
+  --dt-color-surface-info: var(--dt-color-blue-200);
+  --dt-color-red-1000: var(--dt-color-magenta-1000);
+  --dt-color-red-950: var(--dt-color-magenta-950);
+  --dt-color-red-900: var(--dt-color-magenta-900);
+  --dt-color-red-800: var(--dt-color-magenta-800);
+  --dt-color-red-700: var(--dt-color-magenta-700);
+  --dt-color-red-600: var(--dt-color-magenta-600);
+  --dt-color-red-500: var(--dt-color-magenta-500);
+  --dt-color-red-400: var(--dt-color-magenta-400);
+  --dt-color-red-300: var(--dt-color-magenta-300);
+  --dt-color-red-200: var(--dt-color-magenta-200);
+  --dt-color-red-100: var(--dt-color-magenta-100);
+  --dt-color-red-50: var(--dt-color-magenta-50);
+  --dt-color-green-1000: var(--dt-color-teal-1000);
+  --dt-color-green-950: var(--dt-color-teal-950);
+  --dt-color-green-900: var(--dt-color-teal-900);
+  --dt-color-green-800: var(--dt-color-teal-800);
+  --dt-color-green-700: var(--dt-color-teal-700);
+  --dt-color-green-600: var(--dt-color-teal-600);
+  --dt-color-green-500: var(--dt-color-teal-500);
+  --dt-color-green-400: var(--dt-color-teal-400);
+  --dt-color-green-300: var(--dt-color-teal-300);
+  --dt-color-green-200: var(--dt-color-teal-200);
+  --dt-color-green-100: var(--dt-color-teal-100);
+  --dt-color-green-50: var(--dt-color-teal-50);
+  --dt-badge-color-background-positive: var(--dt-color-green-300);
+  --dt-color-chart-categorical-21: oklch(0.67 0.16 252);
+  --dt-color-chart-categorical-17: oklch(0.75 0.22 335);
+  --dt-color-chart-categorical-13: oklch(0.69 0.2 303);
+  --dt-color-surface-positive-subtle-opaque-inverted: oklch(0.14 0.03 205 / 0.66);
+  --dt-color-surface-critical-subtle-opaque-inverted: oklch(0.14 0.06 345 / 0.6);
+  --dt-color-surface-positive-opaque-inverted: oklch(0.34 0.08 203 / 0.3);
+  --dt-color-surface-critical-opaque-inverted: oklch(0.28 0.12 352 / 0.5);
+  --dt-color-surface-info-subtle-opaque: oklch(0.84 0.08 257 / 0.5);
+  --dt-color-surface-positive-subtle-opaque: oklch(0.91 0.05 200 / 0.5);
+  --dt-color-surface-critical-subtle-opaque: oklch(0.88 0.08 342 / 0.5);
+  --dt-color-surface-positive-opaque: oklch(0.86 0.09 200 / 0.53);
+  --dt-color-surface-positive-strong: var(--dt-color-green-700);
+  --dt-color-surface-positive-subtle: var(--dt-color-green-100);
+  --dt-color-surface-positive: var(--dt-color-green-200);
+  --dt-color-chart-categorical-21-selected: oklch(0.47 0.16 252);
+  --dt-color-chart-categorical-21-hover: oklch(0.57 0.16 252);
+  --dt-color-chart-categorical-17-selected: oklch(0.52 0.22 335);
+  --dt-color-chart-categorical-17-hover: oklch(0.64 0.22 335);
+  --dt-color-chart-categorical-13-selected: oklch(0.48 0.2 303);
+  --dt-color-chart-categorical-13-hover: oklch(0.59 0.2 303);
+  --dt-color-chart-categorical-24: oklch(0.72 0.19 340);
+  --dt-color-chart-categorical-16: oklch(0.69 0.13 172);
+  --dt-shell-color-foreground-critical: oklch(0.46 0.24 354);
+  --dt-shell-color-foreground-positive: oklch(0.49 0.13 201);
+  --dt-action-color-background-positive-active: oklch(0.77 0.09 200 / 0.53);
+  --dt-action-color-background-critical-active: oklch(0.78 0.08 342 / 0.5);
+  --dt-color-chart-categorical-24-selected: oklch(0.5 0.19 340);
+  --dt-color-chart-categorical-24-hover: oklch(0.61 0.19 340);
+  --dt-color-chart-categorical-16-selected: oklch(0.48 0.13 172);
+  --dt-color-chart-categorical-16-hover: oklch(0.59 0.13 172);
+  --dt-color-chart-categorical-27: oklch(0.67 0.15 198);
+  --dt-color-chart-categorical-27-selected: oklch(0.47 0.15 198);
+  --dt-color-chart-categorical-27-hover: oklch(0.57 0.15 198);
+}
+
+/* Dark mode overrides */
+[data-dt-mode="dark"] {
+  color-scheme: dark;
+  --dt-badge-color-border-bulletin-subtle: oklch(0.58 0.24 287 / 0.5);
+  --dt-badge-color-foreground-bulletin-subtle: var(--dt-color-purple-900);
+  --dt-badge-color-background-warning: var(--dt-color-gold-200);
+  --dt-color-surface-info-opaque: oklch(0.41 0.17 260 / 0.6);
+  --dt-color-surface-critical-opaque: oklch(0.39 0.16 353 / 0.65);
+  --dt-color-surface-info: var(--dt-color-blue-200);
+  --dt-color-red-1000: var(--dt-color-magenta-1000);
+  --dt-color-red-950: var(--dt-color-magenta-950);
+  --dt-color-red-900: var(--dt-color-magenta-900);
+  --dt-color-red-800: var(--dt-color-magenta-800);
+  --dt-color-red-700: var(--dt-color-magenta-700);
+  --dt-color-red-600: var(--dt-color-magenta-600);
+  --dt-color-red-500: var(--dt-color-magenta-500);
+  --dt-color-red-400: var(--dt-color-magenta-400);
+  --dt-color-red-300: var(--dt-color-magenta-300);
+  --dt-color-red-200: var(--dt-color-magenta-200);
+  --dt-color-red-100: var(--dt-color-magenta-100);
+  --dt-color-red-50: var(--dt-color-magenta-50);
+  --dt-color-green-1000: var(--dt-color-teal-1000);
+  --dt-color-green-950: var(--dt-color-teal-950);
+  --dt-color-green-900: var(--dt-color-teal-900);
+  --dt-color-green-800: var(--dt-color-teal-800);
+  --dt-color-green-700: var(--dt-color-teal-700);
+  --dt-color-green-600: var(--dt-color-teal-600);
+  --dt-color-green-500: var(--dt-color-teal-500);
+  --dt-color-green-400: var(--dt-color-teal-400);
+  --dt-color-green-300: var(--dt-color-teal-300);
+  --dt-color-green-200: var(--dt-color-teal-200);
+  --dt-color-green-100: var(--dt-color-teal-100);
+  --dt-color-green-50: var(--dt-color-teal-50);
+  --dt-badge-color-background-positive: var(--dt-color-green-300);
+  --dt-color-chart-categorical-21: oklch(0.5 0.16 256);
+  --dt-color-chart-categorical-17: oklch(0.57 0.26 327);
+  --dt-color-chart-categorical-13: oklch(0.54 0.2 309);
+  --dt-color-surface-positive-subtle-opaque-inverted: oklch(0.98 0.01 200 / 0.66);
+  --dt-color-surface-critical-subtle-opaque-inverted: oklch(0.88 0.08 342 / 0.8);
+  --dt-color-surface-positive-opaque-inverted: oklch(0.91 0.05 200 / 0.3);
+  --dt-color-surface-critical-opaque-inverted: oklch(0.82 0.13 344 / 0.5);
+  --dt-color-surface-success-subtle-opaque: oklch(0.14 0.03 205 / 0.6);
+  --dt-color-surface-positive-subtle-opaque: oklch(0.34 0.08 203 / 0.3);
+  --dt-color-surface-critical-subtle-opaque: oklch(0.14 0.06 345 / 0.6);
+  --dt-color-surface-positive-opaque: oklch(0.45 0.11 202 / 0.6);
+  --dt-color-surface-positive-strong: var(--dt-color-green-700);
+  --dt-color-surface-positive-subtle: var(--dt-color-green-100);
+  --dt-color-surface-positive: var(--dt-color-green-200);
+  --dt-color-surface-critical: var(--dt-color-red-200);
+  --dt-action-color-background-critical-active: oklch(0.49 0.16 353 / 0.65);
+  --dt-color-chart-categorical-21-selected: oklch(0.35 0.16 256);
+  --dt-color-chart-categorical-21-hover: oklch(0.42 0.16 256);
+  --dt-color-chart-categorical-17-selected: oklch(0.4 0.26 327);
+  --dt-color-chart-categorical-17-hover: oklch(0.48 0.26 327);
+  --dt-color-chart-categorical-13-selected: oklch(0.38 0.2 309);
+  --dt-color-chart-categorical-13-hover: oklch(0.46 0.2 309);
+  --dt-color-chart-categorical-24: oklch(0.55 0.18 342);
+  --dt-color-chart-categorical-16: oklch(0.5 0.12 173);
+  --dt-badge-color-background-default: var(--dt-color-surface-moderate-opaque);
+  --dt-shell-color-foreground-critical: oklch(0.9 0.16 345);
+  --dt-action-color-background-positive-active: oklch(0.56 0.11 202 / 0.6);
+  --dt-color-chart-categorical-24-selected: oklch(0.39 0.18 342);
+  --dt-color-chart-categorical-24-hover: oklch(0.47 0.18 342);
+  --dt-color-chart-categorical-16-selected: oklch(0.35 0.12 173);
+  --dt-color-chart-categorical-16-hover: oklch(0.42 0.12 173);
+  --dt-color-chart-categorical-27: oklch(0.47 0.14 199);
+  --dt-color-chart-categorical-27-selected: oklch(0.33 0.14 199);
+  --dt-color-chart-categorical-27-hover: oklch(0.4 0.14 199);
+}
+

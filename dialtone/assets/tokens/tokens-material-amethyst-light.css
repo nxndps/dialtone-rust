@@ -1,0 +1,55 @@
+@layer dialtone.base {/**
+ * Do not edit directly, this file was auto-generated.
+ */:root {
+  color-scheme: light;
+  --dt-color-black-1000: oklch(0.1361 0.0811 291.62);
+  --dt-color-black-950: oklch(0.1599 0.0811 291.62);
+  --dt-color-black-900: oklch(0.2085 0.0594 294.02);
+  --dt-color-black-850: oklch(0.3008 0.0350 290.90);
+  --dt-color-black-800: oklch(0.3436 0.0220 290.70);
+  --dt-color-black-750: oklch(0.3902 0.0184 290.40);
+  --dt-color-black-700: oklch(0.4355 0.0216 290.20);
+  --dt-color-black-650: oklch(0.4747 0.0217 290.10);
+  --dt-color-black-600: oklch(0.5134 0.0213 290.00);
+  --dt-color-black-550: oklch(0.5586 0.0207 289.80);
+  --dt-color-black-500: oklch(0.6114 0.0203 289.70);
+  --dt-color-black-450: oklch(0.6706 0.0198 289.50);
+  --dt-color-black-400: oklch(0.7321 0.0176 289.40);
+  --dt-color-black-350: oklch(0.7914 0.0134 289.30);
+  --dt-color-black-300: oklch(0.8448 0.0096 289.20);
+  --dt-color-black-250: oklch(0.8894 0.0068 289.10);
+  --dt-color-black-200: oklch(0.9245 0.0048 289.10);
+  --dt-color-black-150: oklch(0.9512 0.0026 289.00);
+  --dt-color-black-100: oklch(0.9748 0.0013 289.00);
+  --dt-color-black-50: oklch(1 0 0);
+  --dt-font-size-100-mobile: 1.2rem;
+  --dt-font-size-200-mobile: 1.6rem;
+  --dt-font-size-300-mobile: 2rem;
+  --dt-font-size-400-mobile: 2.9rem;
+  --dt-font-size-500-mobile: 4.1rem;
+  --dt-font-size-100-tc8: 1.7rem;
+  --dt-font-size-200-tc8: 2.1rem;
+  --dt-font-size-300-tc8: 2.7rem;
+  --dt-font-size-400-tc8: 3.8rem;
+  --dt-font-size-500-tc8: 5.4rem;
+  --dt-font-size-100-tv: 2.5rem;
+  --dt-font-size-200-tv: 3.2rem;
+  --dt-font-size-300-tv: 4.1rem;
+  --dt-font-size-400-tv: 5.8rem;
+  --dt-font-size-500-tv: 8.2rem;
+  --zi-hide: -1;
+  --zi-base: 0;
+  --zi-base1: 1;
+  --zi-selected: 25;
+  --zi-active: 50;
+  --zi-navigation: 100;
+  --zi-navigation-fixed: 150;
+  --zi-dropdown: 200;
+  --zi-popover: 300;
+  --zi-tooltip: 400;
+  --zi-drawer: 500;
+  --zi-modal: 600;
+  --zi-modal-element: 650;
+  --zi-notification: 700;
+}
+}

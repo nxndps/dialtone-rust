@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" class="dialtone-theme-light" data-dt-mode="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#7C52FF" />
+    <title>Dialtone components</title>
+    <link data-trunk rel="rust" data-wasm-opt="0" href="Cargo.toml" />
+    <link data-trunk rel="tailwind-css" href="tailwind.css" />
+    <link data-trunk rel="copy-dir" href="../dialtone/assets" data-target-path="dialtone" />
+    <!-- Built CSS references fonts/ beside the stylesheet. -->
+    <link data-trunk rel="copy-dir" href="../dialtone/assets/fonts" data-target-path="fonts" />
+    <base data-trunk-public-url />
+    <script>
+      try {
+        const stored = localStorage.getItem("dt-theme");
+        const mode = stored === "dark" || stored === "light" || stored === "system" ? stored : "light";
+        const dark = mode === "dark" || (mode === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+        for (const el of [document.documentElement, document.body]) {
+          if (!el) continue;
+          el.classList.toggle("dt-theme-dark", dark);
+          el.classList.toggle("dialtone-theme-dark", dark);
+          el.classList.toggle("dialtone-theme-light", !dark);
+          el.setAttribute("data-dt-mode", dark ? "dark" : "light");
+        }
+      } catch (_) {}
+    </script>
+    <!-- Paints the progress bar before the main stylesheet arrives. -->
+    <style>
+      html, body { background: #f8f7f6; }
+      html.dt-theme-dark, html.dt-theme-dark body { background: #0b0a09; }
+      #dt-boot {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f7f6;
+        color: #1c1c1c;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      }
+      html.dt-theme-dark #dt-boot { background: #0b0a09; color: #f8f7f6; }
+      #dt-boot .dt-boot-card { width: min(380px, calc(100% - 48px)); }
+      #dt-boot p { margin: 0; }
+      #dt-boot .dt-boot-title { margin-bottom: 14px; font-size: 15px; font-weight: 500; }
+      #dt-boot .dt-boot-lane { margin-top: 10px; }
+      #dt-boot .dt-boot-overall { margin-top: 0; margin-bottom: 14px; }
+      #dt-boot .dt-boot-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+        font-size: 12px;
+        color: #635f5d;
+      }
+      html.dt-theme-dark #dt-boot .dt-boot-label { color: #aaa4a1; }
+      #dt-boot .dt-boot-overall .dt-boot-label { font-size: 13px; font-weight: 500; color: inherit; }
+      #dt-boot .dt-boot-active .dt-boot-label { color: inherit; }
+      #dt-boot .dt-boot-track {
+        height: 4px;
+        border-radius: 999px;
+        background: #e0dcd9;
+        overflow: hidden;
+      }
+      #dt-boot .dt-boot-overall .dt-boot-track { height: 6px; }
+      html.dt-theme-dark #dt-boot .dt-boot-track { background: #2a2928; }
+      #dt-boot .dt-boot-bar {
+        height: 100%;
+        width: 0%;
+        border-radius: inherit;
+        background: #7c52ff;
+      }
+      #dt-boot .dt-boot-bar.dt-boot-wait {
+        width: 40%;
+        animation: dt-boot-slide 1s ease-in-out infinite;
+      }
+      #dt-boot .dt-boot-meta { margin-top: 12px; font-size: 12px; color: #635f5d; }
+      html.dt-theme-dark #dt-boot .dt-boot-meta { color: #aaa4a1; }
+      @keyframes dt-boot-slide {
+        0% { transform: translateX(-120%); }
+        100% { transform: translateX(320%); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #dt-boot .dt-boot-bar.dt-boot-wait { animation: none; width: 100%; }
+      }
+    </style>
+  </head>
+  <body class="m-0 bg-page text-fg antialiased">
+    <div id="dt-boot" role="status" aria-busy="true">
+      <div class="dt-boot-card">
+        <p class="dt-boot-title">Loading ...</p>
+        <div class="dt-boot-lane dt-boot-overall">
+          <div class="dt-boot-label"><span>Overall</span><span id="dt-boot-overall-pct">0%</span></div>
+          <div class="dt-boot-track">
+            <div id="dt-boot-overall" class="dt-boot-bar" role="progressbar" aria-label="Overall" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+          </div>
+        </div>
+        <div class="dt-boot-lane" id="dt-boot-styles-row">
+          <div class="dt-boot-label"><span>Styles</span><span id="dt-boot-styles-pct">0%</span></div>
+          <div class="dt-boot-track">
+            <div id="dt-boot-styles" class="dt-boot-bar" role="progressbar" aria-label="Styles" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+          </div>
+        </div>
+        <div class="dt-boot-lane" id="dt-boot-ui-row">
+          <div class="dt-boot-label"><span>UI</span><span id="dt-boot-ui-pct">0%</span></div>
+          <div class="dt-boot-track">
+            <div id="dt-boot-ui" class="dt-boot-bar" role="progressbar" aria-label="UI" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+          </div>
+        </div>
+        <div class="dt-boot-lane" id="dt-boot-application-row">
+          <div class="dt-boot-label"><span>Application</span><span id="dt-boot-application-pct">0%</span></div>
+          <div class="dt-boot-track">
+            <div id="dt-boot-application" class="dt-boot-bar" role="progressbar" aria-label="Application" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+          </div>
+        </div>
+        <div class="dt-boot-lane" id="dt-boot-data-row">
+          <div class="dt-boot-label"><span>Data</span><span id="dt-boot-data-pct">0%</span></div>
+          <div class="dt-boot-track">
+            <div id="dt-boot-data" class="dt-boot-bar" role="progressbar" aria-label="Data" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+          </div>
+        </div>
+        <p id="dt-boot-meta" class="dt-boot-meta">Preparing the component library…</p>
+      </div>
+    </div>
+    <script>
+      (function () {
+        const boot = document.getElementById("dt-boot");
+        const meta = document.getElementById("dt-boot-meta");
+        if (!boot || window.__dtBootFetch) return;
+        window.__dtBootFetch = true;
+
+        const held = document.getElementById("dt-boot-module");
+        const liveModule = document.querySelector("script[type=module]");
+        const moduleNode = held || liveModule;
+        const moduleText = moduleNode ? moduleNode.textContent : "";
+        const wasmMatch = moduleText.match(/module_or_path:\s*['"]([^'"]+_bg\.wasm)['"]/);
+        const jsMatch = moduleText.match(/from\s+['"]([^'"]+\.js)['"]/);
+        const wasmUrl = wasmMatch && wasmMatch[1];
+        const jsUrl = jsMatch && jsMatch[1];
+        const styleNode = document.getElementById("dt-boot-style");
+        const styleHref = styleNode && styleNode.getAttribute("data-href");
+
+        function stamped(name) {
+          const n = Number(boot.getAttribute(name));
+          return n > 0 ? n : 0;
+        }
+        const state = {
+          styles: { loaded: 0, total: stamped("data-style-bytes"), url: styleHref || "" },
+          ui: { loaded: 0, total: stamped("data-ui-bytes"), url: jsUrl || "" },
+          application: { loaded: 0, total: stamped("data-app-bytes"), url: wasmUrl || "" },
+          data: { loaded: 0, total: 0, settled: false },
+        };
+        let appStarted = false;
+        let dataJobs = 0;
+        let hideTimer = 0;
+        const phases = [
+          ["styles", "Loading styles…"],
+          ["ui", "Loading UI…"],
+          ["application", "Loading application…"],
+          ["data", "Loading data…"],
+        ];
+
+        function assetTotal(response) {
+          return Number(response.headers.get("X-Asset-Size")) || Number(response.headers.get("Content-Length")) || 0;
+        }
+        function requestUrl(input) {
+          if (typeof input === "string") return input;
+          if (typeof URL !== "undefined" && input instanceof URL) return input.href;
+          if (input && typeof input.url === "string") return input.url;
+          return "";
+        }
+        function lanePercent(lane, hold) {
+          if (!(lane.total > 0)) return lane.settled ? 100 : 0;
+          let percent = Math.min(100, Math.round((Math.min(lane.loaded, lane.total) / lane.total) * 100));
+          if (hold && percent >= 100 && !lane.settled) percent = 99;
+          return percent;
+        }
+        function laneIsDone(id) {
+          const lane = state[id];
+          if (id === "data") {
+            if (lane.settled) return true;
+            if (lane.total > 0 && lane.loaded >= lane.total && dataJobs === 0) return true;
+            return appStarted ? false : dataJobs === 0 && lane.loaded === 0;
+          }
+          if (!lane.url) return true;
+          return lane.total > 0 && lane.loaded >= lane.total;
+        }
+        function paint(id, lane, hold) {
+          const bar = document.getElementById("dt-boot-" + id);
+          const pct = document.getElementById("dt-boot-" + id + "-pct");
+          const row = document.getElementById("dt-boot-" + id + "-row");
+          if (!bar) return;
+          const known = lane.total > 0 || lane.settled;
+          const percent = lanePercent(lane, hold);
+          bar.classList.toggle("dt-boot-wait", !known && lane.loaded > 0);
+          bar.style.width = known ? percent + "%" : "";
+          if (known) bar.setAttribute("aria-valuenow", String(percent));
+          else bar.removeAttribute("aria-valuenow");
+          if (pct) pct.textContent = known ? percent + "%" : "0%";
+          if (row) row.classList.remove("dt-boot-active");
+        }
+        function overall() {
+          let loaded = 0;
+          let total = 0;
+          for (const id of ["styles", "ui", "application", "data"]) {
+            const lane = state[id];
+            if (!(lane.total > 0)) continue;
+            loaded += Math.min(lane.loaded, lane.total);
+            total += lane.total;
+          }
+          return { loaded: loaded, total: total };
+        }
+        function render() {
+          let active = "";
+          for (let i = 0; i < phases.length; i++) {
+            const id = phases[i][0];
+            paint(id, state[id], id === "data" && !state.data.settled);
+            if (!active && !laneIsDone(id)) active = id;
+          }
+          const summed = overall();
+          summed.settled = state.data.settled;
+          paint("overall", summed, !state.data.settled);
+          const row = active && document.getElementById("dt-boot-" + active + "-row");
+          if (row) row.classList.add("dt-boot-active");
+          if (!meta) return;
+          if (!active && coreDone()) meta.textContent = "Starting…";
+          else if (active) {
+            for (let i = 0; i < phases.length; i++) if (phases[i][0] === active) meta.textContent = phases[i][1];
+          }
+        }
+        function laneDone(id) {
+          return laneIsDone(id);
+        }
+        function coreDone() {
+          return laneDone("styles") && laneDone("ui") && laneDone("application");
+        }
+        function finishLane(id) {
+          const lane = state[id];
+          if (!(lane.total > 0)) lane.total = lane.loaded || 1;
+          lane.loaded = Math.max(lane.loaded, lane.total);
+          render();
+          scheduleHide();
+        }
+        function scheduleHide() {
+          if (!appStarted || !coreDone() || dataJobs > 0) return;
+          clearTimeout(hideTimer);
+          hideTimer = setTimeout(function () {
+            if (!boot.isConnected || !appStarted || !coreDone() || dataJobs > 0) return;
+            state.data.settled = true;
+            render();
+            requestAnimationFrame(function () { boot.remove(); });
+          }, 300);
+        }
+        function showError(message) {
+          if (meta) meta.textContent = message;
+        }
+        function readBytes(response, onLoaded) {
+          if (!response.body) return Promise.resolve(new Uint8Array());
+          const reader = response.body.getReader();
+          const chunks = [];
+          let loaded = 0;
+          const pump = function () {
+            return reader.read().then(function (step) {
+              if (step.done) {
+                const bytes = new Uint8Array(loaded);
+                let offset = 0;
+                for (let i = 0; i < chunks.length; i++) {
+                  bytes.set(chunks[i], offset);
+                  offset += chunks[i].byteLength;
+                }
+                return bytes;
+              }
+              chunks.push(step.value);
+              loaded += step.value.byteLength;
+              onLoaded(loaded);
+              return pump();
+            });
+          };
+          return pump();
+        }
+        function readClone(response, onDelta) {
+          if (!response.ok || !response.body) return Promise.resolve(response);
+          const clone = response.clone();
+          const reader = clone.body.getReader();
+          const pump = function () {
+            return reader.read().then(function (step) {
+              if (step.done) return response;
+              onDelta(step.value.byteLength);
+              return pump();
+            });
+          };
+          return pump().then(function () { return response; }, function () { return response; });
+        }
+
+        addEventListener("TrunkApplicationStarted", function () {
+          appStarted = true;
+          scheduleHide();
+        });
+        addEventListener("unhandledrejection", function (event) {
+          if (!boot.isConnected) return;
+          const reason = event.reason;
+          showError(reason && reason.message ? reason.message : "The component library failed to start.");
+        });
+
+        const orig = window.fetch.bind(window);
+        let wasmPending = null;
+        function trackWasm(input, init) {
+          if (wasmPending) return wasmPending;
+          wasmPending = orig(input, init).then(function (response) {
+            const headerTotal = assetTotal(response);
+            if (headerTotal > 0) state.application.total = headerTotal;
+            render();
+            return readClone(response, function (delta) {
+              state.application.loaded += delta;
+              render();
+            }).then(function (ready) {
+              finishLane("application");
+              return ready;
+            });
+          });
+          return wasmPending;
+        }
+        function trackData(input, init) {
+          dataJobs += 1;
+          clearTimeout(hideTimer);
+          let jobBytes = 0;
+          let jobTotal = 0;
+          return orig(input, init).then(function (response) {
+            jobTotal = assetTotal(response);
+            if (jobTotal > 0) state.data.total += jobTotal;
+            render();
+            return readClone(response, function (delta) {
+              jobBytes += delta;
+              state.data.loaded += delta;
+              render();
+            });
+          }).then(function (response) {
+            if (!(jobTotal > 0)) state.data.total += jobBytes;
+            dataJobs -= 1;
+            render();
+            scheduleHide();
+            return response;
+          }, function (error) {
+            dataJobs -= 1;
+            scheduleHide();
+            throw error;
+          });
+        }
+        window.fetch = function (input, init) {
+          const url = requestUrl(input);
+          if (wasmUrl && url.indexOf(wasmUrl) !== -1) return trackWasm(input, init);
+          if (/\.wasm(?:$|\?)/.test(url)) return trackData(input, init);
+          return orig(input, init);
+        };
+
+        function loadOwned(url, lane) {
+          if (!url) {
+            state[lane].url = "";
+            finishLane(lane);
+            return Promise.resolve();
+          }
+          return orig(url).then(function (response) {
+            if (!response.ok) throw new Error("Could not load " + lane + ".");
+            const headerTotal = assetTotal(response);
+            if (headerTotal > 0) state[lane].total = headerTotal;
+            render();
+            return readBytes(response, function (loaded) {
+              state[lane].loaded = loaded;
+              render();
+            }).then(function (bytes) { finishLane(lane); return bytes; });
+          }).catch(function (error) {
+            showError(error && error.message ? error.message : "Could not load " + lane + ".");
+            state[lane].url = "";
+            finishLane(lane);
+          });
+        }
+
+        function applyStyles(bytes) {
+          try {
+            const style = document.createElement("style");
+            style.id = "dt-boot-styles-applied";
+            style.textContent = new TextDecoder().decode(bytes);
+            document.head.appendChild(style);
+          } catch (_) {
+            const link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = styleHref;
+            document.head.appendChild(link);
+          }
+        }
+
+        render();
+        if (wasmUrl) trackWasm(wasmUrl);
+        else finishLane("application");
+        const stylesJob = styleHref ? loadOwned(styleHref, "styles").then(function (bytes) {
+          if (bytes) applyStyles(bytes);
+        }) : (finishLane("styles"), Promise.resolve());
+        const uiJob = held && jsUrl ? loadOwned(jsUrl, "ui") : (finishLane("ui"), Promise.resolve());
+        Promise.all([stylesJob, uiJob]).then(function () {
+          if (!held) return;
+          const script = document.createElement("script");
+          script.type = "module";
+          script.textContent = moduleText;
+          document.body.appendChild(script);
+        });
+      })();
+    </script>
+  </body>
+</html>

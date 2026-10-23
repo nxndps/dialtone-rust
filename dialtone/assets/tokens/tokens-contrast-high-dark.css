@@ -1,0 +1,67 @@
+@layer dialtone.base {/**
+ * Do not edit directly, this file was auto-generated.
+ */:root {
+  color-scheme: dark;
+  --dt-color-link-primary-hover: var(--dt-color-purple-1000);
+  --dt-color-link-primary: var(--dt-color-purple-900);
+  --dt-color-foreground-info-strong: var(--dt-color-blue-1000);
+  --dt-color-foreground-info: var(--dt-color-blue-900);
+  --dt-color-foreground-warning-strong: var(--dt-color-gold-1000); /* Indicates a strong warning state on surfaces that require a stronger contrast. */
+  --dt-color-foreground-warning: var(--dt-color-gold-900);
+  --dt-color-foreground-positive-strong: var(--dt-color-green-900);
+  --dt-color-foreground-positive: var(--dt-color-green-800);
+  --dt-color-foreground-critical-strong: var(--dt-color-red-1000);
+  --dt-color-foreground-critical: var(--dt-color-red-900);
+  --dt-color-border-bold: oklch(from var(--dt-color-black-1000) l c h / .33);
+  --dt-color-border-moderate: oklch(from var(--dt-color-black-1000) l c h / .33);
+  --dt-color-border-default: oklch(from var(--dt-color-black-1000) l c h / .33);
+  --dt-color-border-subtle: oklch(from var(--dt-color-black-1000) l c h / .33);
+  --dt-color-foreground-disabled: var(--dt-color-black-750);
+  --dt-color-foreground-placeholder: var(--dt-color-black-750);
+  --dt-color-foreground-muted: var(--dt-color-black-750);
+  --dt-color-foreground-tertiary: var(--dt-color-black-800);
+  --dt-color-foreground-secondary: var(--dt-color-black-950);
+  --dt-color-foreground-primary: var(--dt-color-black-1000);
+  --dt-shell-color-border-default: oklch(from var(--dt-color-border-default) l c h / .18);
+  --dt-shell-color-border-subtle: oklch(from var(--dt-color-border-subtle) l c h / .15);
+  --dt-shell-color-foreground-muted: oklch(0.92 0 84.6 / 0.6);
+  --dt-shell-color-foreground-tertiary: oklch(from var(--dt-shell-base-color-foreground) l c h / .72);
+  --dt-shell-color-foreground-secondary: oklch(from var(--dt-shell-base-color-foreground) l c h / .86);
+  --dt-shell-color-foreground-primary: var(--dt-shell-base-color-foreground);
+  --dt-action-color-border-positive-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-muted-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-inverted-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-critical-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-base-default: var(--dt-color-border-subtle);
+  --dt-color-link-muted: var(--dt-color-foreground-secondary);
+  --dt-font-size-100-mobile: 1.2rem;
+  --dt-font-size-200-mobile: 1.6rem;
+  --dt-font-size-300-mobile: 2rem;
+  --dt-font-size-400-mobile: 2.9rem;
+  --dt-font-size-500-mobile: 4.1rem;
+  --dt-font-size-100-tc8: 1.7rem;
+  --dt-font-size-200-tc8: 2.1rem;
+  --dt-font-size-300-tc8: 2.7rem;
+  --dt-font-size-400-tc8: 3.8rem;
+  --dt-font-size-500-tc8: 5.4rem;
+  --dt-font-size-100-tv: 2.5rem;
+  --dt-font-size-200-tv: 3.2rem;
+  --dt-font-size-300-tv: 4.1rem;
+  --dt-font-size-400-tv: 5.8rem;
+  --dt-font-size-500-tv: 8.2rem;
+  --zi-hide: -1;
+  --zi-base: 0;
+  --zi-base1: 1;
+  --zi-selected: 25;
+  --zi-active: 50;
+  --zi-navigation: 100;
+  --zi-navigation-fixed: 150;
+  --zi-dropdown: 200;
+  --zi-popover: 300;
+  --zi-tooltip: 400;
+  --zi-drawer: 500;
+  --zi-modal: 600;
+  --zi-modal-element: 650;
+  --zi-notification: 700;
+}
+}

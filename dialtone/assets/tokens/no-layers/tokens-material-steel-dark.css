@@ -1,0 +1,54 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */:root {
+  color-scheme: dark;
+  --dt-color-black-1000: oklch(1 0 0);
+  --dt-color-black-950: oklch(0.9622 0.0025 273.27);
+  --dt-color-black-900: oklch(0.9244 0.0052 273.01);
+  --dt-color-black-850: oklch(0.8874 0.0075 270.54);
+  --dt-color-black-800: oklch(0.8448 0.0102 269.8);
+  --dt-color-black-750: oklch(0.7913 0.0136 270.35);
+  --dt-color-black-700: oklch(0.7306 0.0176 270.98);
+  --dt-color-black-650: oklch(0.6689 0.02 271.66);
+  --dt-color-black-600: oklch(0.6114 0.0213 272.31);
+  --dt-color-black-550: oklch(0.5619 0.0224 272.87);
+  --dt-color-black-500: oklch(0.5184 0.0233 271.57);
+  --dt-color-black-450: oklch(0.4777 0.0241 269.79);
+  --dt-color-black-400: oklch(0.4355 0.025 268.65);
+  --dt-color-black-350: oklch(0.3894 0.0255 269.76);
+  --dt-color-black-300: oklch(0.3436 0.0261 270.24);
+  --dt-color-black-250: oklch(0.3028 0.0268 270.36);
+  --dt-color-black-200: oklch(0.2657 0.0262 270.96);
+  --dt-color-black-150: oklch(0.2301 0.024 272.36);
+  --dt-color-black-100: oklch(0.1949 0.022 272.81);
+  --dt-color-black-50: oklch(0.1595 0.0202 272.01);
+  --dt-font-size-100-mobile: 1.2rem;
+  --dt-font-size-200-mobile: 1.6rem;
+  --dt-font-size-300-mobile: 2rem;
+  --dt-font-size-400-mobile: 2.9rem;
+  --dt-font-size-500-mobile: 4.1rem;
+  --dt-font-size-100-tc8: 1.7rem;
+  --dt-font-size-200-tc8: 2.1rem;
+  --dt-font-size-300-tc8: 2.7rem;
+  --dt-font-size-400-tc8: 3.8rem;
+  --dt-font-size-500-tc8: 5.4rem;
+  --dt-font-size-100-tv: 2.5rem;
+  --dt-font-size-200-tv: 3.2rem;
+  --dt-font-size-300-tv: 4.1rem;
+  --dt-font-size-400-tv: 5.8rem;
+  --dt-font-size-500-tv: 8.2rem;
+  --zi-hide: -1;
+  --zi-base: 0;
+  --zi-base1: 1;
+  --zi-selected: 25;
+  --zi-active: 50;
+  --zi-navigation: 100;
+  --zi-navigation-fixed: 150;
+  --zi-dropdown: 200;
+  --zi-popover: 300;
+  --zi-tooltip: 400;
+  --zi-drawer: 500;
+  --zi-modal: 600;
+  --zi-modal-element: 650;
+  --zi-notification: 700;
+}

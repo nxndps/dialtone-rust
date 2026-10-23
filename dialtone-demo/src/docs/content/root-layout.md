@@ -1,0 +1,121 @@
+---
+title: Root layout
+description: Page-level container structure for consistent root content layout.
+status: ready
+thumb: true
+storybook: https://dialtone.dialpad.com/vue/?path=/story/components-root-layout--default
+keywords: ["app layout","page layout","d-root-layout","DtRootLayout","dt-root-layout"]
+---
+
+```vue demo-only
+<!-- @class d-d-block -->
+<dt-root-layout
+:fixed="false"
+class="d-w100p d-h-500"
+>
+<template
+  #header
+>
+  <div class="d-h-100 d-bgc-purple-100">Header</div>
+</template>
+<template
+  #sidebar
+>
+  <div class="d-w-200 d-h100p d-bgc-black-100"><div>Sidebar item 1</div><div>Sidebar item 2</div><div>Sidebar item 3</div></div>
+</template>
+<div class="d-bgc-green-100 d-w100p d-h100p">Content</div>
+<template
+  #footer
+>
+  <div class="d-h-100 d-bgc-gold-100">Footer</div>
+</template>
+</dt-root-layout>
+```
+
+## Base Style
+
+A root layout consists of a header, body, sidebar and footer. Content can optionally be passed into the slots which
+will be displayed in the respective area. The sidebar is designed to be responsive and will reposition above the
+body according to the `responsiveBreakpoint` prop.
+
+```vue demo
+<!-- @class d-d-block -->
+<dt-root-layout
+:fixed="false"
+class="d-w100p d-h-500"
+>
+<template
+  #header
+>
+  <div class="d-h-100 d-bgc-purple-100">Header</div>
+</template>
+<template
+  #sidebar
+>
+  <div class="d-w-200 d-h100p d-bgc-black-100"><div>Sidebar item 1</div><div>Sidebar item 2</div><div>Sidebar item 3</div></div>
+</template>
+<div class="d-bgc-green-100 d-w100p d-h100p">Content</div>
+<template
+  #footer
+>
+  <div class="d-h-100 d-bgc-gold-100">Footer</div>
+</template>
+</dt-root-layout>
+```
+
+## Variants and Examples
+
+### Header Sticky
+
+```vue demo
+<!-- @class d-d-block -->
+<div
+  class="d-h-500 d-of-scroll"
+>
+  <dt-root-layout
+    header-sticky
+    class="d-w100p d-h-500"
+  >
+    <template
+      #header
+    >
+      <div class="d-h-100 d-bgc-purple-100">Header</div>
+    </template>
+    <template
+      #sidebar
+    >
+      <div class="d-w-200 d-h100p d-bgc-black-100"><div>Sidebar item 1</div><div>Sidebar item 2</div><div>Sidebar item 3</div></div>
+    </template>
+      <div class="d-bgc-green-100 d-w100p d-h100p">Content</div>
+    <template
+      #footer
+    >
+      <div class="d-h-100 d-bgc-gold-100">Footer</div>
+    </template>
+  </dt-root-layout>
+</div>
+```
+
+## Usage
+
+Root Layout should be used as the top level component for a route. All other components on the page should be nested
+within one of the root layout's slots. The root layout should not be nested within any other elements or components.
+
+## Accessibility
+
+The RootLayout component uses
+[Content Sectioning](https://developer.mozilla.org/en-US/docs/Web/HTML/Element#content_sectioning)
+elements `<header>`, `<aside>`, `<main>`, and `<footer>` which automatically define
+[ARIA Landmark Roles](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles#landmark_roles)
+on the page.
+
+If you have navigation links contained within any of the slots Root Layout provides these should be enclosed in a `<nav>`
+[Nav Section](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nav).
+The RootLayout component will not do this for you.
+
+The sidebar will not automatically wrap to be above the main content by default.
+This can be changed via the `responsiveBreakpoint` prop if desired.
+
+## Vue API
+
+<component-vue-api component-name="rootlayout" />

@@ -1,0 +1,74 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ * High contrast overrides for both light and dark modes
+ */
+
+[data-dt-mode="light"][data-dt-contrast="high"] {
+  --dt-color-link-primary-hover: var(--dt-color-purple-900);
+  --dt-color-link-primary: var(--dt-color-purple-700);
+  --dt-color-foreground-info-strong: var(--dt-color-blue-950); /* Indicates a generally informational state on surfaces that require a stronger contrast. */
+  --dt-color-foreground-info: var(--dt-color-blue-800); /* Indicates a generally informational state. */
+  --dt-color-foreground-warning-strong: var(--dt-color-gold-900); /* Indicates a strong warning state on surfaces that require a stronger contrast. */
+  --dt-color-foreground-warning: var(--dt-color-gold-800); /* Indicates a warning state. */
+  --dt-color-foreground-positive-strong: var(--dt-color-green-900); /* Indicates a strong positive state on surfaces that require a stronger contrast. */
+  --dt-color-foreground-positive: var(--dt-color-green-800); /* Indicates a positive state. */
+  --dt-color-foreground-critical-strong: var(--dt-color-red-800); /* Expresses an error, danger, or otherwise critical state on surfaces that require a stronger contrast. */
+  --dt-color-foreground-critical: var(--dt-color-red-700); /* Expresses an error, danger, or otherwise critical state. */
+  --dt-color-border-bold: oklch(from var(--dt-color-black-1000) l c h / .50);
+  --dt-color-border-moderate: oklch(from var(--dt-color-black-1000) l c h / .50);
+  --dt-color-border-default: oklch(from var(--dt-color-black-1000) l c h / .50);
+  --dt-color-border-subtle: oklch(from var(--dt-color-black-1000) l c h / .50);
+  --dt-color-foreground-disabled: var(--dt-color-black-750); /* Used for text paired with disabled content or components, like the form elements. */
+  --dt-color-foreground-placeholder: var(--dt-color-black-750); /* Text color for placeholder text within form elements. */
+  --dt-color-foreground-muted: var(--dt-color-black-750);
+  --dt-color-foreground-tertiary: var(--dt-color-black-800); /* Used to imply visual hierarchy relative to primary and secondary text colors, e.g. headlines and labels. */
+  --dt-color-foreground-secondary: var(--dt-color-black-950); /* Example uses include introduction paragraphs, labels, and descriptions paired with form elements. */
+  --dt-color-foreground-primary: var(--dt-color-black-1000); /* Default text color throughout the UI. */
+  --dt-shell-color-border-default: oklch(from var(--dt-color-border-default) l c h / .17);
+  --dt-shell-color-border-subtle: oklch(from var(--dt-color-border-subtle) l c h / 0.10);
+  --dt-shell-color-foreground-muted: oklch(0.26 0.01 78.2 / 0.6);
+  --dt-shell-color-foreground-tertiary: oklch(from var(--dt-shell-base-color-foreground) l c h / .72);
+  --dt-shell-color-foreground-secondary: oklch(from var(--dt-shell-base-color-foreground) l c h / .86);
+  --dt-shell-color-foreground-primary: var(--dt-shell-base-color-foreground);
+  --dt-action-color-border-positive-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-muted-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-inverted-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-critical-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-base-default: var(--dt-color-border-subtle);
+  --dt-color-link-muted: var(--dt-color-foreground-secondary);
+}
+
+[data-dt-mode="dark"][data-dt-contrast="high"] {
+  --dt-color-link-primary-hover: var(--dt-color-purple-1000);
+  --dt-color-link-primary: var(--dt-color-purple-900);
+  --dt-color-foreground-info-strong: var(--dt-color-blue-1000);
+  --dt-color-foreground-info: var(--dt-color-blue-900);
+  --dt-color-foreground-warning-strong: var(--dt-color-gold-1000); /* Indicates a strong warning state on surfaces that require a stronger contrast. */
+  --dt-color-foreground-warning: var(--dt-color-gold-900);
+  --dt-color-foreground-positive-strong: var(--dt-color-green-900);
+  --dt-color-foreground-positive: var(--dt-color-green-800);
+  --dt-color-foreground-critical-strong: var(--dt-color-red-1000);
+  --dt-color-foreground-critical: var(--dt-color-red-900);
+  --dt-color-border-bold: oklch(from var(--dt-color-black-1000) l c h / .33);
+  --dt-color-border-moderate: oklch(from var(--dt-color-black-1000) l c h / .33);
+  --dt-color-border-default: oklch(from var(--dt-color-black-1000) l c h / .33);
+  --dt-color-border-subtle: oklch(from var(--dt-color-black-1000) l c h / .33);
+  --dt-color-foreground-disabled: var(--dt-color-black-750);
+  --dt-color-foreground-placeholder: var(--dt-color-black-750);
+  --dt-color-foreground-muted: var(--dt-color-black-750);
+  --dt-color-foreground-tertiary: var(--dt-color-black-800);
+  --dt-color-foreground-secondary: var(--dt-color-black-950);
+  --dt-color-foreground-primary: var(--dt-color-black-1000);
+  --dt-shell-color-border-default: oklch(from var(--dt-color-border-default) l c h / .18);
+  --dt-shell-color-border-subtle: oklch(from var(--dt-color-border-subtle) l c h / .15);
+  --dt-shell-color-foreground-muted: oklch(0.92 0 84.6 / 0.6);
+  --dt-shell-color-foreground-tertiary: oklch(from var(--dt-shell-base-color-foreground) l c h / .72);
+  --dt-shell-color-foreground-secondary: oklch(from var(--dt-shell-base-color-foreground) l c h / .86);
+  --dt-shell-color-foreground-primary: var(--dt-shell-base-color-foreground);
+  --dt-action-color-border-positive-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-muted-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-inverted-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-critical-default: var(--dt-color-border-subtle);
+  --dt-action-color-border-base-default: var(--dt-color-border-subtle);
+  --dt-color-link-muted: var(--dt-color-foreground-secondary);
+}

@@ -1,0 +1,53 @@
+@font-face {
+    font-weight: 400;
+    font-family: "Season Mix";
+    font-style: normal;
+    src: url('./fonts/SeasonMix-Regular.woff2') format('woff2');
+  }
+@font-face {
+    font-weight: 600;
+    font-family: "Season Mix";
+    font-style: normal;
+    src: url('./fonts/SeasonMix-SemiBold.woff2') format('woff2');
+  }
+@font-face {
+    font-weight: 700;
+    font-family: "Season Mix";
+    font-style: normal;
+    src: url('./fonts/SeasonMix-Bold.woff2') format('woff2');
+  }
+@font-face {
+    font-weight: 300;
+    font-family: "Season Sans";
+    font-style: normal;
+    src: url('./fonts/SeasonSans-Light.woff2') format('woff2');
+  }
+@font-face {
+    font-weight: 400;
+    font-family: "Season Sans";
+    font-style: normal;
+    src: url('./fonts/SeasonSans-Regular.woff2') format('woff2');
+  }
+@font-face {
+    font-weight: 500;
+    font-family: "Season Sans";
+    font-style: normal;
+    src: url('./fonts/SeasonSans-Medium.woff2') format('woff2');
+  }
+@font-face {
+    font-weight: 600;
+    font-family: "Season Sans";
+    font-style: normal;
+    src: url('./fonts/SeasonSans-SemiBold.woff2') format('woff2');
+  }
+@font-face {
+    font-weight: 700;
+    font-family: "Season Sans";
+    font-style: normal;
+    src: url('./fonts/SeasonSans-Bold.woff2') format('woff2');
+  }
+@font-face {
+    font-family: "Segoe UI Adjusted";
+    src: local(Segoe UI);
+    ascent-override: 95%;
+  }

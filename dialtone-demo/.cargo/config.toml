@@ -1,0 +1,5 @@
+# Trunk's cwd is dialtone-demo, so this applies to the demo wasm link only.
+# wasm-split needs relocations and unstripped symbols. The workspace root
+# does not set these, so other wasm builds stay unchanged.
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "link-arg=--emit-relocs", "-C", "strip=none"]

@@ -1,0 +1,6 @@
+@dialpad/dialtone 10.7.0
+@dialpad/dialtone-css 9.1.1
+@dialpad/dialtone-icons 5.3.0
+@dialpad/dialtone-tokens 2.0.3
+
+no-layers CSS font urls are fonts/ so a bundled stylesheet finds the woff2 files beside itself. The published package uses ../fonts/ from css/no-layers/.

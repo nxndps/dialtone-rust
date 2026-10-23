@@ -1,0 +1,44 @@
+[package]
+name = "dialtone"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+description = "Leptos ports of Dialtone Vue components"
+
+[dependencies]
+leptos = { version = "0.8", features = ["csr"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+js-sys = { workspace = true }
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true, features = [
+    "ClipboardEvent",
+    "CssStyleDeclaration",
+    "DataTransfer",
+    "Document",
+    "DomRect",
+    "DomRectReadOnly",
+    "DomTokenList",
+    "Element",
+    "EventTarget",
+    "FocusEvent",
+    "HtmlElement",
+    "HtmlInputElement",
+    "HtmlSelectElement",
+    "KeyboardEvent",
+    "MediaQueryList",
+    "MouseEvent",
+    "MutationObserver",
+    "MutationObserverInit",
+    "Node",
+    "NodeList",
+    "PointerEvent",
+    "Range",
+    "ResizeObserver",
+    "ResizeObserverEntry",
+    "Selection",
+    "Storage",
+    "Text",
+    "TreeWalker",
+    "Window",
+] }

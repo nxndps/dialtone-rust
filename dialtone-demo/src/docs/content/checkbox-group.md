@@ -1,0 +1,160 @@
+---
+title: Checkbox Group
+description: Related checkbox options with shared labeling and validation.
+status: ready
+thumb: true
+storybook: https://dialtone.dialpad.com/vue/?path=/story/components-checkbox-group--default
+keywords: ["checkboxes","multi select","form fields","d-checkbox-group","DtCheckboxGroup","dt-checkbox-group"]
+combinator: DtCheckboxGroup
+---
+
+Checkbox Groups are typically paired with a legend which identifies the group. If no legend is provided then it is expected that an `aria-label` will be given in order to provide an invisible label to screen readers. Each Checkbox Group should contain one or more Checkboxes which users can make selections from.
+
+## Variants
+
+### Default
+
+```vue demo
+<dt-checkbox-group
+  name="fruits-checkbox-group"
+  legend="Fruits"
+  :model-value="[]"
+>
+  <dt-checkbox value="apple"><span>Apple</span></dt-checkbox>
+  <dt-checkbox value="banana"><span>Banana</span></dt-checkbox>
+  <dt-checkbox value="other"><span>Other</span></dt-checkbox>
+</dt-checkbox-group>
+```
+
+### With Selected Values
+
+```vue demo
+<dt-checkbox-group
+  name="my-group-name"
+  legend="My Legend"
+  :model-value="['option1']"
+>
+  <dt-checkbox
+    value="option1"
+    label="Option 1"
+  />
+  <dt-checkbox
+    value="option2"
+    label="Option 2"
+  />
+</dt-checkbox-group>
+```
+
+### Disabled
+
+```vue demo
+<dt-checkbox-group
+  name="my-group-name"
+  legend="My Legend"
+  disabled
+>
+  <dt-checkbox
+    value="option1"
+    label="Option 1"
+  />
+  <dt-checkbox
+    value="option2"
+    label="Option 2"
+  />
+</dt-checkbox-group>
+```
+
+### With Validation States
+
+```vue demo
+<dt-stack gap="200">
+  <div>
+    <dt-checkbox-group
+      name="checkbox-group-with-positive-message"
+      legend="Fruits"
+      :messages='[{"message":"Positive validation message","type":"positive"}]'
+    >
+      <dt-checkbox value="apple"><span>Apple</span></dt-checkbox>
+      <dt-checkbox value="banana"><span>Banana</span></dt-checkbox>
+      <dt-checkbox value="other"><span>Other</span></dt-checkbox>
+    </dt-checkbox-group>
+  </div>
+  <div>
+    <dt-checkbox-group
+      name="checkbox-group-with-warning-message"
+      legend="Fruits"
+      :messages='[{"message":"Warning validation message","type":"warning"}]'
+    >
+      <dt-checkbox value="apple"><span>Apple</span></dt-checkbox>
+      <dt-checkbox value="banana"><span>Banana</span></dt-checkbox>
+      <dt-checkbox value="other"><span>Other</span></dt-checkbox>
+    </dt-checkbox-group>
+  </div>
+  <div>
+    <dt-checkbox-group
+      name="checkbox-group-with-critical-message"
+      legend="Fruits"
+      :messages='[{"message":"Critical validation message","type":"critical"}]'
+    >
+      <dt-checkbox value="apple"><span>Apple</span></dt-checkbox>
+      <dt-checkbox value="banana"><span>Banana</span></dt-checkbox>
+      <dt-checkbox value="other"><span>Other</span></dt-checkbox>
+    </dt-checkbox-group>
+  </div>
+</dt-stack>
+<!-- @code -->
+<dt-checkbox-group
+  name="fruits-checkbox-group"
+  legend="Fruits"
+  validation-state="positive"
+  :messages="[{ message: `Positive validation message.`, type: `positive` }]"
+>
+  <dt-checkbox value="apple"><span>Apple</span></dt-checkbox>
+  <dt-checkbox value="banana"><span>Banana</span></dt-checkbox>
+  <dt-checkbox value="other"><span>Other</span></dt-checkbox>
+</dt-checkbox-group>
+<dt-checkbox-group
+  name="fruits-checkbox-group"
+  legend="Fruits"
+  validation-state="warning"
+  :messages="[{ message: `Warning validation message.`, type: `warning` }]"
+>
+  <dt-checkbox value="apple"><span>Apple</span></dt-checkbox>
+  <dt-checkbox value="banana"><span>Banana</span></dt-checkbox>
+  <dt-checkbox value="other"><span>Other</span></dt-checkbox>
+</dt-checkbox-group>
+<dt-checkbox-group
+  name="fruits-checkbox-group"
+  legend="Fruits"
+  validation-state="critical"
+  :messages="[{ message: `Critical validation message.`, type: `critical` }]"
+>
+  <dt-checkbox value="apple"><span>Apple</span></dt-checkbox>
+  <dt-checkbox value="banana"><span>Banana</span></dt-checkbox>
+  <dt-checkbox value="other"><span>Other</span></dt-checkbox>
+</dt-checkbox-group>
+```
+
+### With Validation Messages Hidden
+
+```vue demo
+<dt-checkbox-group
+  name="my-group-name"
+  legend="My Legend"
+  :messages="[{ message: 'My Positive Message', type: `positive` }]"
+  :show-messages="false"
+>
+  <dt-checkbox
+    value="option1"
+    label="Option 1"
+  />
+  <dt-checkbox
+    value="option2"
+    label="Option 2"
+  />
+</dt-checkbox-group>
+```
+
+## Vue API
+
+<component-vue-api component-name="checkboxgroup" />

@@ -1,0 +1,841 @@
+@layer dialtone.base {/**
+ * Do not edit directly, this file was auto-generated.
+ */:root {
+  color-scheme: light;
+  --dt-radio-size-radius: 50%;
+  --dt-avatar-hue-offset-12: 330; /* Family 12 hue offset (Pink/Rose) */
+  --dt-avatar-hue-offset-11: 300; /* Family 11 hue offset (Magenta) */
+  --dt-avatar-hue-offset-10: 270; /* Family 10 hue offset (Purple) */
+  --dt-avatar-hue-offset-9: 240; /* Family 9 hue offset (Indigo) */
+  --dt-avatar-hue-offset-8: 210; /* Family 8 hue offset (Blue) */
+  --dt-avatar-hue-offset-7: 180; /* Family 7 hue offset (Cyan) */
+  --dt-avatar-hue-offset-6: 150; /* Family 6 hue offset (Teal) */
+  --dt-avatar-hue-offset-5: 120; /* Family 5 hue offset (Green) */
+  --dt-avatar-hue-offset-4: 90; /* Family 4 hue offset (Yellow-Green) */
+  --dt-avatar-hue-offset-3: 60; /* Family 3 hue offset (Amber/Gold) */
+  --dt-avatar-hue-offset-2: 30; /* Family 2 hue offset (Orange) */
+  --dt-avatar-hue-offset-1: 0; /* Family 1 hue offset from anchor (Red) */
+  --dt-avatar-chroma-9: 0.08;
+  --dt-avatar-chroma-8: 0.10;
+  --dt-avatar-chroma-7: 0.12;
+  --dt-avatar-chroma-6: 0.15;
+  --dt-avatar-chroma-5: 0.17;
+  --dt-avatar-chroma-4: 0.18;
+  --dt-avatar-chroma-3: 0.17;
+  --dt-avatar-chroma-2: 0.15;
+  --dt-avatar-chroma-1: 0.12;
+  --dt-avatar-chroma-0: 0.08; /* OKLCH chroma - bell curve pattern */
+  --dt-avatar-lightness-9: 0.85; /* OKLCH lightness for variant 9 (lightest) */
+  --dt-avatar-lightness-8: 0.82;
+  --dt-avatar-lightness-7: 0.78;
+  --dt-avatar-lightness-6: 0.74;
+  --dt-avatar-lightness-5: 0.69;
+  --dt-avatar-lightness-4: 0.64;
+  --dt-avatar-lightness-3: 0.59;
+  --dt-avatar-lightness-2: 0.54;
+  --dt-avatar-lightness-1: 0.49;
+  --dt-avatar-lightness-0: 0.45; /* OKLCH lightness for variant 0 (darkest) */
+  --dt-opacity-1300: 1;
+  --dt-opacity-1200: 0.9;
+  --dt-opacity-1100: 0.8;
+  --dt-opacity-1000: 0.75;
+  --dt-opacity-900: 0.7;
+  --dt-opacity-800: 0.6;
+  --dt-opacity-700: 0.5;
+  --dt-opacity-600: 0.4;
+  --dt-opacity-500: 0.3;
+  --dt-opacity-400: 0.25;
+  --dt-opacity-300: 0.2;
+  --dt-opacity-200: 0.1;
+  --dt-opacity-100: 0.05;
+  --dt-opacity-0: 0;
+  --dt-layout-24px: 2.4rem; /* 24px */
+  --dt-layout-20px: 2rem; /* 20px */
+  --dt-layout-8px: 0.8rem; /* 8px */
+  --dt-layout-2px: 0.2rem; /* 2px */
+  --dt-layout-1px: 0.1rem; /* 1px */
+  --dt-spacing-0-negative: 0rem;
+  --dt-spacing-1: 0.1rem; /* 1px - Minimal spacing for borders/dividers */
+  --dt-spacing-0: 0rem; /* 0px - No spacing */
+  --dt-size-radius-circle: 50%;
+  --dt-size-radius-pill: 10.2rem;
+  --dt-size-radius-600: 3.2rem;
+  --dt-size-radius-550: 2.4rem;
+  --dt-size-radius-500: 1.6rem;
+  --dt-size-radius-450: 1.2rem;
+  --dt-size-radius-400: 0.8rem;
+  --dt-size-radius-350: 0.6rem;
+  --dt-size-radius-300: 0.4rem;
+  --dt-size-radius-200: 0.2rem;
+  --dt-size-radius-100: 0.1rem;
+  --dt-size-radius-0: 0rem;
+  --dt-size-100-percent: 100%;
+  --dt-size-95-percent: 95%;
+  --dt-size-90-percent: 90%;
+  --dt-size-80-percent: 80%;
+  --dt-size-75-percent: 75%;
+  --dt-size-70-percent: 70%;
+  --dt-size-66-percent: 66.7%;
+  --dt-size-60-percent: 60%;
+  --dt-size-50-percent: 50%;
+  --dt-size-40-percent: 40%;
+  --dt-size-33-percent: 33.333%;
+  --dt-size-30-percent: 30%;
+  --dt-size-25-percent: 25%;
+  --dt-size-20-percent: 20%;
+  --dt-size-10-percent: 10%;
+  --dt-size-5-percent: 5%;
+  --dt-size-0-percent: 0%;
+  --dt-size-1200-negative: -204.8rem;
+  --dt-size-1150-negative: -153.6rem;
+  --dt-size-1130-negative: -134rem;
+  --dt-size-1125-negative: -128rem;
+  --dt-size-1120-negative: -126.8rem;
+  --dt-size-1115-negative: -114rem;
+  --dt-size-1100-negative: -102.4rem;
+  --dt-size-1080-negative: -91.2rem;
+  --dt-size-1060-negative: -82.8rem;
+  --dt-size-1050-negative: -76.8rem;
+  --dt-size-1040-negative: -76.4rem;
+  --dt-size-1020-negative: -62.8rem;
+  --dt-size-1000-negative: -51.2rem;
+  --dt-size-975-negative: -46.4rem;
+  --dt-size-950-negative: -38.4rem;
+  --dt-size-925-negative: -33.2rem;
+  --dt-size-905-negative: -26.4rem;
+  --dt-size-900-negative: -25.6rem;
+  --dt-size-875-negative: -21.6rem;
+  --dt-size-850-negative: -19.2rem;
+  --dt-size-825-negative: -16.4rem;
+  --dt-size-800-negative: -12.8rem;
+  --dt-size-775-negative: -11.4rem;
+  --dt-size-760-negative: -10.2rem;
+  --dt-size-750-negative: -9.6rem;
+  --dt-size-730-negative: -8.4rem;
+  --dt-size-720-negative: -7.2rem;
+  --dt-size-700-negative: -6.4rem;
+  --dt-size-650-negative: -4.8rem;
+  --dt-size-625-negative: -4.2rem;
+  --dt-size-600-negative: -3.2rem;
+  --dt-size-550-negative: -2.4rem;
+  --dt-size-525-negative: -2rem;
+  --dt-size-500-negative: -1.6rem;
+  --dt-size-450-negative: -1.2rem;
+  --dt-size-400-negative: -0.8rem;
+  --dt-size-350-negative: -0.6rem;
+  --dt-size-300-negative: -0.4rem;
+  --dt-size-200-negative: -0.2rem;
+  --dt-size-100-negative: -0.1rem;
+  --dt-size-50-negative: -0.05rem;
+  --dt-size-border-400: 0.8rem;
+  --dt-size-border-300: 0.4rem;
+  --dt-size-border-200: 0.2rem;
+  --dt-size-border-150: 0.15rem;
+  --dt-size-border-100: 0.1rem;
+  --dt-size-border-50: 0.05rem;
+  --dt-size-border-0: 0rem;
+  --dt-size-base: 8px;
+  --dt-size-1200: 204.8rem;
+  --dt-size-1150: 153.6rem;
+  --dt-size-1130: 134rem;
+  --dt-size-1125: 128rem;
+  --dt-size-1120: 126.8rem;
+  --dt-size-1115: 114rem;
+  --dt-size-1100: 102.4rem;
+  --dt-size-1080: 91.2rem;
+  --dt-size-1060: 82.8rem;
+  --dt-size-1050: 76.8rem;
+  --dt-size-1040: 76.4rem;
+  --dt-size-1020: 62.8rem;
+  --dt-size-1000: 51.2rem;
+  --dt-size-975: 46.4rem;
+  --dt-size-950: 38.4rem;
+  --dt-size-925: 33.2rem;
+  --dt-size-905: 26.4rem;
+  --dt-size-900: 25.6rem;
+  --dt-size-875: 21.6rem;
+  --dt-size-850: 19.2rem;
+  --dt-size-825: 16.4rem;
+  --dt-size-800: 12.8rem;
+  --dt-size-775: 11.4rem;
+  --dt-size-760: 10.2rem;
+  --dt-size-750: 9.6rem;
+  --dt-size-730: 8.4rem;
+  --dt-size-720: 7.2rem;
+  --dt-size-700: 6.4rem;
+  --dt-size-650: 4.8rem;
+  --dt-size-625: 4.2rem;
+  --dt-size-600: 3.2rem;
+  --dt-size-550: 2.4rem;
+  --dt-size-525: 2rem;
+  --dt-size-500: 1.6rem;
+  --dt-size-450: 1.2rem;
+  --dt-size-400: 0.8rem;
+  --dt-size-350: 0.6rem;
+  --dt-size-300: 0.4rem;
+  --dt-size-200: 0.2rem;
+  --dt-size-100: 0.1rem;
+  --dt-size-50: 0.05rem;
+  --dt-size-0: 0rem;
+  --dt-font-text-case-none: none;
+  --dt-font-text-case-capitalize: capitalize;
+  --dt-font-text-case-lowercase: lowercase;
+  --dt-font-text-case-uppercase: uppercase;
+  --dt-font-weight-bold: 700;
+  --dt-font-weight-semi-bold: 600;
+  --dt-font-weight-medium: 500;
+  --dt-font-weight-normal: 400;
+  --dt-font-line-height-600: 2;
+  --dt-font-line-height-500: 1.8;
+  --dt-font-line-height-400: 1.6;
+  --dt-font-line-height-300: 1.4;
+  --dt-font-line-height-200: 1.2;
+  --dt-font-line-height-100: 1;
+  --dt-font-family-mono: SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  --dt-font-family-body: -apple-system, BlinkMacSystemFont, "SF Pro", "Segoe UI Adjusted", "Segoe UI", SFMono, "Helvetica Neue", Cantarell, Ubuntu, Roboto, Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --dt-font-size-root: 10px;
+  --dt-radio-size-width: var(--dt-size-500);
+  --dt-icon-size-border-100: var(--dt-size-border-100);
+  --dt-icon-size-800: calc(var(--dt-size-base) * 6);
+  --dt-icon-size-700: calc(var(--dt-size-base) * 4.75);
+  --dt-icon-size-600: calc(var(--dt-size-base) * 4);
+  --dt-icon-size-500: calc(var(--dt-size-base) * 3);
+  --dt-icon-size-400: calc(var(--dt-size-base) * 2.5);
+  --dt-icon-size-300: calc(var(--dt-size-base) * 2.25);
+  --dt-icon-size-200: calc(var(--dt-size-base) * 1.75);
+  --dt-icon-size-100: calc(var(--dt-size-base) * 1.5);
+  --dt-checkbox-size-width: var(--dt-size-500);
+  --dt-button-size-radius-xl: var(--dt-size-radius-500); /* Border radius for extra large button. */
+  --dt-button-size-radius-lg: var(--dt-size-radius-450); /* Border radius for large button. */
+  --dt-button-size-radius-md: var(--dt-size-radius-400); /* Border radius for medium button. */
+  --dt-button-size-radius-sm: var(--dt-size-radius-350); /* Border radius for small button */
+  --dt-button-size-radius-xs: var(--dt-size-radius-300); /* Border radius for extra small button */
+  --dt-button-line-height-xl: var(--dt-font-line-height-200); /* Line-height for XL button */
+  --dt-button-line-height-lg: var(--dt-font-line-height-200); /* Line-height for LG button */
+  --dt-button-line-height-md: var(--dt-font-line-height-200); /* Line-height for MD button */
+  --dt-button-line-height-sm: var(--dt-font-line-height-300); /* Line-height for SM button */
+  --dt-button-line-height-xs: var(--dt-font-line-height-200); /* Line-height for XS button */
+  --dt-button-font-weight-xl: var(--dt-font-weight-normal); /* Font weight for XL button */
+  --dt-button-font-weight-lg: var(--dt-font-weight-medium); /* Font weight for LG button */
+  --dt-button-font-weight-md: var(--dt-font-weight-medium); /* Font weight for MD button */
+  --dt-button-font-weight-sm: var(--dt-font-weight-semi-bold); /* Font weight for SM button */
+  --dt-button-font-weight-xs: var(--dt-font-weight-semi-bold); /* Font weight for XS button */
+  --dt-inputs-font-weight-xl: var(--dt-font-weight-normal); /* Font weight for extra large inputs (e.g. input and textarea) */
+  --dt-inputs-font-weight-lg: var(--dt-font-weight-normal); /* Font weight for large inputs (e.g. input and textarea) */
+  --dt-inputs-font-weight-md: var(--dt-font-weight-normal); /* Font weight for medium inputs (e.g. input and textarea) */
+  --dt-inputs-font-weight-sm: var(--dt-font-weight-normal); /* Font weight for small inputs (e.g. input and textarea) */
+  --dt-inputs-font-weight-xs: var(--dt-font-weight-normal); /* Font weight for extra small inputs (e.g. input and textarea) */
+  --dt-inputs-line-height-xl: var(--dt-font-line-height-200); /* Line height for extra large inputs (e.g. input and textarea) */
+  --dt-inputs-line-height-lg: var(--dt-font-line-height-200); /* Line height for large inputs (e.g. input and textarea) */
+  --dt-inputs-line-height-md: var(--dt-font-line-height-200); /* Line height for medium inputs (e.g. input and textarea) */
+  --dt-inputs-line-height-sm: var(--dt-font-line-height-300); /* Line height for small inputs (e.g. input and textarea) */
+  --dt-inputs-line-height-xs: var(--dt-font-line-height-200); /* Line height for extra small inputs (e.g. input and textarea) */
+  --dt-inputs-size-radius-xl: var(--dt-size-radius-500);
+  --dt-inputs-size-radius-lg: var(--dt-size-radius-450);
+  --dt-inputs-size-radius-md: var(--dt-size-radius-400);
+  --dt-inputs-size-radius-sm: var(--dt-size-radius-350);
+  --dt-inputs-size-radius-xs: var(--dt-size-radius-300);
+  --dt-inputs-size-border-status: var(--dt-size-border-200);
+  --dt-inputs-size-border-default: var(--dt-size-border-150);
+  --dt-text-code-xs-line-height: var(--dt-font-line-height-200); /* Extra small code style */
+  --dt-text-code-xs-font-weight: var(--dt-font-weight-normal); /* Extra small code style */
+  --dt-text-code-xs-font-family: var(--dt-font-family-mono); /* Extra small code style */
+  --dt-text-code-sm-line-height: var(--dt-font-line-height-200); /* Small code style */
+  --dt-text-code-sm-font-weight: var(--dt-font-weight-normal); /* Small code style */
+  --dt-text-code-sm-font-family: var(--dt-font-family-mono); /* Small code style */
+  --dt-text-code-md-line-height: var(--dt-font-line-height-200); /* Medium (default) code style */
+  --dt-text-code-md-font-weight: var(--dt-font-weight-normal); /* Medium (default) code style */
+  --dt-text-code-md-font-family: var(--dt-font-family-mono); /* Medium (default) code style */
+  --dt-text-code-lg-line-height: var(--dt-font-line-height-200); /* Large code style */
+  --dt-text-code-lg-font-weight: var(--dt-font-weight-normal); /* Large code style */
+  --dt-text-code-lg-font-family: var(--dt-font-family-mono); /* Large code style */
+  --dt-text-label-xs-line-height: var(--dt-font-line-height-300); /* Extra small label style */
+  --dt-text-label-xs-font-weight: var(--dt-font-weight-semi-bold); /* Extra small label style */
+  --dt-text-label-xs-font-family: var(--dt-font-family-body); /* Extra small label style */
+  --dt-text-label-sm-line-height: var(--dt-font-line-height-400); /* Small label style */
+  --dt-text-label-sm-font-weight: var(--dt-font-weight-semi-bold); /* Small label style */
+  --dt-text-label-sm-font-family: var(--dt-font-family-body); /* Small label style */
+  --dt-text-label-md-line-height: var(--dt-font-line-height-400); /* Medium (default) label style */
+  --dt-text-label-md-font-weight: var(--dt-font-weight-semi-bold); /* Medium (default) label style */
+  --dt-text-label-md-font-family: var(--dt-font-family-body); /* Medium (default) label style */
+  --dt-text-label-lg-line-height: var(--dt-font-line-height-300); /* Large label style */
+  --dt-text-label-lg-font-weight: var(--dt-font-weight-semi-bold); /* Large label style */
+  --dt-text-label-lg-font-family: var(--dt-font-family-body); /* Large label style */
+  --dt-text-body-xs-line-height: var(--dt-font-line-height-300); /* Extra small body style */
+  --dt-text-body-xs-font-weight: var(--dt-font-weight-normal); /* Extra small body style */
+  --dt-text-body-xs-font-family: var(--dt-font-family-body); /* Extra small body style */
+  --dt-text-body-sm-line-height: var(--dt-font-line-height-300); /* Small body style */
+  --dt-text-body-sm-font-weight: var(--dt-font-weight-normal); /* Small body style */
+  --dt-text-body-sm-font-family: var(--dt-font-family-body); /* Small body style */
+  --dt-text-body-md-line-height: var(--dt-font-line-height-400); /* Medium (default) body style */
+  --dt-text-body-md-font-weight: var(--dt-font-weight-normal); /* Medium (default) body style */
+  --dt-text-body-md-font-family: var(--dt-font-family-body); /* Medium (default) body style */
+  --dt-text-body-lg-line-height: var(--dt-font-line-height-400); /* Large body style */
+  --dt-text-body-lg-font-weight: var(--dt-font-weight-normal); /* Large body style */
+  --dt-text-body-lg-font-family: var(--dt-font-family-body); /* Large body style */
+  --dt-text-headline-xs-line-height: var(--dt-font-line-height-300); /* Extra small headline style */
+  --dt-text-headline-xs-font-weight: var(--dt-font-weight-bold); /* Extra small headline style */
+  --dt-text-headline-xs-font-family: var(--dt-font-family-body); /* Extra small headline style */
+  --dt-text-headline-sm-line-height: var(--dt-font-line-height-300); /* Small headline style */
+  --dt-text-headline-sm-font-weight: var(--dt-font-weight-bold); /* Small headline style */
+  --dt-text-headline-sm-font-family: var(--dt-font-family-body); /* Small headline style */
+  --dt-text-headline-md-line-height: var(--dt-font-line-height-400); /* Medium headline style */
+  --dt-text-headline-md-font-weight: var(--dt-font-weight-bold); /* Medium headline style */
+  --dt-text-headline-md-font-family: var(--dt-font-family-body); /* Medium headline style */
+  --dt-text-headline-lg-line-height: var(--dt-font-line-height-300); /* Large headline style */
+  --dt-text-headline-lg-font-weight: var(--dt-font-weight-bold); /* Large headline style */
+  --dt-text-headline-lg-font-family: var(--dt-font-family-body); /* Large headline style */
+  --dt-text-headline-xl-line-height: var(--dt-font-line-height-400); /* XL headline style */
+  --dt-text-headline-xl-font-weight: var(--dt-font-weight-bold); /* XL headline style */
+  --dt-text-headline-xl-font-family: var(--dt-font-family-body); /* XL headline style */
+  --dt-text-headline-2xl-line-height: var(--dt-font-line-height-200); /* XXL headline style */
+  --dt-text-headline-2xl-font-weight: var(--dt-font-weight-bold); /* XXL headline style */
+  --dt-text-headline-2xl-font-family: var(--dt-font-family-body); /* XXL headline style */
+  --dt-text-headline-3xl-line-height: var(--dt-font-line-height-200); /* XXXL headline style */
+  --dt-text-headline-3xl-font-weight: var(--dt-font-weight-bold); /* XXXL headline style */
+  --dt-text-headline-3xl-font-family: var(--dt-font-family-body); /* XXXL headline style */
+  --dt-typography-button-xl-font-family: var(--dt-font-family-body); /* Text style for extra large button */
+  --dt-typography-button-lg-font-family: var(--dt-font-family-body); /* Text style for large button */
+  --dt-typography-button-md-font-family: var(--dt-font-family-body); /* Text style for medium button */
+  --dt-typography-button-sm-font-family: var(--dt-font-family-body); /* Text style for small button */
+  --dt-typography-button-xs-font-family: var(--dt-font-family-body); /* Text style for extra small button */
+  --dt-typography-inputs-xl-font-family: var(--dt-font-family-body); /* Text style for extra large inputs (e.g. input and textarea) */
+  --dt-typography-inputs-lg-font-family: var(--dt-font-family-body); /* Text style for large inputs (e.g. input and textarea) */
+  --dt-typography-inputs-md-font-family: var(--dt-font-family-body); /* Text style for medium inputs (e.g. input and textarea) */
+  --dt-typography-inputs-sm-font-family: var(--dt-font-family-body); /* Text style for small inputs (e.g. input and textarea) */
+  --dt-typography-inputs-xs-font-family: var(--dt-font-family-body); /* Text style for extra small inputs (e.g. input and textarea) */
+  --dt-typography-code-sm-text-case: var(--dt-font-text-case-none); /* Smaller text size for monospace code, suitable for inline references or less prominent code examples. */
+  --dt-typography-code-sm-line-height: var(--dt-font-line-height-200); /* Smaller text size for monospace code, suitable for inline references or less prominent code examples. */
+  --dt-typography-code-sm-font-weight: var(--dt-font-weight-normal); /* Smaller text size for monospace code, suitable for inline references or less prominent code examples. */
+  --dt-typography-code-sm-font-family: var(--dt-font-family-mono); /* Smaller text size for monospace code, suitable for inline references or less prominent code examples. */
+  --dt-typography-code-md-text-case: var(--dt-font-text-case-none); /* Base default medium-sized text style for monospace code snippets of technical content. */
+  --dt-typography-code-md-line-height: var(--dt-font-line-height-200); /* Base default medium-sized text style for monospace code snippets of technical content. */
+  --dt-typography-code-md-font-weight: var(--dt-font-weight-normal); /* Base default medium-sized text style for monospace code snippets of technical content. */
+  --dt-typography-code-md-font-family: var(--dt-font-family-mono); /* Base default medium-sized text style for monospace code snippets of technical content. */
+  --dt-typography-helper-sm-text-case: var(--dt-font-text-case-none); /* Smaller text size for subtle guidance or additional context, minimizing visual disruption. */
+  --dt-typography-helper-sm-line-height: var(--dt-font-line-height-200); /* Smaller text size for subtle guidance or additional context, minimizing visual disruption. */
+  --dt-typography-helper-sm-font-weight: var(--dt-font-weight-normal); /* Smaller text size for subtle guidance or additional context, minimizing visual disruption. */
+  --dt-typography-helper-sm-font-family: var(--dt-font-family-body); /* Smaller text size for subtle guidance or additional context, minimizing visual disruption. */
+  --dt-typography-helper-md-text-case: var(--dt-font-text-case-none); /* Base default medium-sized text style for supplementary contextual information. */
+  --dt-typography-helper-md-line-height: var(--dt-font-line-height-300); /* Base default medium-sized text style for supplementary contextual information. */
+  --dt-typography-helper-md-font-weight: var(--dt-font-weight-normal); /* Base default medium-sized text style for supplementary contextual information. */
+  --dt-typography-helper-md-font-family: var(--dt-font-family-body); /* Base default medium-sized text style for supplementary contextual information. */
+  --dt-typography-label-sm-plain-compact-text-case: var(--dt-font-text-case-none); /* A non-bolded, tighter-spaced version of small label style. */
+  --dt-typography-label-sm-plain-compact-line-height: var(--dt-font-line-height-200); /* A non-bolded, tighter-spaced version of small label style. */
+  --dt-typography-label-sm-plain-compact-font-weight: var(--dt-font-weight-normal); /* A non-bolded, tighter-spaced version of small label style. */
+  --dt-typography-label-sm-plain-compact-font-family: var(--dt-font-family-body); /* A non-bolded, tighter-spaced version of small label style. */
+  --dt-typography-label-sm-plain-text-case: var(--dt-font-text-case-none); /* A non-bold version of small label style. */
+  --dt-typography-label-sm-plain-line-height: var(--dt-font-line-height-300); /* A non-bold version of small label style. */
+  --dt-typography-label-sm-plain-font-weight: var(--dt-font-weight-normal); /* A non-bold version of small label style. */
+  --dt-typography-label-sm-plain-font-family: var(--dt-font-family-body); /* A non-bold version of small label style. */
+  --dt-typography-label-sm-compact-text-case: var(--dt-font-text-case-none); /* A tighter-spaced version of small label style. */
+  --dt-typography-label-sm-compact-line-height: var(--dt-font-line-height-200); /* A tighter-spaced version of small label style. */
+  --dt-typography-label-sm-compact-font-weight: var(--dt-font-weight-semi-bold); /* A tighter-spaced version of small label style. */
+  --dt-typography-label-sm-compact-font-family: var(--dt-font-family-body); /* A tighter-spaced version of small label style. */
+  --dt-typography-label-sm-text-case: var(--dt-font-text-case-none); /* Smaller text style for labels when space is limited or for secondary information or to convey a slightly lower hierachy. */
+  --dt-typography-label-sm-line-height: var(--dt-font-line-height-300); /* Smaller text style for labels when space is limited or for secondary information or to convey a slightly lower hierachy. */
+  --dt-typography-label-sm-font-weight: var(--dt-font-weight-semi-bold); /* Smaller text style for labels when space is limited or for secondary information or to convey a slightly lower hierachy. */
+  --dt-typography-label-sm-font-family: var(--dt-font-family-body); /* Smaller text style for labels when space is limited or for secondary information or to convey a slightly lower hierachy. */
+  --dt-typography-label-md-plain-compact-text-case: var(--dt-font-text-case-none); /* A non-bolded, tighter-spaced version of medium label style. */
+  --dt-typography-label-md-plain-compact-line-height: var(--dt-font-line-height-300); /* A non-bolded, tighter-spaced version of medium label style. */
+  --dt-typography-label-md-plain-compact-font-weight: var(--dt-font-weight-normal); /* A non-bolded, tighter-spaced version of medium label style. */
+  --dt-typography-label-md-plain-compact-font-family: var(--dt-font-family-body); /* A non-bolded, tighter-spaced version of medium label style. */
+  --dt-typography-label-md-plain-text-case: var(--dt-font-text-case-none); /* A non-bold version of medium label style. */
+  --dt-typography-label-md-plain-line-height: var(--dt-font-line-height-400); /* A non-bold version of medium label style. */
+  --dt-typography-label-md-plain-font-weight: var(--dt-font-weight-normal); /* A non-bold version of medium label style. */
+  --dt-typography-label-md-plain-font-family: var(--dt-font-family-body); /* A non-bold version of medium label style. */
+  --dt-typography-label-md-compact-text-case: var(--dt-font-text-case-none); /* A tighter-spaced version of medium label style. */
+  --dt-typography-label-md-compact-line-height: var(--dt-font-line-height-300); /* A tighter-spaced version of medium label style. */
+  --dt-typography-label-md-compact-font-weight: var(--dt-font-weight-semi-bold); /* A tighter-spaced version of medium label style. */
+  --dt-typography-label-md-compact-font-family: var(--dt-font-family-body); /* A tighter-spaced version of medium label style. */
+  --dt-typography-label-md-text-case: var(--dt-font-text-case-none); /* Base default medium-sized text style for labels, providing clear identification and categorization. */
+  --dt-typography-label-md-line-height: var(--dt-font-line-height-400); /* Base default medium-sized text style for labels, providing clear identification and categorization. */
+  --dt-typography-label-md-font-weight: var(--dt-font-weight-semi-bold); /* Base default medium-sized text style for labels, providing clear identification and categorization. */
+  --dt-typography-label-md-font-family: var(--dt-font-family-body); /* Base default medium-sized text style for labels, providing clear identification and categorization. */
+  --dt-typography-headline-xxl-compact-text-case: var(--dt-font-text-case-none); /* A tighter-spaced version of extra extra large headline style. */
+  --dt-typography-headline-xxl-compact-line-height: var(--dt-font-line-height-200); /* A tighter-spaced version of extra extra large headline style. */
+  --dt-typography-headline-xxl-compact-font-weight: var(--dt-font-weight-bold); /* A tighter-spaced version of extra extra large headline style. */
+  --dt-typography-headline-xxl-compact-font-family: var(--dt-font-family-body); /* A tighter-spaced version of extra extra large headline style. */
+  --dt-typography-headline-xxl-text-case: var(--dt-font-text-case-none); /* Largest text style for extra extra large content. */
+  --dt-typography-headline-xxl-line-height: var(--dt-font-line-height-200); /* Largest text style for extra extra large content. */
+  --dt-typography-headline-xxl-font-weight: var(--dt-font-weight-bold); /* Largest text style for extra extra large content. */
+  --dt-typography-headline-xxl-font-family: var(--dt-font-family-body); /* Largest text style for extra extra large content. */
+  --dt-typography-headline-xl-compact-text-case: var(--dt-font-text-case-none); /* A tighter-spaced version of extra large headline style. */
+  --dt-typography-headline-xl-compact-line-height: var(--dt-font-line-height-100); /* A tighter-spaced version of extra large headline style. */
+  --dt-typography-headline-xl-compact-font-weight: var(--dt-font-weight-bold); /* A tighter-spaced version of extra large headline style. */
+  --dt-typography-headline-xl-compact-font-family: var(--dt-font-family-body); /* A tighter-spaced version of extra large headline style. */
+  --dt-typography-headline-xl-text-case: var(--dt-font-text-case-none); /* Extra large text style for high importance headlines. */
+  --dt-typography-headline-xl-line-height: var(--dt-font-line-height-200); /* Extra large text style for high importance headlines. */
+  --dt-typography-headline-xl-font-weight: var(--dt-font-weight-bold); /* Extra large text style for high importance headlines. */
+  --dt-typography-headline-xl-font-family: var(--dt-font-family-body); /* Extra large text style for high importance headlines. */
+  --dt-typography-headline-lg-soft-compact-text-case: var(--dt-font-text-case-none); /* A softer font weight, tighter spaced version of large headline style. */
+  --dt-typography-headline-lg-soft-compact-line-height: var(--dt-font-line-height-200); /* A softer font weight, tighter spaced version of large headline style. */
+  --dt-typography-headline-lg-soft-compact-font-weight: var(--dt-font-weight-medium); /* A softer font weight, tighter spaced version of large headline style. */
+  --dt-typography-headline-lg-soft-compact-font-family: var(--dt-font-family-body); /* A softer font weight, tighter spaced version of large headline style. */
+  --dt-typography-headline-lg-compact-text-case: var(--dt-font-text-case-none); /* A tighter-spaced version of large body style. */
+  --dt-typography-headline-lg-compact-line-height: var(--dt-font-line-height-200); /* A tighter-spaced version of large body style. */
+  --dt-typography-headline-lg-compact-font-weight: var(--dt-font-weight-bold); /* A tighter-spaced version of large body style. */
+  --dt-typography-headline-lg-compact-font-family: var(--dt-font-family-body); /* A tighter-spaced version of large body style. */
+  --dt-typography-headline-lg-soft-text-case: var(--dt-font-text-case-none); /* A softer font weight version of large headline style. */
+  --dt-typography-headline-lg-soft-line-height: var(--dt-font-line-height-400); /* A softer font weight version of large headline style. */
+  --dt-typography-headline-lg-soft-font-weight: var(--dt-font-weight-medium); /* A softer font weight version of large headline style. */
+  --dt-typography-headline-lg-soft-font-family: var(--dt-font-family-body); /* A softer font weight version of large headline style. */
+  --dt-typography-headline-lg-text-case: var(--dt-font-text-case-none); /* Large text style for headlines to attract attention. */
+  --dt-typography-headline-lg-line-height: var(--dt-font-line-height-400); /* Large text style for headlines to attract attention. */
+  --dt-typography-headline-lg-font-weight: var(--dt-font-weight-bold); /* Large text style for headlines to attract attention. */
+  --dt-typography-headline-lg-font-family: var(--dt-font-family-body); /* Large text style for headlines to attract attention. */
+  --dt-typography-headline-md-compact-text-case: var(--dt-font-text-case-none); /* A tighter-spaced version of medium headline style. */
+  --dt-typography-headline-md-compact-line-height: var(--dt-font-line-height-300); /* A tighter-spaced version of medium headline style. */
+  --dt-typography-headline-md-compact-font-weight: var(--dt-font-weight-bold); /* A tighter-spaced version of medium headline style. */
+  --dt-typography-headline-md-compact-font-family: var(--dt-font-family-body); /* A tighter-spaced version of medium headline style. */
+  --dt-typography-headline-md-text-case: var(--dt-font-text-case-none); /* Medium-sized base text style for headlines. */
+  --dt-typography-headline-md-line-height: var(--dt-font-line-height-400); /* Medium-sized base text style for headlines. */
+  --dt-typography-headline-md-font-weight: var(--dt-font-weight-bold); /* Medium-sized base text style for headlines. */
+  --dt-typography-headline-md-font-family: var(--dt-font-family-body); /* Medium-sized base text style for headlines. */
+  --dt-typography-headline-sm-soft-compact-text-case: var(--dt-font-text-case-none); /* A softer font weight, tighter-spaced version of small headline style. */
+  --dt-typography-headline-sm-soft-compact-line-height: var(--dt-font-line-height-200); /* A softer font weight, tighter-spaced version of small headline style. */
+  --dt-typography-headline-sm-soft-compact-font-weight: var(--dt-font-weight-medium); /* A softer font weight, tighter-spaced version of small headline style. */
+  --dt-typography-headline-sm-soft-compact-font-family: var(--dt-font-family-body); /* A softer font weight, tighter-spaced version of small headline style. */
+  --dt-typography-headline-sm-soft-text-case: var(--dt-font-text-case-none); /* A softer font weight version of small headline style. */
+  --dt-typography-headline-sm-soft-line-height: var(--dt-font-line-height-300); /* A softer font weight version of small headline style. */
+  --dt-typography-headline-sm-soft-font-weight: var(--dt-font-weight-medium); /* A softer font weight version of small headline style. */
+  --dt-typography-headline-sm-soft-font-family: var(--dt-font-family-body); /* A softer font weight version of small headline style. */
+  --dt-typography-headline-sm-compact-text-case: var(--dt-font-text-case-none); /* A tighter-spaced version of small headline style. */
+  --dt-typography-headline-sm-compact-line-height: var(--dt-font-line-height-200); /* A tighter-spaced version of small headline style. */
+  --dt-typography-headline-sm-compact-font-weight: var(--dt-font-weight-bold); /* A tighter-spaced version of small headline style. */
+  --dt-typography-headline-sm-compact-font-family: var(--dt-font-family-body); /* A tighter-spaced version of small headline style. */
+  --dt-typography-headline-sm-text-case: var(--dt-font-text-case-none); /* Smaller text size for secondary information or subheadings. */
+  --dt-typography-headline-sm-line-height: var(--dt-font-line-height-300); /* Smaller text size for secondary information or subheadings. */
+  --dt-typography-headline-sm-font-weight: var(--dt-font-weight-bold); /* Smaller text size for secondary information or subheadings. */
+  --dt-typography-headline-sm-font-family: var(--dt-font-family-body); /* Smaller text size for secondary information or subheadings. */
+  --dt-typography-headline-eyebrow-text-case: var(--dt-font-text-case-uppercase); /* Visually concise and uppercase title text used above a paired headline. Also known as a kicker or overline. */
+  --dt-typography-headline-eyebrow-line-height: var(--dt-font-line-height-300); /* Visually concise and uppercase title text used above a paired headline. Also known as a kicker or overline. */
+  --dt-typography-headline-eyebrow-font-weight: var(--dt-font-weight-normal); /* Visually concise and uppercase title text used above a paired headline. Also known as a kicker or overline. */
+  --dt-typography-headline-eyebrow-font-family: var(--dt-font-family-body); /* Visually concise and uppercase title text used above a paired headline. Also known as a kicker or overline. */
+  --dt-typography-body-sm-compact-text-case: var(--dt-font-text-case-none); /* A tighter-spaced version of small body style. */
+  --dt-typography-body-sm-compact-line-height: var(--dt-font-line-height-200); /* A tighter-spaced version of small body style. */
+  --dt-typography-body-sm-compact-font-weight: var(--dt-font-weight-normal); /* A tighter-spaced version of small body style. */
+  --dt-typography-body-sm-compact-font-family: var(--dt-font-family-body); /* A tighter-spaced version of small body style. */
+  --dt-typography-body-sm-text-case: var(--dt-font-text-case-none); /* Reduced small text style for less prominent or adjacent content. */
+  --dt-typography-body-sm-line-height: var(--dt-font-line-height-300); /* Reduced small text style for less prominent or adjacent content. */
+  --dt-typography-body-sm-font-weight: var(--dt-font-weight-normal); /* Reduced small text style for less prominent or adjacent content. */
+  --dt-typography-body-sm-font-family: var(--dt-font-family-body); /* Reduced small text style for less prominent or adjacent content. */
+  --dt-typography-body-md-compact-text-case: var(--dt-font-text-case-none); /* A tighter-spaced version of medium body style. */
+  --dt-typography-body-md-compact-line-height: var(--dt-font-line-height-300); /* A tighter-spaced version of medium body style. */
+  --dt-typography-body-md-compact-font-weight: var(--dt-font-weight-normal); /* A tighter-spaced version of medium body style. */
+  --dt-typography-body-md-compact-font-family: var(--dt-font-family-body); /* A tighter-spaced version of medium body style. */
+  --dt-typography-body-md-text-case: var(--dt-font-text-case-none); /* Base default medium text style for main content. */
+  --dt-typography-body-md-line-height: var(--dt-font-line-height-400); /* Base default medium text style for main content. */
+  --dt-typography-body-md-font-weight: var(--dt-font-weight-normal); /* Base default medium text style for main content. */
+  --dt-typography-body-md-font-family: var(--dt-font-family-body); /* Base default medium text style for main content. */
+  --dt-layout-100-percent: var(--dt-size-100-percent);
+  --dt-layout-95-percent: var(--dt-size-95-percent);
+  --dt-layout-90-percent: var(--dt-size-90-percent);
+  --dt-layout-80-percent: var(--dt-size-80-percent);
+  --dt-layout-75-percent: var(--dt-size-75-percent);
+  --dt-layout-70-percent: var(--dt-size-70-percent);
+  --dt-layout-66-percent: var(--dt-size-66-percent);
+  --dt-layout-60-percent: var(--dt-size-60-percent);
+  --dt-layout-50-percent: var(--dt-size-50-percent);
+  --dt-layout-40-percent: var(--dt-size-40-percent);
+  --dt-layout-33-percent: var(--dt-size-33-percent);
+  --dt-layout-30-percent: var(--dt-size-30-percent);
+  --dt-layout-25-percent: var(--dt-size-25-percent);
+  --dt-layout-20-percent: var(--dt-size-20-percent);
+  --dt-layout-10-percent: var(--dt-size-10-percent);
+  --dt-layout-5-percent: var(--dt-size-5-percent);
+  --dt-layout-0-percent: var(--dt-size-0-percent);
+  --dt-layout-base: calc(var(--dt-size-base) * 8); /* 64px - Layout base unit unit */
+  --dt-spacing-1-negative: calc(var(--dt-spacing-1) * -1);
+  --dt-spacing-base: var(--dt-size-base); /* 8px - Base spacing unit */
+  --dt-space-100-percent: var(--dt-size-100-percent);
+  --dt-space-95-percent: var(--dt-size-95-percent);
+  --dt-space-90-percent: var(--dt-size-90-percent);
+  --dt-space-80-percent: var(--dt-size-80-percent);
+  --dt-space-75-percent: var(--dt-size-75-percent);
+  --dt-space-70-percent: var(--dt-size-70-percent);
+  --dt-space-66-percent: var(--dt-size-66-percent);
+  --dt-space-60-percent: var(--dt-size-60-percent);
+  --dt-space-50-percent: var(--dt-size-50-percent);
+  --dt-space-40-percent: var(--dt-size-40-percent);
+  --dt-space-33-percent: var(--dt-size-33-percent);
+  --dt-space-30-percent: var(--dt-size-30-percent);
+  --dt-space-25-percent: var(--dt-size-25-percent);
+  --dt-space-20-percent: var(--dt-size-20-percent);
+  --dt-space-10-percent: var(--dt-size-10-percent);
+  --dt-space-5-percent: var(--dt-size-5-percent);
+  --dt-space-0-percent: var(--dt-size-0-percent);
+  --dt-space-1200-negative: var(--dt-size-1200-negative);
+  --dt-space-1150-negative: var(--dt-size-1150-negative);
+  --dt-space-1130-negative: var(--dt-size-1130-negative);
+  --dt-space-1125-negative: var(--dt-size-1125-negative);
+  --dt-space-1120-negative: var(--dt-size-1120-negative);
+  --dt-space-1115-negative: var(--dt-size-1115-negative);
+  --dt-space-1100-negative: var(--dt-size-1100-negative);
+  --dt-space-1080-negative: var(--dt-size-1080-negative);
+  --dt-space-1060-negative: var(--dt-size-1060-negative);
+  --dt-space-1050-negative: var(--dt-size-1050-negative);
+  --dt-space-1040-negative: var(--dt-size-1040-negative);
+  --dt-space-1020-negative: var(--dt-size-1020-negative);
+  --dt-space-1000-negative: var(--dt-size-1000-negative);
+  --dt-space-975-negative: var(--dt-size-975-negative);
+  --dt-space-950-negative: var(--dt-size-950-negative);
+  --dt-space-925-negative: var(--dt-size-925-negative);
+  --dt-space-905-negative: var(--dt-size-905-negative);
+  --dt-space-900-negative: var(--dt-size-900-negative);
+  --dt-space-875-negative: var(--dt-size-875-negative);
+  --dt-space-850-negative: var(--dt-size-850-negative);
+  --dt-space-825-negative: var(--dt-size-825-negative);
+  --dt-space-800-negative: var(--dt-size-800-negative);
+  --dt-space-775-negative: var(--dt-size-775-negative);
+  --dt-space-760-negative: var(--dt-size-760-negative);
+  --dt-space-750-negative: var(--dt-size-750-negative);
+  --dt-space-730-negative: var(--dt-size-730-negative);
+  --dt-space-720-negative: var(--dt-size-720-negative);
+  --dt-space-700-negative: var(--dt-size-700-negative);
+  --dt-space-650-negative: var(--dt-size-650-negative);
+  --dt-space-625-negative: var(--dt-size-625-negative);
+  --dt-space-600-negative: var(--dt-size-600-negative);
+  --dt-space-550-negative: var(--dt-size-550-negative);
+  --dt-space-525-negative: var(--dt-size-525-negative);
+  --dt-space-500-negative: var(--dt-size-500-negative);
+  --dt-space-450-negative: var(--dt-size-450-negative);
+  --dt-space-400-negative: var(--dt-size-400-negative);
+  --dt-space-350-negative: var(--dt-size-350-negative);
+  --dt-space-300-negative: var(--dt-size-300-negative);
+  --dt-space-200-negative: var(--dt-size-200-negative);
+  --dt-space-100-negative: var(--dt-size-100-negative);
+  --dt-space-50-negative: var(--dt-size-50-negative);
+  --dt-space-base: var(--dt-size-base);
+  --dt-space-1200: var(--dt-size-1200);
+  --dt-space-1150: var(--dt-size-1150);
+  --dt-space-1130: var(--dt-size-1130);
+  --dt-space-1125: var(--dt-size-1125);
+  --dt-space-1120: var(--dt-size-1120);
+  --dt-space-1115: var(--dt-size-1115);
+  --dt-space-1100: var(--dt-size-1100);
+  --dt-space-1080: var(--dt-size-1080);
+  --dt-space-1060: var(--dt-size-1060);
+  --dt-space-1050: var(--dt-size-1050);
+  --dt-space-1040: var(--dt-size-1040);
+  --dt-space-1020: var(--dt-size-1020);
+  --dt-space-1000: var(--dt-size-1000);
+  --dt-space-975: var(--dt-size-975);
+  --dt-space-950: var(--dt-size-950);
+  --dt-space-925: var(--dt-size-925);
+  --dt-space-905: var(--dt-size-905);
+  --dt-space-900: var(--dt-size-900);
+  --dt-space-875: var(--dt-size-875);
+  --dt-space-850: var(--dt-size-850);
+  --dt-space-825: var(--dt-size-825);
+  --dt-space-800: var(--dt-size-800);
+  --dt-space-775: var(--dt-size-775);
+  --dt-space-760: var(--dt-size-760);
+  --dt-space-750: var(--dt-size-750);
+  --dt-space-730: var(--dt-size-730);
+  --dt-space-720: var(--dt-size-720);
+  --dt-space-700: var(--dt-size-700);
+  --dt-space-650: var(--dt-size-650);
+  --dt-space-625: var(--dt-size-625);
+  --dt-space-600: var(--dt-size-600);
+  --dt-space-550: var(--dt-size-550);
+  --dt-space-525: var(--dt-size-525);
+  --dt-space-500: var(--dt-size-500);
+  --dt-space-450: var(--dt-size-450);
+  --dt-space-400: var(--dt-size-400);
+  --dt-space-350: var(--dt-size-350);
+  --dt-space-300: var(--dt-size-300);
+  --dt-space-200: var(--dt-size-200);
+  --dt-space-100: var(--dt-size-100);
+  --dt-space-50: var(--dt-size-50);
+  --dt-space-0: var(--dt-size-0);
+  --dt-size-border-focus: calc(var(--dt-size-border-200) + var(--dt-size-border-100));
+  --dt-font-family-expressive: "Season Mix", var(--dt-font-family-body);
+  --dt-font-size-800: calc(var(--dt-font-size-root) * 6.6);
+  --dt-font-size-750: calc(var(--dt-font-size-root) * 5.8);
+  --dt-font-size-700: calc(var(--dt-font-size-root) * 5.2);
+  --dt-font-size-650: calc(var(--dt-font-size-root) * 4.6);
+  --dt-font-size-600: calc(var(--dt-font-size-root) * 4.2);
+  --dt-font-size-550: calc(var(--dt-font-size-root) * 3.6);
+  --dt-font-size-500: calc(var(--dt-font-size-root) * 3.2); /* h1 */
+  --dt-font-size-450: calc(var(--dt-font-size-root) * 2.9); /* h2 */
+  --dt-font-size-400: calc(var(--dt-font-size-root) * 2.6); /* h3 */
+  --dt-font-size-350: calc(var(--dt-font-size-root) * 2.2); /* h4 */
+  --dt-font-size-300: calc(var(--dt-font-size-root) * 2); /* lg / large */
+  --dt-font-size-250: calc(var(--dt-font-size-root) * 1.8);
+  --dt-font-size-200: calc(var(--dt-font-size-root) * 1.6); /* md / medium / base */
+  --dt-font-size-150: calc(var(--dt-font-size-root) * 1.4); /* smd / small-medium / smedium */
+  --dt-font-size-125: calc(var(--dt-font-size-root) * 1.3);
+  --dt-font-size-100: calc(var(--dt-font-size-root) * 1.2); /* sm / small */
+  --dt-font-size-75: calc(var(--dt-font-size-root) * 1.1); /* xs / extra small */
+  --dt-font-size-50: var(--dt-font-size-root); /* xxs / extra extra small */
+  --dt-radio-size-height: var(--dt-radio-size-width);
+  --dt-icon-size-border-800: calc(var(--dt-icon-size-border-100) * 3.5);
+  --dt-icon-size-border-700: calc(var(--dt-icon-size-border-100) * 2.75);
+  --dt-icon-size-border-600: calc(var(--dt-icon-size-border-100) * 2.5);
+  --dt-icon-size-border-400: calc(var(--dt-icon-size-border-100) * 1.75);
+  --dt-icon-size-border-300: calc(var(--dt-icon-size-border-100) * 1.5);
+  --dt-icon-size-border-200: calc(var(--dt-icon-size-border-100) * 1.25);
+  --dt-checkbox-size-radius: var(--dt-inputs-size-radius-xs);
+  --dt-checkbox-size-height: var(--dt-checkbox-size-width);
+  --dt-button-font-size-xl: var(--dt-font-size-350); /* Extra large Button text size */
+  --dt-button-font-size-lg: var(--dt-font-size-300); /* Large Button text size */
+  --dt-button-font-size-md: var(--dt-font-size-200); /* Medium Button text size */
+  --dt-button-font-size-sm: var(--dt-font-size-125); /* Small Button text size */
+  --dt-button-font-size-xs: var(--dt-font-size-100); /* Extra small Button text size */
+  --dt-inputs-font-size-xl: var(--dt-font-size-350); /* Font size for extra large inputs (e.g. input and textarea) */
+  --dt-inputs-font-size-lg: var(--dt-font-size-300); /* Font size for large inputs (e.g. input and textarea) */
+  --dt-inputs-font-size-md: var(--dt-font-size-200); /* Font size for medium inputs (e.g. input and textarea) */
+  --dt-inputs-font-size-sm: var(--dt-font-size-125); /* Font size for small inputs (e.g. input and textarea) */
+  --dt-inputs-font-size-xs: var(--dt-font-size-100); /* Font size for extra small inputs (e.g. input and textarea) */
+  --dt-text-code-xs-font-size: var(--dt-font-size-100); /* Extra small code style */
+  --dt-text-code-sm-font-size: var(--dt-font-size-150); /* Small code style */
+  --dt-text-code-md-font-size: var(--dt-font-size-200); /* Medium (default) code style */
+  --dt-text-code-lg-font-size: var(--dt-font-size-250); /* Large code style */
+  --dt-text-label-xs-font-size: var(--dt-font-size-100); /* Extra small label style */
+  --dt-text-label-sm-font-size: var(--dt-font-size-150); /* Small label style */
+  --dt-text-label-md-font-size: var(--dt-font-size-200); /* Medium (default) label style */
+  --dt-text-label-lg-font-size: var(--dt-font-size-250); /* Large label style */
+  --dt-text-body-xs-font-size: var(--dt-font-size-100); /* Extra small body style */
+  --dt-text-body-sm-font-size: var(--dt-font-size-150); /* Small body style */
+  --dt-text-body-md-font-size: var(--dt-font-size-200); /* Medium (default) body style */
+  --dt-text-body-lg-font-size: var(--dt-font-size-250); /* Large body style */
+  --dt-text-headline-xs-font-size: var(--dt-font-size-100); /* Extra small headline style */
+  --dt-text-headline-sm-font-size: var(--dt-font-size-150); /* Small headline style */
+  --dt-text-headline-md-font-size: var(--dt-font-size-200); /* Medium headline style */
+  --dt-text-headline-lg-font-size: var(--dt-font-size-250); /* Large headline style */
+  --dt-text-headline-xl-font-size: var(--dt-font-size-300); /* XL headline style */
+  --dt-text-headline-2xl-font-size: var(--dt-font-size-400); /* XXL headline style */
+  --dt-text-headline-3xl-font-size: var(--dt-font-size-500);
+  --dt-text-headline-3xl: var(--dt-text-headline-3xl-font-weight) var(--dt-text-headline-3xl-font-size)/var(--dt-text-headline-3xl-line-height) var(--dt-text-headline-3xl-font-family);
+  --dt-text-headline-2xl: var(--dt-text-headline-2xl-font-weight) var(--dt-text-headline-2xl-font-size)/var(--dt-text-headline-2xl-line-height) var(--dt-text-headline-2xl-font-family);
+  --dt-text-headline-xl: var(--dt-text-headline-xl-font-weight) var(--dt-text-headline-xl-font-size)/var(--dt-text-headline-xl-line-height) var(--dt-text-headline-xl-font-family);
+  --dt-text-headline-lg: var(--dt-text-headline-lg-font-weight) var(--dt-text-headline-lg-font-size)/var(--dt-text-headline-lg-line-height) var(--dt-text-headline-lg-font-family);
+  --dt-text-headline-md: var(--dt-text-headline-md-font-weight) var(--dt-text-headline-md-font-size)/var(--dt-text-headline-md-line-height) var(--dt-text-headline-md-font-family);
+  --dt-text-headline-sm: var(--dt-text-headline-sm-font-weight) var(--dt-text-headline-sm-font-size)/var(--dt-text-headline-sm-line-height) var(--dt-text-headline-sm-font-family);
+  --dt-text-headline-xs: var(--dt-text-headline-xs-font-weight) var(--dt-text-headline-xs-font-size)/var(--dt-text-headline-xs-line-height) var(--dt-text-headline-xs-font-family);
+  --dt-text-body-lg: var(--dt-text-body-lg-font-weight) var(--dt-text-body-lg-font-size)/var(--dt-text-body-lg-line-height) var(--dt-text-body-lg-font-family);
+  --dt-text-body-md: var(--dt-text-body-md-font-weight) var(--dt-text-body-md-font-size)/var(--dt-text-body-md-line-height) var(--dt-text-body-md-font-family);
+  --dt-text-body-sm: var(--dt-text-body-sm-font-weight) var(--dt-text-body-sm-font-size)/var(--dt-text-body-sm-line-height) var(--dt-text-body-sm-font-family);
+  --dt-text-body-xs: var(--dt-text-body-xs-font-weight) var(--dt-text-body-xs-font-size)/var(--dt-text-body-xs-line-height) var(--dt-text-body-xs-font-family);
+  --dt-text-label-lg: var(--dt-text-label-lg-font-weight) var(--dt-text-label-lg-font-size)/var(--dt-text-label-lg-line-height) var(--dt-text-label-lg-font-family);
+  --dt-text-label-md: var(--dt-text-label-md-font-weight) var(--dt-text-label-md-font-size)/var(--dt-text-label-md-line-height) var(--dt-text-label-md-font-family);
+  --dt-text-label-sm: var(--dt-text-label-sm-font-weight) var(--dt-text-label-sm-font-size)/var(--dt-text-label-sm-line-height) var(--dt-text-label-sm-font-family);
+  --dt-text-label-xs: var(--dt-text-label-xs-font-weight) var(--dt-text-label-xs-font-size)/var(--dt-text-label-xs-line-height) var(--dt-text-label-xs-font-family);
+  --dt-text-code-lg: var(--dt-text-code-lg-font-weight) var(--dt-text-code-lg-font-size)/var(--dt-text-code-lg-line-height) var(--dt-text-code-lg-font-family);
+  --dt-text-code-md: var(--dt-text-code-md-font-weight) var(--dt-text-code-md-font-size)/var(--dt-text-code-md-line-height) var(--dt-text-code-md-font-family);
+  --dt-text-code-sm: var(--dt-text-code-sm-font-weight) var(--dt-text-code-sm-font-size)/var(--dt-text-code-sm-line-height) var(--dt-text-code-sm-font-family);
+  --dt-text-code-xs: var(--dt-text-code-xs-font-weight) var(--dt-text-code-xs-font-size)/var(--dt-text-code-xs-line-height) var(--dt-text-code-xs-font-family); /* XXXL headline style */
+  --dt-typography-button-xl-line-height: var(--dt-button-line-height-xl); /* Text style for extra large button */
+  --dt-typography-button-xl-font-weight: var(--dt-button-font-weight-xl); /* Text style for extra large button */
+  --dt-typography-button-lg-line-height: var(--dt-button-line-height-lg); /* Text style for large button */
+  --dt-typography-button-lg-font-weight: var(--dt-button-font-weight-lg); /* Text style for large button */
+  --dt-typography-button-md-line-height: var(--dt-button-line-height-md); /* Text style for medium button */
+  --dt-typography-button-md-font-weight: var(--dt-button-font-weight-md); /* Text style for medium button */
+  --dt-typography-button-sm-line-height: var(--dt-button-line-height-sm); /* Text style for small button */
+  --dt-typography-button-sm-font-weight: var(--dt-button-font-weight-sm); /* Text style for small button */
+  --dt-typography-button-xs-line-height: var(--dt-button-line-height-xs); /* Text style for extra small button */
+  --dt-typography-button-xs-font-weight: var(--dt-button-font-weight-xs); /* Text style for extra small button */
+  --dt-typography-inputs-xl-line-height: var(--dt-inputs-line-height-xl); /* Text style for extra large inputs (e.g. input and textarea) */
+  --dt-typography-inputs-xl-font-weight: var(--dt-inputs-font-weight-xl); /* Text style for extra large inputs (e.g. input and textarea) */
+  --dt-typography-inputs-lg-line-height: var(--dt-inputs-line-height-lg); /* Text style for large inputs (e.g. input and textarea) */
+  --dt-typography-inputs-lg-font-weight: var(--dt-inputs-font-weight-lg); /* Text style for large inputs (e.g. input and textarea) */
+  --dt-typography-inputs-md-line-height: var(--dt-inputs-line-height-md); /* Text style for medium inputs (e.g. input and textarea) */
+  --dt-typography-inputs-md-font-weight: var(--dt-inputs-font-weight-md); /* Text style for medium inputs (e.g. input and textarea) */
+  --dt-typography-inputs-sm-line-height: var(--dt-inputs-line-height-sm); /* Text style for small inputs (e.g. input and textarea) */
+  --dt-typography-inputs-sm-font-weight: var(--dt-inputs-font-weight-sm); /* Text style for small inputs (e.g. input and textarea) */
+  --dt-typography-inputs-xs-line-height: var(--dt-inputs-line-height-xs); /* Text style for extra small inputs (e.g. input and textarea) */
+  --dt-typography-inputs-xs-font-weight: var(--dt-inputs-font-weight-xs); /* Text style for extra small inputs (e.g. input and textarea) */
+  --dt-typography-code-sm-font-size: var(--dt-font-size-75); /* Smaller text size for monospace code, suitable for inline references or less prominent code examples. */
+  --dt-typography-code-md-font-size: var(--dt-font-size-150); /* Base default medium-sized text style for monospace code snippets of technical content. */
+  --dt-typography-helper-sm-font-size: var(--dt-font-size-100); /* Smaller text size for subtle guidance or additional context, minimizing visual disruption. */
+  --dt-typography-helper-md-font-size: var(--dt-font-size-200); /* Base default medium-sized text style for supplementary contextual information. */
+  --dt-typography-label-sm-plain-compact-font-size: var(--dt-font-size-100); /* A non-bolded, tighter-spaced version of small label style. */
+  --dt-typography-label-sm-plain-font-size: var(--dt-font-size-100); /* A non-bold version of small label style. */
+  --dt-typography-label-sm-compact-font-size: var(--dt-font-size-100); /* A tighter-spaced version of small label style. */
+  --dt-typography-label-sm-font-size: var(--dt-font-size-100); /* Smaller text style for labels when space is limited or for secondary information or to convey a slightly lower hierachy. */
+  --dt-typography-label-md-plain-compact-font-size: var(--dt-font-size-200); /* A non-bolded, tighter-spaced version of medium label style. */
+  --dt-typography-label-md-plain-font-size: var(--dt-font-size-200); /* A non-bold version of medium label style. */
+  --dt-typography-label-md-compact-font-size: var(--dt-font-size-200); /* A tighter-spaced version of medium label style. */
+  --dt-typography-label-md-font-size: var(--dt-font-size-200); /* Base default medium-sized text style for labels, providing clear identification and categorization. */
+  --dt-typography-headline-xxl-compact-font-size: var(--dt-font-size-500); /* A tighter-spaced version of extra extra large headline style. */
+  --dt-typography-headline-xxl-font-size: var(--dt-font-size-500); /* Largest text style for extra extra large content. */
+  --dt-typography-headline-xl-compact-font-size: var(--dt-font-size-400); /* A tighter-spaced version of extra large headline style. */
+  --dt-typography-headline-xl-font-size: var(--dt-font-size-400); /* Extra large text style for high importance headlines. */
+  --dt-typography-headline-lg-soft-compact-font-size: var(--dt-font-size-300); /* A softer font weight, tighter spaced version of large headline style. */
+  --dt-typography-headline-lg-compact-font-size: var(--dt-font-size-300); /* A tighter-spaced version of large body style. */
+  --dt-typography-headline-lg-soft-font-size: var(--dt-font-size-300); /* A softer font weight version of large headline style. */
+  --dt-typography-headline-lg-font-size: var(--dt-font-size-300); /* Large text style for headlines to attract attention. */
+  --dt-typography-headline-md-compact-font-size: var(--dt-font-size-200); /* A tighter-spaced version of medium headline style. */
+  --dt-typography-headline-md-font-size: var(--dt-font-size-200); /* Medium-sized base text style for headlines. */
+  --dt-typography-headline-sm-soft-compact-font-size: var(--dt-font-size-100); /* A softer font weight, tighter-spaced version of small headline style. */
+  --dt-typography-headline-sm-soft-font-size: var(--dt-font-size-100); /* A softer font weight version of small headline style. */
+  --dt-typography-headline-sm-compact-font-size: var(--dt-font-size-100); /* A tighter-spaced version of small headline style. */
+  --dt-typography-headline-sm-font-size: var(--dt-font-size-100); /* Smaller text size for secondary information or subheadings. */
+  --dt-typography-headline-eyebrow-font-size: var(--dt-font-size-100); /* Visually concise and uppercase title text used above a paired headline. Also known as a kicker or overline. */
+  --dt-typography-body-sm-compact-font-size: var(--dt-font-size-100); /* A tighter-spaced version of small body style. */
+  --dt-typography-body-sm-font-size: var(--dt-font-size-100); /* Reduced small text style for less prominent or adjacent content. */
+  --dt-typography-body-md-compact-font-size: var(--dt-font-size-200); /* A tighter-spaced version of medium body style. */
+  --dt-typography-body-md-font-size: var(--dt-font-size-200); /* Base default medium text style for main content. */
+  --dt-layout-1600: calc(var(--dt-layout-base) * 16); /* 1024px */
+  --dt-layout-1550: calc(var(--dt-layout-base) * 15.5); /* 992px */
+  --dt-layout-1500: calc(var(--dt-layout-base) * 15); /* 960px */
+  --dt-layout-1450: calc(var(--dt-layout-base) * 14.5); /* 928px */
+  --dt-layout-1400: calc(var(--dt-layout-base) * 14); /* 896px */
+  --dt-layout-1350: calc(var(--dt-layout-base) * 13.5); /* 864px */
+  --dt-layout-1300: calc(var(--dt-layout-base) * 13); /* 832px */
+  --dt-layout-1250: calc(var(--dt-layout-base) * 12.5); /* 800px */
+  --dt-layout-1200: calc(var(--dt-layout-base) * 12); /* 768px */
+  --dt-layout-1150: calc(var(--dt-layout-base) * 11.5); /* 736px */
+  --dt-layout-1100: calc(var(--dt-layout-base) * 11); /* 704px */
+  --dt-layout-1050: calc(var(--dt-layout-base) * 10.5); /* 672px */
+  --dt-layout-1000: calc(var(--dt-layout-base) * 10); /* 640px */
+  --dt-layout-950: calc(var(--dt-layout-base) * 9.5); /* 608px */
+  --dt-layout-900: calc(var(--dt-layout-base) * 9); /* 576px */
+  --dt-layout-850: calc(var(--dt-layout-base) * 8.5); /* 544px */
+  --dt-layout-800: calc(var(--dt-layout-base) * 8); /* 512px */
+  --dt-layout-750: calc(var(--dt-layout-base) * 7.5); /* 480px */
+  --dt-layout-700: calc(var(--dt-layout-base) * 7); /* 448px */
+  --dt-layout-650: calc(var(--dt-layout-base) * 6.5); /* 416px */
+  --dt-layout-600: calc(var(--dt-layout-base) * 6); /* 384px */
+  --dt-layout-550: calc(var(--dt-layout-base) * 5.5); /* 352px */
+  --dt-layout-500: calc(var(--dt-layout-base) * 5); /* 320px */
+  --dt-layout-450: calc(var(--dt-layout-base) * 4.5); /* 288px */
+  --dt-layout-400: calc(var(--dt-layout-base) * 4); /* 256px */
+  --dt-layout-350: calc(var(--dt-layout-base) * 3.5); /* 224px */
+  --dt-layout-300: calc(var(--dt-layout-base) * 3); /* 192px */
+  --dt-layout-250: calc(var(--dt-layout-base) * 2.5); /* 160px */
+  --dt-layout-200: calc(var(--dt-layout-base) * 2); /* 128px */
+  --dt-layout-175: calc(var(--dt-layout-base) * 1.75); /* 112px */
+  --dt-layout-150: calc(var(--dt-layout-base) * 1.5); /* 96px */
+  --dt-layout-125: calc(var(--dt-layout-base) * 1.25); /* 80px */
+  --dt-layout-100: var(--dt-layout-base); /* 64px */
+  --dt-layout-75: calc(var(--dt-layout-base) * 0.75); /* 48px */
+  --dt-layout-50: calc(var(--dt-layout-base) * 0.5); /* 32px */
+  --dt-layout-25: calc(var(--dt-layout-base) * 0.25); /* 16px */
+  --dt-layout-0: calc(var(--dt-layout-base) * 0); /* 0px */
+  --dt-spacing-800: calc(var(--dt-spacing-base) * 8); /* 64px */
+  --dt-spacing-750: calc(var(--dt-spacing-base) * 7.5); /* 60px */
+  --dt-spacing-700: calc(var(--dt-spacing-base) * 7); /* 56px */
+  --dt-spacing-650: calc(var(--dt-spacing-base) * 6.5); /* 52px */
+  --dt-spacing-600: calc(var(--dt-spacing-base) * 6); /* 48px */
+  --dt-spacing-550: calc(var(--dt-spacing-base) * 5.5); /* 44px */
+  --dt-spacing-525: calc(var(--dt-spacing-base) * 5.25); /* 42px */
+  --dt-spacing-500: calc(var(--dt-spacing-base) * 5); /* 40px */
+  --dt-spacing-450: calc(var(--dt-spacing-base) * 4.5); /* 36px */
+  --dt-spacing-400: calc(var(--dt-spacing-base) * 4); /* 32px */
+  --dt-spacing-350: calc(var(--dt-spacing-base) * 3.5); /* 28px */
+  --dt-spacing-300: calc(var(--dt-spacing-base) * 3); /* 24px */
+  --dt-spacing-250: calc(var(--dt-spacing-base) * 2.5); /* 20px */
+  --dt-spacing-200: calc(var(--dt-spacing-base) * 2); /* 16px */
+  --dt-spacing-175: calc(var(--dt-spacing-base) * 1.75); /* 14px */
+  --dt-spacing-150: calc(var(--dt-spacing-base) * 1.5); /* 12px */
+  --dt-spacing-125: calc(var(--dt-spacing-base) * 1.25); /* 10px */
+  --dt-spacing-100: var(--dt-spacing-base); /* 8px */
+  --dt-spacing-75: calc(var(--dt-spacing-base) * 0.75); /* 6px */
+  --dt-spacing-50: calc(var(--dt-spacing-base) * 0.5); /* 4px */
+  --dt-spacing-25: calc(var(--dt-spacing-base) * 0.25); /* 2px */
+  --dt-icon-size-border-500: var(--dt-icon-size-border-400);
+  --dt-typography-button-xl-font-size: var(--dt-button-font-size-xl); /* Text style for extra large button */
+  --dt-typography-button-lg-font-size: var(--dt-button-font-size-lg); /* Text style for large button */
+  --dt-typography-button-md-font-size: var(--dt-button-font-size-md); /* Text style for medium button */
+  --dt-typography-button-sm-font-size: var(--dt-button-font-size-sm); /* Text style for small button */
+  --dt-typography-button-xs-font-size: var(--dt-button-font-size-xs); /* Text style for extra small button */
+  --dt-typography-inputs-xl-font-size: var(--dt-inputs-font-size-xl); /* Text style for extra large inputs (e.g. input and textarea) */
+  --dt-typography-inputs-lg-font-size: var(--dt-inputs-font-size-lg); /* Text style for large inputs (e.g. input and textarea) */
+  --dt-typography-inputs-md-font-size: var(--dt-inputs-font-size-md); /* Text style for medium inputs (e.g. input and textarea) */
+  --dt-typography-inputs-sm-font-size: var(--dt-inputs-font-size-sm); /* Text style for small inputs (e.g. input and textarea) */
+  --dt-typography-inputs-xs-font-size: var(--dt-inputs-font-size-xs);
+  --dt-typography-inputs-xs: var(--dt-typography-inputs-xs-font-weight) var(--dt-typography-inputs-xs-font-size)/var(--dt-typography-inputs-xs-line-height) var(--dt-typography-inputs-xs-font-family);
+  --dt-typography-inputs-sm: var(--dt-typography-inputs-sm-font-weight) var(--dt-typography-inputs-sm-font-size)/var(--dt-typography-inputs-sm-line-height) var(--dt-typography-inputs-sm-font-family);
+  --dt-typography-inputs-md: var(--dt-typography-inputs-md-font-weight) var(--dt-typography-inputs-md-font-size)/var(--dt-typography-inputs-md-line-height) var(--dt-typography-inputs-md-font-family);
+  --dt-typography-inputs-lg: var(--dt-typography-inputs-lg-font-weight) var(--dt-typography-inputs-lg-font-size)/var(--dt-typography-inputs-lg-line-height) var(--dt-typography-inputs-lg-font-family);
+  --dt-typography-inputs-xl: var(--dt-typography-inputs-xl-font-weight) var(--dt-typography-inputs-xl-font-size)/var(--dt-typography-inputs-xl-line-height) var(--dt-typography-inputs-xl-font-family);
+  --dt-typography-button-xs: var(--dt-typography-button-xs-font-weight) var(--dt-typography-button-xs-font-size)/var(--dt-typography-button-xs-line-height) var(--dt-typography-button-xs-font-family);
+  --dt-typography-button-sm: var(--dt-typography-button-sm-font-weight) var(--dt-typography-button-sm-font-size)/var(--dt-typography-button-sm-line-height) var(--dt-typography-button-sm-font-family);
+  --dt-typography-button-md: var(--dt-typography-button-md-font-weight) var(--dt-typography-button-md-font-size)/var(--dt-typography-button-md-line-height) var(--dt-typography-button-md-font-family);
+  --dt-typography-button-lg: var(--dt-typography-button-lg-font-weight) var(--dt-typography-button-lg-font-size)/var(--dt-typography-button-lg-line-height) var(--dt-typography-button-lg-font-family);
+  --dt-typography-button-xl: var(--dt-typography-button-xl-font-weight) var(--dt-typography-button-xl-font-size)/var(--dt-typography-button-xl-line-height) var(--dt-typography-button-xl-font-family);
+  --dt-typography-body-md: var(--dt-typography-body-md-font-weight) var(--dt-typography-body-md-font-size)/var(--dt-typography-body-md-line-height) var(--dt-typography-body-md-font-family);
+  --dt-typography-body-md-compact: var(--dt-typography-body-md-compact-font-weight) var(--dt-typography-body-md-compact-font-size)/var(--dt-typography-body-md-compact-line-height) var(--dt-typography-body-md-compact-font-family);
+  --dt-typography-body-sm: var(--dt-typography-body-sm-font-weight) var(--dt-typography-body-sm-font-size)/var(--dt-typography-body-sm-line-height) var(--dt-typography-body-sm-font-family);
+  --dt-typography-body-sm-compact: var(--dt-typography-body-sm-compact-font-weight) var(--dt-typography-body-sm-compact-font-size)/var(--dt-typography-body-sm-compact-line-height) var(--dt-typography-body-sm-compact-font-family);
+  --dt-typography-headline-eyebrow: var(--dt-typography-headline-eyebrow-font-weight) var(--dt-typography-headline-eyebrow-font-size)/var(--dt-typography-headline-eyebrow-line-height) var(--dt-typography-headline-eyebrow-font-family);
+  --dt-typography-headline-sm: var(--dt-typography-headline-sm-font-weight) var(--dt-typography-headline-sm-font-size)/var(--dt-typography-headline-sm-line-height) var(--dt-typography-headline-sm-font-family);
+  --dt-typography-headline-sm-compact: var(--dt-typography-headline-sm-compact-font-weight) var(--dt-typography-headline-sm-compact-font-size)/var(--dt-typography-headline-sm-compact-line-height) var(--dt-typography-headline-sm-compact-font-family);
+  --dt-typography-headline-sm-soft: var(--dt-typography-headline-sm-soft-font-weight) var(--dt-typography-headline-sm-soft-font-size)/var(--dt-typography-headline-sm-soft-line-height) var(--dt-typography-headline-sm-soft-font-family);
+  --dt-typography-headline-sm-soft-compact: var(--dt-typography-headline-sm-soft-compact-font-weight) var(--dt-typography-headline-sm-soft-compact-font-size)/var(--dt-typography-headline-sm-soft-compact-line-height) var(--dt-typography-headline-sm-soft-compact-font-family);
+  --dt-typography-headline-md: var(--dt-typography-headline-md-font-weight) var(--dt-typography-headline-md-font-size)/var(--dt-typography-headline-md-line-height) var(--dt-typography-headline-md-font-family);
+  --dt-typography-headline-md-compact: var(--dt-typography-headline-md-compact-font-weight) var(--dt-typography-headline-md-compact-font-size)/var(--dt-typography-headline-md-compact-line-height) var(--dt-typography-headline-md-compact-font-family);
+  --dt-typography-headline-lg: var(--dt-typography-headline-lg-font-weight) var(--dt-typography-headline-lg-font-size)/var(--dt-typography-headline-lg-line-height) var(--dt-typography-headline-lg-font-family);
+  --dt-typography-headline-lg-soft: var(--dt-typography-headline-lg-soft-font-weight) var(--dt-typography-headline-lg-soft-font-size)/var(--dt-typography-headline-lg-soft-line-height) var(--dt-typography-headline-lg-soft-font-family);
+  --dt-typography-headline-lg-compact: var(--dt-typography-headline-lg-compact-font-weight) var(--dt-typography-headline-lg-compact-font-size)/var(--dt-typography-headline-lg-compact-line-height) var(--dt-typography-headline-lg-compact-font-family);
+  --dt-typography-headline-lg-soft-compact: var(--dt-typography-headline-lg-soft-compact-font-weight) var(--dt-typography-headline-lg-soft-compact-font-size)/var(--dt-typography-headline-lg-soft-compact-line-height) var(--dt-typography-headline-lg-soft-compact-font-family);
+  --dt-typography-headline-xl: var(--dt-typography-headline-xl-font-weight) var(--dt-typography-headline-xl-font-size)/var(--dt-typography-headline-xl-line-height) var(--dt-typography-headline-xl-font-family);
+  --dt-typography-headline-xl-compact: var(--dt-typography-headline-xl-compact-font-weight) var(--dt-typography-headline-xl-compact-font-size)/var(--dt-typography-headline-xl-compact-line-height) var(--dt-typography-headline-xl-compact-font-family);
+  --dt-typography-headline-xxl: var(--dt-typography-headline-xxl-font-weight) var(--dt-typography-headline-xxl-font-size)/var(--dt-typography-headline-xxl-line-height) var(--dt-typography-headline-xxl-font-family);
+  --dt-typography-headline-xxl-compact: var(--dt-typography-headline-xxl-compact-font-weight) var(--dt-typography-headline-xxl-compact-font-size)/var(--dt-typography-headline-xxl-compact-line-height) var(--dt-typography-headline-xxl-compact-font-family);
+  --dt-typography-label-md: var(--dt-typography-label-md-font-weight) var(--dt-typography-label-md-font-size)/var(--dt-typography-label-md-line-height) var(--dt-typography-label-md-font-family);
+  --dt-typography-label-md-compact: var(--dt-typography-label-md-compact-font-weight) var(--dt-typography-label-md-compact-font-size)/var(--dt-typography-label-md-compact-line-height) var(--dt-typography-label-md-compact-font-family);
+  --dt-typography-label-md-plain: var(--dt-typography-label-md-plain-font-weight) var(--dt-typography-label-md-plain-font-size)/var(--dt-typography-label-md-plain-line-height) var(--dt-typography-label-md-plain-font-family);
+  --dt-typography-label-md-plain-compact: var(--dt-typography-label-md-plain-compact-font-weight) var(--dt-typography-label-md-plain-compact-font-size)/var(--dt-typography-label-md-plain-compact-line-height) var(--dt-typography-label-md-plain-compact-font-family);
+  --dt-typography-label-sm: var(--dt-typography-label-sm-font-weight) var(--dt-typography-label-sm-font-size)/var(--dt-typography-label-sm-line-height) var(--dt-typography-label-sm-font-family);
+  --dt-typography-label-sm-compact: var(--dt-typography-label-sm-compact-font-weight) var(--dt-typography-label-sm-compact-font-size)/var(--dt-typography-label-sm-compact-line-height) var(--dt-typography-label-sm-compact-font-family);
+  --dt-typography-label-sm-plain: var(--dt-typography-label-sm-plain-font-weight) var(--dt-typography-label-sm-plain-font-size)/var(--dt-typography-label-sm-plain-line-height) var(--dt-typography-label-sm-plain-font-family);
+  --dt-typography-label-sm-plain-compact: var(--dt-typography-label-sm-plain-compact-font-weight) var(--dt-typography-label-sm-plain-compact-font-size)/var(--dt-typography-label-sm-plain-compact-line-height) var(--dt-typography-label-sm-plain-compact-font-family);
+  --dt-typography-helper-md: var(--dt-typography-helper-md-font-weight) var(--dt-typography-helper-md-font-size)/var(--dt-typography-helper-md-line-height) var(--dt-typography-helper-md-font-family);
+  --dt-typography-helper-sm: var(--dt-typography-helper-sm-font-weight) var(--dt-typography-helper-sm-font-size)/var(--dt-typography-helper-sm-line-height) var(--dt-typography-helper-sm-font-family);
+  --dt-typography-code-md: var(--dt-typography-code-md-font-weight) var(--dt-typography-code-md-font-size)/var(--dt-typography-code-md-line-height) var(--dt-typography-code-md-font-family);
+  --dt-typography-code-sm: var(--dt-typography-code-sm-font-weight) var(--dt-typography-code-sm-font-size)/var(--dt-typography-code-sm-line-height) var(--dt-typography-code-sm-font-family); /* Text style for extra small inputs (e.g. input and textarea) */
+  --dt-spacing-800-negative: calc(var(--dt-spacing-800) * -1);
+  --dt-spacing-750-negative: calc(var(--dt-spacing-750) * -1);
+  --dt-spacing-700-negative: calc(var(--dt-spacing-700) * -1);
+  --dt-spacing-650-negative: calc(var(--dt-spacing-650) * -1);
+  --dt-spacing-600-negative: calc(var(--dt-spacing-600) * -1);
+  --dt-spacing-550-negative: calc(var(--dt-spacing-550) * -1);
+  --dt-spacing-525-negative: calc(var(--dt-spacing-525) * -1);
+  --dt-spacing-500-negative: calc(var(--dt-spacing-500) * -1);
+  --dt-spacing-450-negative: calc(var(--dt-spacing-450) * -1);
+  --dt-spacing-400-negative: calc(var(--dt-spacing-400) * -1);
+  --dt-spacing-350-negative: calc(var(--dt-spacing-350) * -1);
+  --dt-spacing-300-negative: calc(var(--dt-spacing-300) * -1);
+  --dt-spacing-250-negative: calc(var(--dt-spacing-250) * -1);
+  --dt-spacing-200-negative: calc(var(--dt-spacing-200) * -1);
+  --dt-spacing-175-negative: calc(var(--dt-spacing-175) * -1);
+  --dt-spacing-150-negative: calc(var(--dt-spacing-150) * -1);
+  --dt-spacing-125-negative: calc(var(--dt-spacing-125) * -1);
+  --dt-spacing-100-negative: calc(var(--dt-spacing-100) * -1);
+  --dt-spacing-75-negative: calc(var(--dt-spacing-75) * -1);
+  --dt-spacing-50-negative: calc(var(--dt-spacing-50) * -1);
+  --dt-spacing-25-negative: calc(var(--dt-spacing-25) * -1);
+  --dt-font-size-100-mobile: 1.2rem;
+  --dt-font-size-200-mobile: 1.6rem;
+  --dt-font-size-300-mobile: 2rem;
+  --dt-font-size-400-mobile: 2.9rem;
+  --dt-font-size-500-mobile: 4.1rem;
+  --dt-font-size-100-tc8: 1.7rem;
+  --dt-font-size-200-tc8: 2.1rem;
+  --dt-font-size-300-tc8: 2.7rem;
+  --dt-font-size-400-tc8: 3.8rem;
+  --dt-font-size-500-tc8: 5.4rem;
+  --dt-font-size-100-tv: 2.5rem;
+  --dt-font-size-200-tv: 3.2rem;
+  --dt-font-size-300-tv: 4.1rem;
+  --dt-font-size-400-tv: 5.8rem;
+  --dt-font-size-500-tv: 8.2rem;
+  --zi-hide: -1;
+  --zi-base: 0;
+  --zi-base1: 1;
+  --zi-selected: 25;
+  --zi-active: 50;
+  --zi-navigation: 100;
+  --zi-navigation-fixed: 150;
+  --zi-dropdown: 200;
+  --zi-popover: 300;
+  --zi-tooltip: 400;
+  --zi-drawer: 500;
+  --zi-modal: 600;
+  --zi-modal-element: 650;
+  --zi-notification: 700;
+}
+}

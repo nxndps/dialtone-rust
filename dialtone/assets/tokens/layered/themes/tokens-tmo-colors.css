@@ -1,0 +1,23 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ * Theme: tmo
+ * Contains only overrides from base dp theme.
+ */
+
+/* Light mode overrides */
+[data-dt-mode="light"] {
+  color-scheme: light;
+  --dt-shell-base-color-accent: oklch(0.5901 0.2386 1.31);
+  --dt-avatar-anchor-hue: 1.3;
+  --dt-shell-mention-color-surface-secondary: oklch(0.27 0.24 1.31);
+}
+
+/* Dark mode overrides */
+[data-dt-mode="dark"] {
+  color-scheme: dark;
+  --dt-shell-base-color-accent: oklch(0.7904 0.1208 348.23);
+  --dt-avatar-anchor-hue: 348.2;
+  --dt-shell-logo-color-star: var(--dt-color-purple-1000);
+  --dt-shell-mention-color-surface-secondary: lch(90.9 14 347);
+}
+

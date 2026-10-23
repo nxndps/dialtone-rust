@@ -1,0 +1,32 @@
+[package]
+name = "dialtone-demo"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+dialtone = { path = "../dialtone" }
+console_error_panic_hook = "0.1"
+getrandom = { workspace = true, features = ["wasm_js"] }
+leptos = { version = "0.8", features = ["csr"] }
+js-sys = { workspace = true }
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true, features = [
+    "Document",
+    "DomTokenList",
+    "Element",
+    "EventTarget",
+    "HtmlElement",
+    "HtmlInputElement",
+    "KeyboardEvent",
+    "IntersectionObserver",
+    "IntersectionObserverEntry",
+    "IntersectionObserverInit",
+    "Location",
+    "MediaQueryList",
+    "MutationObserver",
+    "MutationObserverInit",
+    "Node",
+    "Storage",
+    "Window",
+] }

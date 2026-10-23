@@ -1,0 +1,35 @@
+[build]
+target = "index.html"
+dist = "dist"
+public_url = "/"
+# The post-build hook rewrites the wasm and js after Trunk hashes them.
+# SRI would reject those replaced bytes.
+no_sri = true
+
+[watch]
+watch = ["src", "index.html", "tailwind.css", "assets"]
+
+[tools]
+tailwindcss = "4.1.10"
+
+# Component catalog. view-sync stays on :8081. From dialtone-demo/:
+#   NO_COLOR=true trunk serve
+# Open http://127.0.0.1:8082/
+# Host build scripts link with scripts/zig-cc from the workspace
+# .cargo/config.toml. That file sets SDKROOT, so rustc does not call xcrun.
+# Trunk runs cargo, which reads that linker.
+# Each component is a #[lazy] chunk. The hook runs wasm-split on the cargo
+# wasm (needs the relocs in .cargo/config.toml) and copies the chunks here.
+[serve]
+addresses = ["127.0.0.1"]
+port = 8082
+
+[[hooks]]
+stage = "post_build"
+command = "sh"
+command_arguments = ["assets/copy-into-staging.sh"]
+
+[[hooks]]
+stage = "post_build"
+command = "sh"
+command_arguments = ["split-tool/run.sh"]

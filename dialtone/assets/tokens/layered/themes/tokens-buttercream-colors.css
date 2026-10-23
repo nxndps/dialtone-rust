@@ -1,0 +1,79 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ * Theme: buttercream
+ * Contains only overrides from base dp theme.
+ */
+
+/* Light mode overrides */
+[data-dt-mode="light"] {
+  color-scheme: light;
+  --dt-shell-mention-color-foreground-primary: oklch(0.1646 0.0142 243.8);
+  --dt-shell-base-color-action: oklch(0.3971 0.0508 237.38);
+  --dt-shell-base-color-accent: oklch(0.8565 0.1745 94.91);
+  --dt-shell-base-color-border: oklch(0.2517 0.0279 238.54);
+  --dt-shell-base-color-surface: oklch(0.9803 0.0223 87.15);
+  --dt-avatar-anchor-hue: 94.9;
+  --dt-shell-mention-color-surface-secondary: oklch(0.39 0.17 94.9);
+  --dt-shell-color-border-default: oklch(0.25 0.03 239 / 0.17);
+  --dt-shell-color-border-subtle: oklch(0.25 0.03 239 / 0.1);
+  --dt-shell-base-color-foreground: var(--dt-color-teal-950);
+  --dt-shell-action-color-background-muted-selected: oklch(0.4 0.05 237 / 0.07);
+  --dt-shell-action-color-background-muted-active: oklch(0.4 0.05 237 / 0.07);
+  --dt-shell-action-color-background-muted-hover: oklch(0.4 0.05 237 / 0.1);
+  --dt-shell-action-color-background-muted-default: oklch(0.4 0.05 237 / 0.05);
+  --dt-shell-action-color-background-secondary-selected: oklch(0.4 0.05 237 / 0.13);
+  --dt-shell-action-color-background-secondary-active: oklch(0.4 0.05 237 / 0.16);
+  --dt-shell-action-color-background-secondary-hover: oklch(0.4 0.05 237 / 0.1);
+  --dt-shell-action-color-background-secondary-default: oklch(0.4 0.05 237 / 0);
+  --dt-shell-action-color-background-primary-selected: oklch(0.4 0.05 237 / 0.13);
+  --dt-shell-action-color-background-primary-active: oklch(0.4 0.05 237 / 0.16);
+  --dt-shell-action-color-background-primary-hover: oklch(0.4 0.05 237 / 0.1);
+  --dt-shell-action-color-background-primary-default: oklch(0.4 0.05 237 / 0);
+  --dt-shell-color-foreground-disabled: oklch(0.22 0.05 204 / 0.57);
+  --dt-shell-color-foreground-muted: oklch(0.22 0.05 204 / 0.6);
+  --dt-shell-color-foreground-strong: oklch(0.22 0.05 204);
+  --dt-shell-color-foreground-tertiary: oklch(0.22 0.05 204 / 0.72);
+  --dt-shell-color-foreground-secondary: oklch(0.22 0.05 204 / 0.86);
+  --dt-shell-action-color-foreground-muted-selected: oklch(0.09 0.05 204 / 0.6);
+  --dt-shell-action-color-foreground-muted-hover: oklch(0.13 0.05 204 / 0.6);
+}
+
+/* Dark mode overrides */
+[data-dt-mode="dark"] {
+  color-scheme: dark;
+  --dt-shell-mention-color-foreground-primary: oklch(0.1646 0.0142 243.8);
+  --dt-shell-base-color-action: oklch(0.9693 0.0455 93.5);
+  --dt-shell-base-color-accent: oklch(0.8565 0.1745 94.91);
+  --dt-shell-base-color-border: oklch(0.932 0.0376 237.05);
+  --dt-shell-base-color-surface: oklch(0.2405 0.019 88.77);
+  --dt-badge-color-border-bulletin-subtle: oklch(0.58 0.24 287 / 0.5);
+  --dt-badge-color-foreground-bulletin-subtle: var(--dt-color-purple-900);
+  --dt-badge-color-background-warning: var(--dt-color-gold-200);
+  --dt-avatar-anchor-hue: 94.9;
+  --dt-shell-logo-color-star: var(--dt-color-purple-1000);
+  --dt-shell-mention-color-surface-secondary: lch(94.4 28.9 87.8);
+  --dt-shell-color-border-default: oklch(0.93 0.04 237 / 0.18);
+  --dt-shell-color-border-subtle: oklch(0.93 0.04 237 / 0.15);
+  --dt-shell-base-color-foreground: var(--dt-color-teal-950);
+  --dt-shell-action-color-background-muted-selected: oklch(0.97 0.05 93.5 / 0.07);
+  --dt-shell-action-color-background-muted-active: oklch(0.97 0.05 93.5 / 0.07);
+  --dt-shell-action-color-background-muted-hover: oklch(0.97 0.05 93.5 / 0.1);
+  --dt-shell-action-color-background-muted-default: oklch(0.97 0.05 93.5 / 0.05);
+  --dt-shell-action-color-background-secondary-selected: oklch(0.97 0.05 93.5 / 0.13);
+  --dt-shell-action-color-background-secondary-active: oklch(0.97 0.05 93.5 / 0.16);
+  --dt-shell-action-color-background-secondary-hover: oklch(0.97 0.05 93.5 / 0.1);
+  --dt-shell-action-color-background-secondary-default: oklch(0.97 0.05 93.5 / 0);
+  --dt-shell-action-color-background-primary-selected: oklch(0.97 0.05 93.5 / 0.13);
+  --dt-shell-action-color-background-primary-active: oklch(0.97 0.05 93.5 / 0.16);
+  --dt-shell-action-color-background-primary-hover: oklch(0.97 0.05 93.5 / 0.1);
+  --dt-shell-action-color-background-primary-default: oklch(0.97 0.05 93.5 / 0);
+  --dt-shell-color-foreground-disabled: oklch(0.96 0.01 200 / 0.57);
+  --dt-shell-color-foreground-muted: oklch(0.96 0.01 200 / 0.6);
+  --dt-shell-color-foreground-tertiary: oklch(0.96 0.01 200 / 0.72);
+  --dt-shell-color-foreground-secondary: oklch(0.96 0.01 200 / 0.86);
+  --dt-shell-color-foreground-strong: oklch(1.72 0.01 200);
+  --dt-badge-color-background-default: var(--dt-color-surface-moderate-opaque);
+  --dt-shell-action-color-foreground-muted-selected: oklch(0.38 0.01 200 / 0.6);
+  --dt-shell-action-color-foreground-muted-hover: oklch(0.58 0.01 200 / 0.6);
+}
+
