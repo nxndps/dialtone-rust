@@ -232,7 +232,7 @@ pub fn DtTooltip(
         }
         if kind == "focusin" {
             let el = anchor_ref
-                .get()
+                .get_untracked()
                 .map(|el| el.unchecked_into::<HtmlElement>());
             if has_visible_focus(el) {
                 set_shown(true);
@@ -282,11 +282,12 @@ pub fn DtTooltip(
         }
     };
 
+    // Animation frames and the sticky interval are not a tracking context.
     let reposition = move || {
-        let Some(anchor) = anchor_ref.get() else {
+        let Some(anchor) = anchor_ref.get_untracked() else {
             return;
         };
-        let Some(tooltip) = tooltip_ref.get() else {
+        let Some(tooltip) = tooltip_ref.get_untracked() else {
             return;
         };
         let anchor: HtmlElement = anchor.unchecked_into();
@@ -359,7 +360,7 @@ pub fn DtTooltip(
                     if !flatten {
                         return;
                     }
-                    let Some(anchor) = anchor_ref.get() else {
+                    let Some(anchor) = anchor_ref.get_untracked() else {
                         return;
                     };
                     let anchor: HtmlElement = anchor.unchecked_into();
@@ -372,7 +373,7 @@ pub fn DtTooltip(
                     if !flatten {
                         return;
                     }
-                    let Some(anchor) = anchor_ref.get() else {
+                    let Some(anchor) = anchor_ref.get_untracked() else {
                         return;
                     };
                     let anchor: HtmlElement = anchor.unchecked_into();
