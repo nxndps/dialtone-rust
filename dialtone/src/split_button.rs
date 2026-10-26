@@ -271,6 +271,12 @@ pub fn DtSplitButton(
     /// Extra class on the root (Vue `$attrs.class`).
     #[prop(optional, into)]
     class: String,
+    /// `data-qa` on the start button. Default `dt-split-button-start`.
+    #[prop(optional, default = "dt-split-button-start")]
+    start_data_qa: &'static str,
+    /// `data-qa` on the end button. Default `dt-split-button-end`.
+    #[prop(optional, default = "dt-split-button-end")]
+    end_data_qa: &'static str,
     /// Start click (`start-clicked`).
     #[prop(optional, into)]
     on_start_click: Option<Callback<()>>,
@@ -419,7 +425,7 @@ pub fn DtSplitButton(
     let start_button = match (legacy_icon, children) {
         (Some(icon), Some(children)) => view! {
             <DtButton
-                data_qa="dt-split-button-start"
+                data_qa=start_data_qa
                 class=start_class.clone()
                 kind=kind
                 importance=importance
@@ -449,7 +455,7 @@ pub fn DtSplitButton(
         .into_any(),
         (None, Some(children)) => view! {
             <DtButton
-                data_qa="dt-split-button-start"
+                data_qa=start_data_qa
                 class=start_class.clone()
                 kind=kind
                 importance=importance
@@ -478,7 +484,7 @@ pub fn DtSplitButton(
         .into_any(),
         (Some(icon), None) => view! {
             <DtButton
-                data_qa="dt-split-button-start"
+                data_qa=start_data_qa
                 class=start_class.clone()
                 kind=kind
                 importance=importance
@@ -506,7 +512,7 @@ pub fn DtSplitButton(
         .into_any(),
         (None, None) => view! {
             <DtButton
-                data_qa="dt-split-button-start"
+                data_qa=start_data_qa
                 class=start_class
                 kind=kind
                 importance=importance
@@ -539,7 +545,7 @@ pub fn DtSplitButton(
         let popup = if menu { "menu" } else { "" };
         let button = view! {
             <DtButton
-                data_qa="dt-split-button-end"
+                data_qa=end_data_qa
                 id=end_id.get_value()
                 class=end_class.get_value()
                 kind=kind

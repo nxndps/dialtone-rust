@@ -1,3 +1,6 @@
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
+
 use leptos::html;
 use leptos::prelude::*;
 use wasm_bindgen::JsCast;
@@ -82,8 +85,11 @@ pub fn DtCollapsible(
     }
 
     let controlled = open.is_some();
-    let internal = RwSignal::new(true);
-    let is_open = RwSignal::new(true);
+    // A controlled section that starts closed must not paint open. The effect
+    // below only copies later changes.
+    let initial_open = open.map(|signal| signal.get_untracked()).unwrap_or(true);
+    let internal = RwSignal::new(initial_open);
+    let is_open = RwSignal::new(initial_open);
     Effect::new(move |_| {
         if let Some(open) = open {
             is_open.set(open.get());
@@ -92,8 +98,20 @@ pub fn DtCollapsible(
 
     let initialized = RwSignal::new(true);
     let phase = RwSignal::new("idle");
-    let height_style = RwSignal::new(String::new());
+    let height_style = RwSignal::new(if initial_open {
+        String::new()
+    } else {
+        "height:0px;overflow:hidden;".to_string()
+    });
     let content_ref = NodeRef::<html::Div>::new();
+    // The height frames are queued on the window. Cleanup has to ignore them
+    // or a disposed node ref panics after the collapsible unmounts.
+    let alive = Arc::new(AtomicBool::new(true));
+    on_cleanup({
+        let alive = Arc::clone(&alive);
+        move || alive.store(false, Ordering::Relaxed)
+    });
+    let alive_for_effect = Arc::clone(&alive);
 
     let finish = move |open_now: bool| {
         phase.set("idle");
@@ -115,15 +133,26 @@ pub fn DtCollapsible(
         if !initialized.get_untracked() {
             return;
         }
+        let alive = Arc::clone(&alive_for_effect);
         request_animation_frame(move || {
+            if !alive.load(Ordering::Relaxed) {
+                return;
+            }
             let Some(element) = content_ref.get_untracked() else {
                 return;
             };
             let element: HtmlElement = element.unchecked_into();
+            if !alive.load(Ordering::Relaxed) {
+                return;
+            }
             if open_now {
                 phase.set("enter");
                 height_style.set("height:0px;overflow:hidden;".to_string());
+                let alive = Arc::clone(&alive);
                 request_animation_frame(move || {
+                    if !alive.load(Ordering::Relaxed) {
+                        return;
+                    }
                     let height = element.scroll_height();
                     height_style.set(format!("height:{height}px;overflow:hidden;"));
                 });
@@ -131,7 +160,11 @@ pub fn DtCollapsible(
                 let height = element.offset_height();
                 phase.set("leave");
                 height_style.set(format!("height:{height}px;overflow:hidden;"));
+                let alive = Arc::clone(&alive);
                 request_animation_frame(move || {
+                    if !alive.load(Ordering::Relaxed) {
+                        return;
+                    }
                     height_style.set("height:0px;overflow:hidden;".to_string());
                 });
             }

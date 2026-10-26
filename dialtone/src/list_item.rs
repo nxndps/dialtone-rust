@@ -42,6 +42,14 @@ fn element_tag(value: &str) -> &'static str {
     }
 }
 
+fn key_from_button(event: &KeyboardEvent) -> bool {
+    use wasm_bindgen::JsCast;
+    event
+        .target()
+        .and_then(|target| target.dyn_into::<web_sys::Element>().ok())
+        .is_some_and(|element| element.tag_name().eq_ignore_ascii_case("button"))
+}
+
 /// Root classes in Vue order: base, focusable, highlighted, static, then `class`.
 fn list_item_class(navigation: &str, highlighted: bool, class: &str) -> String {
     join_class([
@@ -111,14 +119,19 @@ fn section_class(slot_class: &str, layout_class: &str) -> String {
 /// `block_end` (`blockEnd`) wins over `bottom`. `selected` draws `DtIconCheck`
 /// size `200` and replaces the `selected` slot (`selected_slot`).
 ///
-/// Enter and Space call `on_click` and then `on_keydown`. The Vue event object
-/// is not forwarded. The layout is inlined from `DtItemLayout` `unstyled`
-/// because that port does not take the v10 section class props.
+/// Enter and Space call `on_click`, then `on_keydown` with the event. A key
+/// whose target is a nested `button` does not call `on_click`. `disabled`
+/// sets `aria-disabled` and skips `on_click`. The layout is inlined from
+/// `DtItemLayout` `unstyled` because that port does not take the v10 section
+/// class props.
 #[component]
 pub fn DtListItem(
     /// Element id. Empty generates one.
     #[prop(optional, into)]
     id: String,
+    /// `data-qa`. Empty omits the attribute.
+    #[prop(optional, into)]
+    data_qa: String,
     /// `listitem` (default), `menuitem`, or `option`.
     #[prop(optional, default = "listitem")]
     role: &'static str,
@@ -137,6 +150,18 @@ pub fn DtListItem(
     /// Extra classes on the root (`$attrs.class`).
     #[prop(optional, into)]
     class: String,
+    /// Classes that follow a signal. Appended after `class`.
+    #[prop(optional, into)]
+    class_signal: MaybeProp<String>,
+    /// `data-action`. Empty omits the attribute.
+    #[prop(optional, into)]
+    data_action: String,
+    /// `data-key`. Empty omits the attribute.
+    #[prop(optional, into)]
+    data_key: String,
+    /// `aria-disabled="true"` when true. A signal updates it. Skips `on_click`.
+    #[prop(optional, into)]
+    disabled: MaybeProp<bool>,
     /// Extra classes on the layout (`wrapperClass`).
     #[prop(optional, into)]
     wrapper_class: String,
@@ -144,7 +169,7 @@ pub fn DtListItem(
     #[prop(optional)]
     highlight_id: Option<Signal<String>>,
     #[prop(optional, into)] on_click: Option<Callback<()>>,
-    #[prop(optional, into)] on_keydown: Option<Callback<()>>,
+    #[prop(optional, into)] on_keydown: Option<Callback<KeyboardEvent>>,
     #[prop(optional, into)] on_mousemove: Option<Callback<()>>,
     #[prop(optional, into)] on_mouseleave: Option<Callback<()>>,
     #[prop(optional)] start: Option<ViewFn>,
@@ -283,7 +308,14 @@ pub fn DtListItem(
         body.into_any()
     };
 
-    let class_for = move || list_item_class(navigation, highlighted.get(), &root_class);
+    let data_qa = (!data_qa.is_empty()).then_some(data_qa);
+    let data_action = (!data_action.is_empty()).then_some(data_action);
+    let data_key = (!data_key.is_empty()).then_some(data_key);
+    let class_for = move || {
+        let reactive = class_signal.get().unwrap_or_default();
+        let combined = join_class([root_class.as_str(), reactive.as_str()]);
+        list_item_class(navigation, highlighted.get(), &combined)
+    };
     let aria_selected = move || {
         if role == "listitem" {
             None
@@ -294,17 +326,22 @@ pub fn DtListItem(
         }
     };
     let activate = move || {
+        if disabled.get().unwrap_or(false) {
+            return;
+        }
         if let Some(callback) = on_click {
             callback.run(());
         }
     };
+    let aria_disabled = move || disabled.get().unwrap_or(false).then_some("true");
     let on_key = move |event: KeyboardEvent| {
         let code = event.code();
-        if code == "Enter" || code == "Space" {
+        if (code == "Enter" || code == "Space") && !key_from_button(&event) {
+            event.prevent_default();
             activate();
         }
         if let Some(callback) = on_keydown {
-            callback.run(());
+            callback.run(event);
         }
     };
     let on_move = move |_| {
@@ -326,6 +363,10 @@ pub fn DtListItem(
                 <$tag
                     id=id.clone()
                     class=class_for
+                    data-qa=data_qa.clone()
+                    data-action=data_action.clone()
+                    data-key=data_key.clone()
+                    aria-disabled=aria_disabled
                     tabindex=tabindex
                     role=role
                     aria-selected=aria_selected

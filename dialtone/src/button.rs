@@ -255,12 +255,21 @@ pub fn DtButton(
     /// Replaces the accessible name while `loading` is set.
     #[prop(optional, into)]
     aria_label: String,
+    /// Accessible name that follows a signal. A non-empty value wins over `aria_label`.
+    #[prop(optional, into)]
+    aria_label_signal: MaybeProp<String>,
+    /// `aria-keyshortcuts`. Empty omits the attribute.
+    #[prop(optional, into)]
+    aria_keyshortcuts: String,
     /// `title`. Empty omits the attribute.
     #[prop(optional, into)]
     title: String,
     /// Extra classes appended to the button.
     #[prop(optional, into)]
     class: String,
+    /// Classes that follow a signal. Appended after `class`.
+    #[prop(optional, into)]
+    class_signal: MaybeProp<String>,
     /// `data-qa`. Default `dt-button`. Split and segmented controls set their own.
     #[prop(optional, default = "dt-button")]
     data_qa: &'static str,
@@ -285,9 +294,9 @@ pub fn DtButton(
     /// `aria-selected`. Unset omits the attribute.
     #[prop(optional)]
     aria_selected: Option<bool>,
-    /// `aria-expanded`. Unset omits the attribute.
-    #[prop(optional)]
-    aria_expanded: Option<bool>,
+    /// `aria-expanded`. Unset omits the attribute. A signal updates it.
+    #[prop(optional, into)]
+    aria_expanded: MaybeProp<bool>,
     /// `aria-controls`. Empty omits the attribute.
     #[prop(optional, into)]
     aria_controls: String,
@@ -342,6 +351,7 @@ pub fn DtButton(
             )
             .as_str(),
             extra_class.get_value().as_str(),
+            class_signal.get().unwrap_or_default().as_str(),
         ])
     };
     let is_disabled = move || disabled.get().unwrap_or(false);
@@ -357,8 +367,13 @@ pub fn DtButton(
     let aria_controls_attr = (!aria_controls.is_empty()).then_some(aria_controls);
     let aria_haspopup_attr = (!aria_haspopup.is_empty()).then_some(aria_haspopup);
     let title_attr = (!title.is_empty()).then_some(title);
+    let shortcut_attr = (!aria_keyshortcuts.is_empty()).then_some(aria_keyshortcuts);
     let aria_selected_attr = aria_selected.map(|selected| if selected { "true" } else { "false" });
-    let aria_expanded_attr = aria_expanded.map(|expanded| if expanded { "true" } else { "false" });
+    let expanded_value = move || {
+        aria_expanded
+            .get()
+            .map(|expanded| if expanded { "true" } else { "false" })
+    };
     let icon_class_name = icon_class(kind, icon_position);
     let start_icon_class = icon_class(kind, "left");
     let end_icon_class = icon_class(kind, "right");
@@ -373,12 +388,18 @@ pub fn DtButton(
     } else {
         format!("width: {width}")
     };
-    let button_label = if loading {
-        Some(LOADING_LABEL.to_string())
-    } else if aria_label.is_empty() {
-        None
-    } else {
-        Some(aria_label)
+    let static_label = StoredValue::new(aria_label);
+    let read_label = move || -> Option<String> {
+        if loading {
+            return Some(LOADING_LABEL.to_string());
+        }
+        if let Some(text) = aria_label_signal.get() {
+            if !text.is_empty() {
+                return Some(text);
+            }
+        }
+        let text = static_label.get_value();
+        (!text.is_empty()).then_some(text)
     };
     let focused = RwSignal::new(false);
     let is_anchor = !href.is_empty();
@@ -429,15 +450,16 @@ pub fn DtButton(
                 data-qa=data_qa
                 data-value=data_value_attr.clone()
                 aria-selected=aria_selected_attr
-                aria-expanded=aria_expanded_attr
+                aria-expanded=expanded_value
                 aria-controls=aria_controls_attr
                 aria-haspopup=aria_haspopup_attr
+                aria-keyshortcuts=shortcut_attr.clone()
                 aria-checked=checked_value
                 title=title_attr.clone()
                 href=move || (!is_disabled()).then_some(href.clone())
                 target=(!target.is_empty()).then_some(target)
                 rel=(!rel.is_empty()).then_some(rel)
-                aria-label=button_label.clone()
+                aria-label=read_label
                 aria-disabled=move || {
                     if let Some(flag) = aria_disabled.get() {
                         return flag.then_some("true");
@@ -502,13 +524,14 @@ pub fn DtButton(
                 prop:disabled=move || is_disabled()
                 tabindex=tab_value
                 aria-selected=aria_selected_attr
-                aria-expanded=aria_expanded_attr
+                aria-expanded=expanded_value
                 aria-controls=aria_controls_attr
                 aria-haspopup=aria_haspopup_attr
+                aria-keyshortcuts=shortcut_attr
                 aria-checked=checked_value
                 title=title_attr
                 aria-disabled=move || aria_disabled.get().unwrap_or(false).then_some("true")
-                aria-label=button_label
+                aria-label=read_label
                 aria-live=move || live_value(assertive_on_focus, focused.get(), &fallback)
                 on:click=move |_| {
                     if let Some(on_click) = on_click {

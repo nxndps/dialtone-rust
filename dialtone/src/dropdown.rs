@@ -118,6 +118,9 @@ pub fn DtDropdown(
     /// Extra class on the list (`listClass`).
     #[prop(optional, into)]
     list_class: String,
+    /// `data-qa` on the list. Default `dt-dropdown-list-wrapper`.
+    #[prop(optional, default = "dt-dropdown-list-wrapper")]
+    list_data_qa: &'static str,
     /// Id on the list. Generated when empty (`listId`).
     #[prop(optional, into)]
     list_id: String,
@@ -398,7 +401,7 @@ pub fn DtDropdown(
                 node_ref=list_ref
                 id=list_id.get_value()
                 class=list_class.clone()
-                data-qa="dt-dropdown-list-wrapper"
+                data-qa=list_data_qa
                 on:click=move |event: MouseEvent| {
                     if enabled_menuitem(event.target()).is_some() {
                         set_open(false);

@@ -124,6 +124,52 @@ pub fn DtIconClose(
 }
 
 #[component]
+pub fn DtIconXCircle(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+    view! {
+        <DtIcon name="x-circle" data_name="X Circle" size=size>
+            <path
+                fill="currentColor"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M6 1.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9ZM.5 6a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Z"
+            />
+            <path
+                fill="currentColor"
+                d="M7.854 4.854a.5.5 0 0 0-.707-.707L6 5.293 4.854 4.147a.5.5 0 0 0-.707.707L5.293 6 4.147 7.147a.5.5 0 0 0 .707.707L6 6.707l1.147 1.147a.5.5 0 0 0 .707-.707L6.707 6l1.147-1.146Z"
+            />
+        </DtIcon>
+    }
+}
+
+#[component]
+pub fn DtIconSatisfied(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+    view! {
+        <DtIcon name="satisfied" data_name="Satisfied" size=size>
+            <path
+                fill="currentColor"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M6 1.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9ZM.5 6a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0ZM4 4.5a.5.5 0 0 1 .5-.5h.005a.5.5 0 0 1 0 1H4.5a.5.5 0 0 1-.5-.5Zm3 0a.5.5 0 0 1 .5-.5h.005a.5.5 0 0 1 0 1H7.5a.5.5 0 0 1-.5-.5ZM3.7 6.6a.5.5 0 0 1 .698.098L4.4 6.7 4 7l.4-.3v-.001.002l.018.02a2.474 2.474 0 0 0 .408.374c.288.21.687.405 1.174.405.487 0 .886-.195 1.175-.404a2.474 2.474 0 0 0 .424-.395l.003-.003A.5.5 0 0 1 8.4 7.3L8 7l.4.3-.001.001-.001.002-.004.005-.01.014c-.01.01-.021.025-.036.042a3.474 3.474 0 0 1-.585.54c-.4.29-1 .596-1.763.596a2.994 2.994 0 0 1-1.763-.596 3.474 3.474 0 0 1-.62-.582l-.01-.014-.005-.005v-.002H3.6L4 7l-.4.3a.5.5 0 0 1 .1-.7Z"
+            />
+        </DtIcon>
+    }
+}
+
+#[component]
+pub fn DtIconVerySatisfied(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+    view! {
+        <DtIcon name="very-satisfied" data_name="Very Satisfied" size=size>
+            <path
+                fill="currentColor"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M6 1.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9ZM.5 6a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0ZM4 4.5a.5.5 0 0 1 .5-.5h.005a.5.5 0 0 1 0 1H4.5a.5.5 0 0 1-.5-.5Zm3 0a.5.5 0 0 1 .5-.5h.005a.5.5 0 0 1 0 1H7.5a.5.5 0 0 1-.5-.5ZM2.618 6.177A.5.5 0 0 1 3 6h6a.5.5 0 0 1 .493.583A3.5 3.5 0 0 1 6 9.5a3.5 3.5 0 0 1-3.493-2.917.5.5 0 0 1 .111-.406ZM3.667 7a2.5 2.5 0 0 0 2.326 1.5h.014A2.5 2.5 0 0 0 8.333 7H3.667Z"
+            />
+        </DtIcon>
+    }
+}
+
+#[component]
 pub fn DtIconCheck(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
     view! {
         <DtIcon name="check" data_name="Check" size=size>

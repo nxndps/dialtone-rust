@@ -167,11 +167,14 @@ fn label_anchor(anchor: &HtmlElement, expanded: bool, controls: &str, popup: &st
 }
 
 fn popover_z_index(anchor: Option<HtmlElement>) -> i32 {
+    // A portaled menu defaults to 400. The schedule dialog is not a `.d-modal`,
+    // but it is `aria-modal`, and its overlay is 500. Treat that as an overlay
+    // so the menu paints above it.
     let in_overlay = anchor
         .and_then(|element| {
             element
                 .closest(
-                    ".d-modal[aria-hidden=\"false\"], .d-modal:not([aria-hidden]), .d-zi-drawer",
+                    ".d-modal[aria-hidden=\"false\"], .d-modal:not([aria-hidden]), .d-zi-drawer, [aria-modal=\"true\"]",
                 )
                 .ok()
                 .flatten()

@@ -9,16 +9,17 @@ use dialtone::{
     DtIconCheckCircle, DtIconChevronDown, DtIconChevronLeft, DtIconChevronRight,
     DtIconChevronsLeft, DtIconChevronsRight, DtIconClose, DtIconConnectionApi, DtIconExternalLink,
     DtIconInfo, DtIconLaptop2, DtIconMoon, DtIconMoreHorizontal, DtIconMoreVertical, DtIconPlus,
-    DtIconRefresh, DtIconSave, DtIconSearch, DtIconSparkle, DtIconSun, DtIconTrash, DtIconUser,
-    DtIconUsers, DtIllustration, DtImageViewer, DtInput, DtInputGroup, DtItemLayout,
-    DtKeyboardShortcut, DtLazyShow, DtLink, DtListItem, DtListItemGroup, DtLoader, DtModal,
-    DtModeIsland, DtMotionText, DtNotice, DtPagination, DtPopover, DtPresence, DtProgressCircle,
-    DtProse, DtRadio, DtRadioGroup, DtResizable, DtResizableHandle, DtResizablePanel,
-    DtRichTextEditor, DtRootLayout, DtScroller, DtScrollerItem, DtSegmentedControl,
-    DtSegmentedControlItem, DtSelectMenu, DtSelectOption, DtSkeleton, DtSkeletonListItemOption,
-    DtSkeletonParagraphOption, DtSkeletonShapeKind, DtSkeletonShapeOption, DtSplitButton, DtStack,
-    DtTab, DtTabGroup, DtTabGroupChange, DtTabPanel, DtText, DtTextList, DtTextListItem, DtToast,
-    DtToggle, DtTooltip, DtValidationMessage, DtValidationMessages,
+    DtIconRefresh, DtIconSatisfied, DtIconSave, DtIconSearch, DtIconSparkle, DtIconSun,
+    DtIconTrash, DtIconUser, DtIconUsers, DtIconVerySatisfied, DtIconXCircle, DtIllustration,
+    DtImageViewer, DtInput, DtInputGroup, DtItemLayout, DtKeyboardShortcut, DtLazyShow, DtLink,
+    DtListItem, DtListItemGroup, DtLoader, DtModal, DtModeIsland, DtMotionText, DtNotice,
+    DtPagination, DtPopover, DtPresence, DtProgressCircle, DtProse, DtRadio, DtRadioGroup,
+    DtResizable, DtResizableHandle, DtResizablePanel, DtRichTextEditor, DtRootLayout, DtScroller,
+    DtScrollerItem, DtSegmentedControl, DtSegmentedControlItem, DtSelectMenu, DtSelectOption,
+    DtSkeleton, DtSkeletonListItemOption, DtSkeletonParagraphOption, DtSkeletonShapeKind,
+    DtSkeletonShapeOption, DtSplitButton, DtStack, DtTab, DtTabGroup, DtTabGroupChange, DtTabPanel,
+    DtText, DtTextList, DtTextListItem, DtToast, DtToggle, DtTooltip, DtValidationMessage,
+    DtValidationMessages,
 };
 use leptos::prelude::*;
 
@@ -1173,6 +1174,9 @@ pub(crate) fn IconExample() -> impl IntoView {
                 <IconCell name="More"><DtIconMoreVertical /></IconCell>
                 <IconCell name="More horizontal"><DtIconMoreHorizontal /></IconCell>
                 <IconCell name="Close"><DtIconClose /></IconCell>
+                <IconCell name="X circle"><DtIconXCircle /></IconCell>
+                <IconCell name="Satisfied"><DtIconSatisfied /></IconCell>
+                <IconCell name="Very satisfied"><DtIconVerySatisfied /></IconCell>
                 <IconCell name="Down"><DtIconChevronDown /></IconCell>
                 <IconCell name="Left"><DtIconChevronLeft /></IconCell>
                 <IconCell name="Right"><DtIconChevronRight /></IconCell>

@@ -26,7 +26,7 @@ fn has_visible_focus(anchor: Option<HtmlElement>) -> bool {
 fn tooltip_z_index(anchor: Option<HtmlElement>) -> i32 {
     let in_overlay = anchor
         .and_then(|el| {
-            el.closest(".d-modal[aria-hidden=\"false\"], .d-modal:not([aria-hidden]), .d-zi-drawer")
+            el.closest(".d-modal[aria-hidden=\"false\"], .d-modal:not([aria-hidden]), .d-zi-drawer, [aria-modal=\"true\"]")
                 .ok()
                 .flatten()
         })
