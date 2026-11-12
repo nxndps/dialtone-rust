@@ -34,6 +34,14 @@ The base loader should be the go-to loader for most of your needs. When in doubt
 <dt-loader></dt-loader>
 ```
 
+### Spinner
+
+The circular mark from earlier Dialtone. Set `kind` to `spinner`. The default kind is `dots`.
+
+```vue demo
+<dt-loader kind="spinner"></dt-loader>
+```
+
 ## Sizes
 
 The base loader size is 24px and should be used in most cases.
@@ -58,8 +66,8 @@ The base loader size is 24px and should be used in most cases.
 
 ## Accessibility
 
-- You can add an `aria-label` attribute to the loader to indicate a custom label.
-- If no `aria-label` is provided, the default value is "loading".
+- The root role is `img`. An empty `aria-label` reads as "loading".
+- `role` `none` or `presentation` omits that label. Use `aria-hidden="true"` when nearby text already says the interface is loading.
 
 ## Vue API
 

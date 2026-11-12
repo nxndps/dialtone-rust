@@ -11,9 +11,9 @@ Vendored assets are Dialtone 10.11.0. See `assets/VERSION`:
 - `@dialpad/dialtone-icons` 5.5.0
 - `@dialpad/dialtone-tokens` 2.1.2
 
-New ports follow tag `dialtone/v10.7.0`. `DtSlider` follows `dialtone/v10.11.0`. Some older ports still emit Dialtone 9 class names. Both sets are in the vendored CSS.
+New ports follow tag `dialtone/v10.7.0`. `DtSlider` and `DtLoader` follow `dialtone/v10.11.0`. Some older ports still emit Dialtone 9 class names. Both sets are in the vendored CSS.
 
-`DtLoader` still follows `dialtone/v10.7.0` and draws the two-path spinner. Dialtone 10.11.0 defaults that component to four dots. The spinner animation applies only with `d-loader--spinner`, which this port does not add, so the mark does not spin. `DtMotionText` does not emit `slide-in-gradient`. That class is in the 10.11.0 CSS.
+`DtMotionText` does not emit `slide-in-gradient`. That class is in the 10.11.0 CSS.
 
 ## Prerequisites
 

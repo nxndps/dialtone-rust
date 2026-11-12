@@ -572,14 +572,14 @@ pub(crate) fn LoaderExample() -> impl IntoView {
         <Example
             id="loader"
             title="Loader"
-            summary="Indeterminate loader sized by an icon token. This port draws the v10.7 spinner and does not add d-loader--spinner, so it does not spin. An omitted size uses 500."
+            summary="Indeterminate loader. kind defaults to dots. spinner is the circular mark. An omitted size uses 500."
             code=r##"<DtLoader />
     <DtLoader size="200" />
-    <DtLoader size="500" aria_label="Loading schedules" />"##
+    <DtLoader kind="spinner" aria_label="Loading schedules" />"##
         >
             <DtLoader />
             <DtLoader size="200" />
-            <DtLoader size="500" aria_label="Loading schedules" />
+            <DtLoader kind="spinner" aria_label="Loading schedules" />
         </Example>
     }
 }

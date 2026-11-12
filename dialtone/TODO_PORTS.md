@@ -57,7 +57,7 @@ Behavior may already match v10. Confirm against `dialtone/v10.7.0` and name the 
 - [x] `DtDescriptionList` — `description_list.rs`. Follows `dialtone/v10.7.0`. Unknown direction and gap tokens are still emitted.
 - [x] `DtInput` — `input.rs`. Follows `dialtone/v10.7.0`.
 - [x] `DtInputGroup` — `input_group.rs`. Follows `dialtone/v10.7.0`.
-- [x] `DtLoader` — `loader.rs`. Follows `dialtone/v10.7.0`. `size` defaults to `"500"`.
+- [x] `DtLoader` — `loader.rs`. Follows `dialtone/v10.11.0`. `kind` defaults to `dots`. `spinner` adds `d-loader--spinner`. `size` defaults to `"500"`.
 - [x] `DtModal` — `modal.rs`. Follows `dialtone/v10.7.0`. The mapping-editor widths are gone.
 - [x] `DtPopover` — `popover.rs`. Follows `dialtone/v10.7.0`. `tether` defaults to false here. Vue's default is true. `initial_focus` stays `none`. Vue's default is `first`. `transition` stays empty. Vue's default is `fade`.
 - [x] `DtRootLayout` — `root_layout.rs`. Follows `dialtone/v10.7.0`. `fixed` stays false. Vue's default is true.
@@ -67,7 +67,6 @@ Behavior may already match v10. Confirm against `dialtone/v10.7.0` and name the 
 
 The vendored CSS is Dialtone 10.11.0. These stay on the confirmation tag.
 
-- `DtLoader` still draws the v10.7.0 spinner on `div.d-loader`. Dialtone 10.11.0 defaults `kind` to `dots`. The vendored spin runs only with `d-loader--spinner`, so this port does not animate.
 - `DtMotionText` does not emit `slide-in-gradient`. That class is in the 10.11.0 CSS and is not a v10.7.0 mode.
 - `DtPopover` keeps `tether` false, `initial_focus` none, and `transition` empty. Vue's defaults are true, first, and fade.
 - `DtRootLayout` keeps `fixed` false. Vue's default is true.
