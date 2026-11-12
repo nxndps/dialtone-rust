@@ -4,7 +4,10 @@ use leptos::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::HtmlInputElement;
 
-use super::validation::{validation_messages, DtValidationMessage};
+use super::radio::{radio_message_state, radio_messages_view, resolved_validation_state};
+use super::text::{text_classes, TextStyle};
+use super::unique_id;
+use super::validation::DtValidationMessage;
 
 /// Group state read by a slotted [`DtCheckbox`](crate::DtCheckbox).
 #[derive(Clone)]
@@ -25,13 +28,80 @@ fn join_class(parts: impl IntoIterator<Item = impl AsRef<str>>) -> String {
         .join(" ")
 }
 
-fn checkbox_validation_class(state: &str) -> &'static str {
-    match state {
-        "error" => "d-checkbox--error",
-        "warning" => "d-checkbox--warning",
-        "success" => "d-checkbox--success",
-        _ => "",
+fn text_style<'a>(kind: &'a str, size: &'a str, tone: &'a str, strength: &'a str) -> TextStyle<'a> {
+    TextStyle {
+        kind,
+        variant: "",
+        size,
+        family: "",
+        italic: false,
+        tone,
+        align: "",
+        truncate: false,
+        max_lines: 0,
+        numeric: false,
+        wrap: "",
+        text_box_trim: "",
+        strength,
+        density: "",
     }
+}
+
+/// Input class from `CHECKBOX_INPUT_VALIDATION_CLASSES`. `info` is a valid
+/// state and adds no class. An unknown token warns and adds no class.
+pub(crate) fn checkbox_validation_class(state: &str) -> &'static str {
+    match state {
+        "" | "info" => "",
+        "warning" => "d-checkbox--warning",
+        "critical" => "d-checkbox--critical",
+        "positive" => "d-checkbox--positive",
+        other => {
+            leptos::logging::warn!(
+                "[DtCheckbox] validationState \"{other}\" is not warning, critical, positive, or info."
+            );
+            ""
+        }
+    }
+}
+
+pub(crate) fn checkbox_input_class(state: &str, input_class: &str) -> String {
+    join_class([
+        "d-checkbox",
+        checkbox_validation_class(state),
+        input_class,
+    ])
+}
+
+/// `DtText` label classes plus `d-checkbox__copy d-checkbox__label`.
+/// Empty `label_size` is `300`. Empty `label_strength` is `normal`.
+pub(crate) fn checkbox_label_class(
+    label_class: &str,
+    label_size: &str,
+    label_strength: &str,
+    disabled: bool,
+) -> String {
+    let size = if label_size.is_empty() {
+        "300"
+    } else {
+        label_size
+    };
+    let strength = if label_strength.is_empty() {
+        "normal"
+    } else {
+        label_strength
+    };
+    let tone = if disabled { "disabled" } else { "primary" };
+    let text = text_classes(&text_style("label", size, tone, strength));
+    join_class([
+        text.as_str(),
+        label_class,
+        "d-checkbox__copy d-checkbox__label",
+    ])
+}
+
+pub(crate) fn checkbox_description_class(description_class: &str) -> String {
+    let text = text_classes(&text_style("body", "200", "tertiary", ""));
+    join_class([text.as_str(), "d-description", description_class])
 }
 
 /// Next `selectedValues` after one checkbox changes. Dialtone `setGroupValue`.
@@ -45,18 +115,24 @@ pub(crate) fn next_selected(selected: &[String], value: &str, checked: bool) -> 
     next
 }
 
-/// Dialtone Vue `DtCheckbox` (`dialtone/v9.190.0`).
+/// Dialtone Vue `DtCheckbox` (`dialtone/v10.7.0`).
 ///
-/// `checked` is the Vue `modelValue`. Inside [`DtCheckboxGroup`](crate::DtCheckboxGroup),
-/// the checked state comes from `selected_values` and `value`. A click while
-/// `indeterminate` reports unchecked and clears the indeterminate mark.
-/// `messages` use [`DtValidationMessage`].
+/// `checked` is the boolean `modelValue`. `on_change` is `update:modelValue`
+/// and reports that boolean. Inside [`DtCheckboxGroup`](crate::DtCheckboxGroup),
+/// the checked state follows `selected_values`. A click while `indeterminate`
+/// reports unchecked, clears the indeterminate mark, and sets the DOM
+/// `checked` property to false. `show_label` is `showLabel`. `label_size` is
+/// `labelSize`. `label_strength` is `labelStrength`. `validation_state` is
+/// `validationState`. `class` is `$attrs.class` on the root div.
+///
+/// A non-empty `aria_label` wins over the hidden-label fallback. Vue binds
+/// `$attrs` after the `showLabel` aria-label.
 #[component]
 pub fn DtCheckbox(
     /// Checked state (`modelValue`). Ignored for display inside a checkbox group.
     #[prop(optional)]
     checked: Option<Signal<bool>>,
-    /// Called with the next checked value.
+    /// Called with the next checked value (`update:modelValue`).
     #[prop(optional, into)]
     on_change: Option<Callback<bool>>,
     /// Clears on click. The next click reports unchecked.
@@ -69,9 +145,19 @@ pub fn DtCheckbox(
     /// Label text. The default slot replaces it.
     #[prop(optional, into)]
     label: String,
+    /// Show the label (`showLabel`). False sets `aria-label` from `label`.
+    #[prop(optional, default = true)]
+    show_label: bool,
+    /// Label size (`labelSize`). Empty uses `300`.
+    #[prop(optional, default = "")]
+    label_size: &'static str,
+    /// Label weight (`labelStrength`). Empty uses `normal`.
+    #[prop(optional, default = "")]
+    label_strength: &'static str,
     #[prop(optional, into)] description: String,
     #[prop(optional)] disabled: bool,
-    /// `error`, `warning`, or `success` (`validationState`). A group state wins.
+    /// `warning`, `critical`, `positive`, or `info` (`validationState`).
+    /// A group state wins. `info` adds no input class.
     #[prop(optional, default = "")]
     validation_state: &'static str,
     /// Extra class on the input (`inputClass`).
@@ -83,17 +169,19 @@ pub fn DtCheckbox(
     /// Extra class on the description (`descriptionClass`).
     #[prop(optional, into)]
     description_class: String,
-    /// Extra class on the root (`rootClass`).
-    #[prop(optional, into)]
-    root_class: String,
     /// Extra class on the messages (`messagesClass`).
     #[prop(optional, into)]
     messages_class: String,
+    /// Extra class on the root (`$attrs.class`).
+    #[prop(optional, into)]
+    class: String,
     /// Show `messages` (`showMessages`).
     #[prop(optional, default = true)]
     show_messages: bool,
     #[prop(optional)] messages: Vec<DtValidationMessage>,
-    #[prop(optional, into)] aria_label: String,
+    /// Accessible name. Wins over the hidden-label fallback.
+    #[prop(optional, into)]
+    aria_label: String,
     #[prop(optional, into)] on_focus_in: Option<Callback<()>>,
     #[prop(optional, into)] on_focus_out: Option<Callback<()>>,
     /// Description slot (`description`). Replaces `description`.
@@ -104,9 +192,21 @@ pub fn DtCheckbox(
     let checked = checked.unwrap_or_else(|| Signal::derive(|| false));
     let group = use_context::<CheckboxGroupContext>();
     let local_indeterminate = RwSignal::new(indeterminate);
-    let has_label = children.is_some() || !label.is_empty();
-    let has_description = description_slot.is_some() || !description.is_empty();
-    let has_messages = show_messages && !messages.is_empty();
+    let has_label_content = children.is_some() || !label.is_empty();
+    if !has_label_content && aria_label.is_empty() {
+        leptos::logging::warn!(
+            "[Dialtone] A label is required for accessibility. Provide a label prop and use show-label=\"false\" to hide it visually."
+        );
+    }
+    if let Some(group) = group.as_ref() {
+        if !name.is_empty() && group.name.as_ref() != name.as_str() {
+            leptos::logging::warn!(
+                "Component is being used inside a Group. Did you mean to override the name prop value ({}) with ({})? It is recommended to only set name at the Group level.",
+                group.name,
+                name
+            );
+        }
+    }
     let is_disabled = disabled || group.as_ref().is_some_and(|group| group.disabled);
     let input_name = if !name.is_empty() {
         name
@@ -116,19 +216,25 @@ pub fn DtCheckbox(
             .map(|group| group.name.to_string())
             .unwrap_or_default()
     };
-    let state = group
-        .as_ref()
-        .and_then(|group| group.validation_state.clone())
-        .filter(|state| !state.is_empty())
-        .unwrap_or_else(|| validation_state.to_string());
-    let input_class_name = join_class([
-        "d-checkbox",
-        checkbox_validation_class(&state),
-        input_class.as_str(),
-    ]);
-    let label_class_name = join_class([label_class.as_str(), "d-checkbox__copy d-checkbox__label"]);
-    let description_class_name = join_class(["d-description", description_class.as_str()]);
-    let root_class = (!root_class.is_empty()).then_some(root_class);
+    let state = resolved_validation_state(
+        group
+            .as_ref()
+            .and_then(|group| group.validation_state.as_deref()),
+        validation_state,
+    );
+    let input_class_name = checkbox_input_class(&state, &input_class);
+    let label_class_name =
+        checkbox_label_class(&label_class, label_size, label_strength, is_disabled);
+    let description_class_name = checkbox_description_class(&description_class);
+    let root_class = (!class.is_empty()).then_some(class);
+    let name_attr = (!input_name.is_empty()).then_some(input_name);
+    let input_label = if !aria_label.is_empty() {
+        Some(aria_label)
+    } else if !show_label && !label.is_empty() {
+        Some(label.clone())
+    } else {
+        None
+    };
     let value_for_check = value.clone();
     let group_for_check = group.clone();
     let is_checked = move || {
@@ -141,12 +247,17 @@ pub fn DtCheckbox(
             checked.get()
         }
     };
-    let messages_view = validation_messages(
-        messages,
+    let messages_id = unique_id("dt-checkbox-messages");
+    let described_by = (show_messages && !messages.is_empty()).then(|| messages_id.clone());
+    let aria_invalid = (radio_message_state(&messages) == Some("critical")).then_some("true");
+    let messages_view = radio_messages_view(
+        &messages,
         show_messages,
         &messages_class,
         "dt-checkbox-validation-messages",
+        &messages_id,
     );
+    let has_description = description_slot.is_some() || !description.is_empty();
     let description_body = if let Some(slot) = description_slot {
         Some(slot.run().into_any())
     } else if !description.is_empty() {
@@ -154,10 +265,14 @@ pub fn DtCheckbox(
     } else {
         None
     };
-    let label_body = if let Some(children) = children {
-        Some(children().into_any())
-    } else if !label.is_empty() {
-        Some(label.into_any())
+    let label_body = if show_label {
+        if let Some(children) = children {
+            Some(children().into_any())
+        } else if !label.is_empty() {
+            Some(label.into_any())
+        } else {
+            None
+        }
     } else {
         None
     };
@@ -171,12 +286,14 @@ pub fn DtCheckbox(
                     <input
                         type="checkbox"
                         class=input_class_name
-                        name=input_name
+                        name=name_attr
                         value=value.clone()
                         prop:checked=is_checked
                         prop:disabled=is_disabled
                         prop:indeterminate=move || local_indeterminate.get()
-                        aria-label=(!aria_label.is_empty()).then_some(aria_label)
+                        aria-label=input_label
+                        aria-invalid=aria_invalid
+                        aria-describedby=described_by
                         on:change=move |event| {
                             let mut next = event_target_checked(&event);
                             if local_indeterminate.get_untracked() {
@@ -214,22 +331,20 @@ pub fn DtCheckbox(
                         }
                     />
                 </div>
-                {has_label.then(|| view! {
+                {label_body.map(|body| view! {
                     <div class=label_class_name.clone() data-qa="checkbox-label">
-                        {label_body}
+                        {body}
                     </div>
                 })}
             </label>
-            {(has_description || has_messages).then(|| view! {
-                <div class="d-checkbox__messages" data-qa="checkbox-description-messages">
-                    {has_description.then(|| view! {
-                        <div class=description_class_name.clone() data-qa="checkbox-description">
-                            {description_body}
-                        </div>
-                    })}
-                    {messages_view}
-                </div>
-            })}
+            <div class="d-checkbox__messages" data-qa="checkbox-description-messages">
+                {has_description.then(|| view! {
+                    <div class=description_class_name.clone() data-qa="checkbox-description">
+                        {description_body}
+                    </div>
+                })}
+                {messages_view}
+            </div>
         </div>
     }
 }
@@ -240,10 +355,38 @@ mod tests {
 
     #[test]
     fn validation_class_matches_the_vue_map() {
-        assert_eq!(checkbox_validation_class("error"), "d-checkbox--error");
         assert_eq!(checkbox_validation_class("warning"), "d-checkbox--warning");
-        assert_eq!(checkbox_validation_class("success"), "d-checkbox--success");
+        assert_eq!(checkbox_validation_class("critical"), "d-checkbox--critical");
+        assert_eq!(checkbox_validation_class("positive"), "d-checkbox--positive");
+        assert_eq!(checkbox_validation_class("info"), "");
         assert_eq!(checkbox_validation_class(""), "");
+        assert_eq!(checkbox_validation_class("error"), "");
+        assert_eq!(checkbox_validation_class("success"), "");
+    }
+
+    #[test]
+    fn input_class_joins_in_vue_order() {
+        assert_eq!(checkbox_input_class("", ""), "d-checkbox");
+        assert_eq!(
+            checkbox_input_class("critical", "my-custom-class"),
+            "d-checkbox d-checkbox--critical my-custom-class"
+        );
+    }
+
+    #[test]
+    fn label_and_description_classes_follow_dt_text() {
+        assert_eq!(
+            checkbox_label_class("", "", "", false),
+            "d-text d-text-label--md d-text--tone-primary d-text--fw-normal d-checkbox__copy d-checkbox__label"
+        );
+        assert_eq!(
+            checkbox_label_class("my-custom-class", "400", "bold", true),
+            "d-text d-text-label--lg d-text--tone-disabled d-text--fw-bold my-custom-class d-checkbox__copy d-checkbox__label"
+        );
+        assert_eq!(
+            checkbox_description_class("my-custom-class"),
+            "d-text d-text-body--sm d-text--tone-tertiary d-description my-custom-class"
+        );
     }
 
     #[test]

@@ -549,6 +549,9 @@ pub fn DtSkeleton(
     /// `-1` omits the animation style.
     #[prop(optional, default = 1.0)]
     offset: f64,
+    /// Extra class on the root. `DtEmoji` passes `d-icon` and the size class.
+    #[prop(optional, into)]
+    class: String,
     /// Several text lines (`paragraphOption`). Pass `true` for the defaults.
     #[prop(optional, into)]
     paragraph_option: DtSkeletonParagraphOptionProp,
@@ -575,6 +578,13 @@ pub fn DtSkeleton(
     // Text, paragraph, and list lines are a percentage of this element. A
     // centered flex parent would otherwise shrink the element to 0.
     let fills = shape_option.is_none();
+    let root_class = match (fills, class.is_empty()) {
+        (true, true) => "d-w100p".to_string(),
+        (true, false) => format!("d-w100p {class}"),
+        (false, true) => String::new(),
+        (false, false) => class,
+    };
+    let root_class = (!root_class.is_empty()).then_some(root_class);
     let body = if let Some(option) = list_item_option {
         view! {
             <DtSkeletonListItem
@@ -622,7 +632,7 @@ pub fn DtSkeleton(
 
     view! {
         <div
-            class=("d-w100p", fills)
+            class=root_class
             aria-busy="true"
             role="status"
             attr:aria-label=aria_label

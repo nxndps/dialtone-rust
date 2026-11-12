@@ -20,9 +20,10 @@ pub(super) use dialtone::{
     DtResizable, DtResizableHandle, DtResizablePanel, DtRichTextEditor, DtRootLayout, DtScroller,
     DtScrollerItem, DtSegmentedControl, DtSegmentedControlItem, DtSelectMenu, DtSelectOption,
     DtSkeleton, DtSkeletonListItemOption, DtSkeletonParagraphOption, DtSkeletonShapeKind,
-    DtSkeletonShapeOption, DtSkeletonTextOption, DtSplitButton, DtStack, DtTab, DtTabGroup,
-    DtTabGroupChange, DtTabPanel, DtText, DtTextList, DtTextListItem, DtToast, DtToggle, DtTooltip,
-    DtValidationMessage, DtValidationMessages, ILLUSTRATION_NAMES,
+    DtSkeletonShapeOption, DtSkeletonTextOption, DtSlider, DtSliderFill, DtSliderMarks,
+    DtSliderReadout, DtSliderTicks, DtSliderValue, DtSplitButton, DtStack, DtTab, DtTabGroup,
+    DtTabGroupChange, DtTabPanel, DtTable, DtText, DtTextList, DtTextListItem, DtToast, DtToggle,
+    DtTooltip, DtValidationMessage, DtValidationMessages, ILLUSTRATION_NAMES,
 };
 use leptos::html;
 use leptos::prelude::*;
@@ -949,10 +950,12 @@ mod scroller;
 mod segmented_control;
 mod select_menu;
 mod skeleton;
+mod slider;
 mod split_button;
 mod stack;
 mod tab;
 mod tab_group;
+mod table;
 mod text;
 mod text_list;
 mod toast;
@@ -1015,10 +1018,12 @@ pub(crate) use scroller::ScrollerPage;
 pub(crate) use segmented_control::SegmentedControlPage;
 pub(crate) use select_menu::SelectMenuPage;
 pub(crate) use skeleton::SkeletonPage;
+pub(crate) use slider::SliderPage;
 pub(crate) use split_button::SplitButtonPage;
 pub(crate) use stack::StackPage;
 pub(crate) use tab::TabPage;
 pub(crate) use tab_group::TabGroupPage;
+pub(crate) use table::TablePage;
 pub(crate) use text::TextPage;
 pub(crate) use text_list::TextListPage;
 pub(crate) use toast::ToastPage;

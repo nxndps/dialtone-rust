@@ -5,11 +5,11 @@ pub(crate) fn BannerPage() -> impl IntoView {
     provide_context(VariantSource(include_str!("banner.rs")));
     let title = RwSignal::new("Rotation updated".to_string());
     let message = RwSignal::new("The primary on-call changed.".to_string());
-    let kind = RwSignal::new("success");
+    let kind = RwSignal::new("positive");
     let important = RwSignal::new(false);
     let pinned = RwSignal::new(false);
-    let hide_close = RwSignal::new(false);
-    let hide_icon = RwSignal::new(false);
+    let show_close = RwSignal::new(true);
+    let show_icon = RwSignal::new(true);
     let visible = RwSignal::new(true);
     let icon = RwSignal::new("");
     let action = RwSignal::new(String::new());
@@ -25,8 +25,8 @@ pub(crate) fn BannerPage() -> impl IntoView {
                 let kind = kind.get();
                 let important = important.get();
                 let pinned = pinned.get();
-                let hide_close = hide_close.get();
-                let hide_icon = hide_icon.get();
+                let show_close = show_close.get();
+                let show_icon = show_icon.get();
                 if visible.get() {
                     let dialog_class_value = dialog_class.get();
                     let content_id = content_id.get();
@@ -40,19 +40,19 @@ pub(crate) fn BannerPage() -> impl IntoView {
                         }
                     };
                     open_two!(DtBanner {
-                        title=title
+                        header_text=title
                         content_id=content_id
                         kind=kind
                         important=important
                         pinned=pinned
-                        hide_close=hide_close
-                        hide_icon=hide_icon
+                        show_close=show_close
+                        show_icon=show_icon
                         dialog_class=dialog_class_value
                         background_image=background_image
                         background_size=background_size
                         on_close=move || visible.set(false)
                     } {
-                        {message}
+                        {message.clone()}
                     }, icon_slot(icon.get()), icon, action_slot(action.get()), action)
                 } else {
                     view! {
@@ -74,15 +74,15 @@ pub(crate) fn BannerPage() -> impl IntoView {
                 options=vec![
                     ("base", "Base"),
                     ("info", "Info"),
-                    ("success", "Success"),
+                    ("positive", "Positive"),
                     ("warning", "Warning"),
-                    ("error", "Error"),
+                    ("critical", "Critical"),
                 ]
             />
             <SettingCheck label="Important" value=important />
             <SettingCheck label="Pinned" value=pinned />
-            <SettingCheck label="Hide close" value=hide_close />
-            <SettingCheck label="Hide icon" value=hide_icon />
+            <SettingCheck label="Show close" value=show_close />
+            <SettingCheck label="Show icon" value=show_icon />
             <SettingText label="Content id" value=content_id />
             <SettingText label="Background image" value=background_image />
             <SettingText label="Background size" value=background_size />
@@ -90,12 +90,16 @@ pub(crate) fn BannerPage() -> impl IntoView {
     });
     let code = example_panel(move || {
         let mut props = Vec::new();
-        push_str(&mut props, "title", &title.get());
+        push_str(&mut props, "header_text", &title.get());
         push_str(&mut props, "kind", kind.get());
         push_bool(&mut props, "important", important.get());
         push_bool(&mut props, "pinned", pinned.get());
-        push_bool(&mut props, "hide_close", hide_close.get());
-        push_bool(&mut props, "hide_icon", hide_icon.get());
+        if !show_close.get() {
+            props.push(("show_close", "false".to_string()));
+        }
+        if !show_icon.get() {
+            props.push(("show_icon", "false".to_string()));
+        }
         push_str(&mut props, "content_id", &content_id.get());
         push_str(&mut props, "background_image", &background_image.get());
         push_str(&mut props, "background_size", &background_size.get());
@@ -111,7 +115,7 @@ pub(crate) fn BannerPage() -> impl IntoView {
                 ),
             );
         }
-        if !hide_close.get() {
+        if show_close.get() {
             push_expr(&mut props, "on_close", "move || visible.set(false)");
         }
         view_of(&element(
@@ -143,9 +147,9 @@ pub(crate) fn BannerPage() -> impl IntoView {
             <h2>"Variants"</h2>
             <div class="docs-variants">
                 <Variant title="Kinds">
-                    <DtBanner title="Heads up" kind="info" hide_close=true>"Changes apply on the next sync."</DtBanner>
-                    <DtBanner title="Check the mapping" kind="warning" hide_close=true>"Two schedules still need a target."</DtBanner>
-                    <DtBanner title="Sync failed" kind="error" hide_close=true>"PagerDuty returned 503."</DtBanner>
+                    <DtBanner header_text="Heads up" kind="info" show_close=false>"Changes apply on the next sync."</DtBanner>
+                    <DtBanner header_text="Check the mapping" kind="warning" show_close=false>"Two schedules still need a target."</DtBanner>
+                    <DtBanner header_text="Sync failed" kind="critical" show_close=false>"PagerDuty returned 503."</DtBanner>
                 </Variant>
             </div>
         </section>

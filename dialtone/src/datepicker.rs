@@ -311,6 +311,14 @@ fn preferred_locale(locale: &str) -> &str {
     }
 }
 
+/// `Intl` `dateStyle`. The day button uses `"long"`.
+pub fn format_date_style(date: DtDate, locale: &str, style: &str) -> String {
+    let locale = preferred_locale(locale);
+    intl_format(date, locale, |options| {
+        set_opt(options, "dateStyle", style);
+    })
+}
+
 /// Dialtone `formatLong`.
 pub fn format_long(date: DtDate, locale: &str) -> String {
     let locale = preferred_locale(locale);
@@ -482,14 +490,16 @@ fn button_by_id(id: &str) -> Option<HtmlElement> {
         .ok()
 }
 
-/// Dialtone Vue `DtDatepicker` (`dialtone/v9.190.0`).
+/// Dialtone Vue `DtDatepicker` (`dialtone/v10.7.0`).
 ///
 /// The calendar itself, not a popover input. `month` on [`DtDate`] is 1–12.
 /// Pass `selected_date` and write it from `on_select`, or leave it unset and the
 /// component keeps the selection. `on_close` is the Escape `close-datepicker` event.
 /// Aria phrases are the en-US Dialtone strings. Month and weekday text uses `Intl`.
+/// A day button's accessible name uses `dateStyle: "long"`.
 /// Button ids are `{id}-prevYearButton`, `{id}-prevMonthButton`, `{id}-nextMonthButton`,
 /// `{id}-nextYearButton`, and `{id}-day-{index}`. The heading is `{id}-calendar-heading`.
+/// Vue hardcodes those ids. The prefix keeps two calendars from sharing one id.
 #[component]
 pub fn DtDatepicker(
     /// Controlled selection (`selectedDate`). Unset keeps an internal date.
@@ -511,7 +521,9 @@ pub fn DtDatepicker(
     let week_start = week_starts_on % 7;
     let max_date = match (min_date, max_date) {
         (Some(min_date), Some(max_date)) if date_ord(max_date) < date_ord(min_date) => {
-            leptos::logging::warn!("DtDatepicker max_date is before min_date");
+            leptos::logging::warn!(
+                "[DtDatepicker]: maxDate must be after or equal to minDate."
+            );
             None
         }
         _ => max_date,
@@ -618,9 +630,10 @@ pub fn DtDatepicker(
     };
 
     view! {
-        <div class="d-stack d-datepicker d-stack--gap-400" data-qa="dt-stack">
+        <div class="d-stack d-datepicker d-stack--gap-100 d-stack--justify-start" data-qa="dt-stack">
             <div
                 class="d-datepicker__hd"
+                data-qa="dt-datepicker-header"
                 on:keydown=move |event: KeyboardEvent| {
                     let key = event.key();
                     let ids = nav_ids.get_value();
@@ -660,25 +673,27 @@ pub fn DtDatepicker(
                     let month = view_month.get();
                     let locale = locale.get_value();
                     let ids = nav_ids.get_value();
-                    let title = format_month_year(year, month, &locale);
+                    let (prev_month_year, prev_month) = shift_month(year, month, -1);
+                    let (next_month_year, next_month) = shift_month(year, month, 1);
                     let month_name = format_month(year, month, &locale);
+                    let prev_month_name = format_month(prev_month_year, prev_month, &locale);
+                    let next_month_name = format_month(next_month_year, next_month, &locale);
                     let prev_year_label = format!("{CHANGE_TO} {PREVIOUS_YEAR} {}", year - 1);
                     let next_year_label = format!("{CHANGE_TO} {NEXT_YEAR} {}", year + 1);
-                    let prev_month_label = format!("{CHANGE_TO} {PREVIOUS_MONTH} {month_name}");
-                    let next_month_label = format!("{CHANGE_TO} {NEXT_MONTH} {month_name}");
+                    let prev_month_label = format!("{CHANGE_TO} {PREVIOUS_MONTH} {prev_month_name}");
+                    let next_month_label = format!("{CHANGE_TO} {NEXT_MONTH} {next_month_name}");
                     let prev_year_id = ids[0].clone();
                     let prev_month_id = ids[1].clone();
                     let next_month_id = ids[2].clone();
                     let next_year_id = ids[3].clone();
                     view! {
-                        <div class="d-stack d-datepicker__month-year d-stack--row d-stack--gap-300">
-                            <nav class="d-stack d-datepicker__nav d-stack--row d-stack--gap-200">
+                        <div class="d-stack d-datepicker__month-year d-stack--row d-stack--gap-50 d-stack--justify-start" data-qa="dt-stack">
+                            <nav class="d-stack d-datepicker__nav d-stack--row d-stack--gap-25 d-stack--justify-start" data-qa="dt-stack">
                                 <DtTooltip message=PREVIOUS_YEAR placement="top" fallback_placements="top-start,auto">
                                     <DtButton
                                         id=prev_year_id
                                         class="d-datepicker__nav-btn"
-                                        circle=true
-                                        size="xs"
+                                        size="100"
                                         importance="clear"
                                         kind="muted"
                                         disabled=prev_year_disabled(year, month, min_date)
@@ -691,8 +706,7 @@ pub fn DtDatepicker(
                                     <DtButton
                                         id=prev_month_id
                                         class="d-datepicker__nav-btn"
-                                        circle=true
-                                        size="xs"
+                                        size="100"
                                         importance="clear"
                                         kind="muted"
                                         disabled=prev_month_disabled(year, month, min_date)
@@ -702,14 +716,15 @@ pub fn DtDatepicker(
                                     />
                                 </DtTooltip>
                             </nav>
-                            <h2 id=heading_id.get_value() class="d-datepicker__month-year-title">{title}</h2>
-                            <nav class="d-stack d-datepicker__nav d-stack--row d-stack--gap-200">
+                            <div id=heading_id.get_value() class="d-datepicker__month-year-title" data-qa="dt-datepicker-heading">
+                                {month_name} " " {year.to_string()}
+                            </div>
+                            <nav class="d-stack d-datepicker__nav d-stack--row d-stack--gap-25 d-stack--justify-start" data-qa="dt-stack">
                                 <DtTooltip message=NEXT_MONTH placement="top" fallback_placements="top-end,auto">
                                     <DtButton
                                         id=next_month_id
                                         class="d-datepicker__nav-btn"
-                                        circle=true
-                                        size="xs"
+                                        size="100"
                                         importance="clear"
                                         kind="muted"
                                         disabled=next_month_disabled(year, month, max_date)
@@ -722,8 +737,7 @@ pub fn DtDatepicker(
                                     <DtButton
                                         id=next_year_id
                                         class="d-datepicker__nav-btn"
-                                        circle=true
-                                        size="xs"
+                                        size="100"
                                         importance="clear"
                                         kind="muted"
                                         disabled=next_year_disabled(year, month, max_date)
@@ -739,6 +753,7 @@ pub fn DtDatepicker(
             </div>
             <div
                 class="d-datepicker__bd"
+                data-qa="dt-datepicker-body"
                 on:keydown=move |event: KeyboardEvent| {
                     let key = event.key();
                     if key == "Escape" {
@@ -836,6 +851,7 @@ pub fn DtDatepicker(
                             node_ref=table_ref
                             class="d-datepicker__calendar"
                             aria-labelledby=heading
+                            data-qa="dt-datepicker-calendar"
                         >
                             <thead>
                                 <tr>
@@ -844,7 +860,7 @@ pub fn DtDatepicker(
                                         let label = name.clone();
                                         view! {
                                             <th scope="col" class="d-datepicker__cell d-datepicker__cell--header">
-                                                <span class="d-datepicker__weekday" title=title aria-label=label>
+                                                <span class="d-datepicker__weekday" data-qa="dt-datepicker-weekday" title=title aria-label=label>
                                                     {name}
                                                 </span>
                                             </th>
@@ -854,7 +870,7 @@ pub fn DtDatepicker(
                             </thead>
                             <tbody>
                                 {weeks.into_iter().enumerate().map(|(week_index, week)| view! {
-                                    <tr>
+                                    <tr data-qa="dt-datepicker-week">
                                         {week.into_iter().enumerate().map(|(day_index, day)| {
                                             let day_id = format!("{root_id}-day-{}", week_index * 7 + day_index);
                                             let class_name = join_class([
@@ -862,15 +878,18 @@ pub fn DtDatepicker(
                                                 day.disabled.then_some("d-datepicker__day--disabled").unwrap_or(""),
                                                 day.selected.then_some("d-datepicker__day--selected").unwrap_or(""),
                                             ]);
-                                            let label = format!("{SELECT_DAY} {}", format_long(day.date, &locale_name));
+                                            let label = format!(
+                                                "{SELECT_DAY} {}",
+                                                format_date_style(day.date, &locale_name, "long")
+                                            );
                                             let day_number = day.date.day.to_string();
                                             view! {
                                                 <td class="d-datepicker__cell" role="listbox">
                                                     <DtButton
                                                         id=day_id
                                                         class=class_name
-                                                        circle=true
-                                                        size="sm"
+                                                        size="200"
+                                                        kind="muted"
                                                         importance="clear"
                                                         disabled=day.disabled
                                                         aria_selected=day.selected

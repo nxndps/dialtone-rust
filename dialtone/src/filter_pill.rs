@@ -7,6 +7,7 @@ use super::checkbox::DtCheckbox;
 use super::checkbox_group::DtCheckboxGroup;
 use super::dropdown::DtDropdown;
 use super::icon::{DtIconChevronDown, DtIconClose};
+use super::list_item::DtListItem;
 use super::popover::DtPopover;
 use super::stack::{DtStack, StackAt};
 use super::tooltip::DtTooltip;
@@ -138,12 +139,16 @@ fn selected_only(filters: &[DtFilter], name: &str) -> Vec<DtFilter> {
         .collect()
 }
 
-/// Dialtone Vue `DtFilterPill` (staging `a46ac063`).
+/// Dialtone Vue `DtFilterPill` (`dialtone/v10.7.0`).
 ///
-/// The component is not in tag `dialtone/v9.190.0`. `d-filter-pill*` is in the
-/// vendored Dialtone 10 CSS. Dropdown rows stay `li.d-list-item`. That caller was
-/// not migrated to `DtListItem`. `filters` is the Vue `modelValue`. `defer_selection` keeps
-/// checkbox edits in [`DtFilterPillContent::pending`] until Apply.
+/// `d-filter-pill*` is in the vendored Dialtone 10 CSS. `d-filter-pill__icon` is
+/// not. The chevron is the button `end_icon`. Its `data-qa` sits on a wrapper
+/// span because [`DtIcon`](crate::DtIcon) has no `data-qa` prop. Dropdown rows
+/// are [`DtListItem`]. `filters` is the Vue `modelValue`. Clear sets `active`
+/// to false. Vue deletes the property. `defer_selection` keeps checkbox edits
+/// in [`DtFilterPillContent::pending`] until Apply. Anchor wrappers use
+/// `display: contents` so the trigger and the clear button are the pill's flex
+/// items.
 #[component]
 pub fn DtFilterPill(
     /// Filters (`modelValue`).
@@ -402,6 +407,7 @@ pub fn DtFilterPill(
         let tip = start_tip.get_value();
         let button = view! {
             <span
+                style="display: contents"
                 on:click=move |event: MouseEvent| {
                     event.stop_propagation();
                     if !read_only && !disabled {
@@ -437,14 +443,18 @@ pub fn DtFilterPill(
                             size=button_size
                             data_qa="dt-filter-pill__button"
                             importance="outlined"
+                            start_icon=start_icon.get_value()
+                            end_icon=(!read_only).then(|| {
+                                ViewFn::from(move || {
+                                    view! {
+                                        <span class="d-filter-pill__icon" data-qa="dt-filter-pill__icon">
+                                            <DtIconChevronDown size=icon_size />
+                                        </span>
+                                    }
+                                })
+                            })
                         >
-                            {start_icon.get_value().map(|slot| slot.run())}
                             {label_view()}
-                            {(!read_only).then(|| view! {
-                                <span class="d-filter-pill__icon" data-qa="dt-filter-pill__icon">
-                                    <DtIconChevronDown size=icon_size />
-                                </span>
-                            })}
                         </DtButton>
                     }
                 }}
@@ -482,18 +492,17 @@ pub fn DtFilterPill(
                         let selected = filter.active;
                         let name_click = name.clone();
                         view! {
-                            <li
+                            <DtListItem
                                 role="menuitem"
-                                class="d-list-item"
-                                tabindex="0"
-                                aria-selected=if selected { "true" } else { "false" }
-                                on:click=move |_| {
+                                navigation_type="arrow-keys"
+                                selected=selected
+                                on_click=Callback::new(move |_| {
                                     publish(selected_only(&local.get_untracked(), &name_click));
                                     set_open(false);
-                                }
+                                })
                             >
                                 {name}
-                            </li>
+                            </DtListItem>
                         }
                     })
                     .collect_view()
@@ -559,7 +568,7 @@ pub fn DtFilterPill(
                         <DtButton
                             importance="clear"
                             kind="muted"
-                            size="sm"
+                            size="200"
                             data_qa="dt-filter-pill__cancel-button"
                             on_click=cancel_selection
                         >
@@ -567,7 +576,7 @@ pub fn DtFilterPill(
                         </DtButton>
                         <DtButton
                             importance="primary"
-                            size="sm"
+                            size="200"
                             data_qa="dt-filter-pill__apply-button"
                             on_click=apply_selection
                         >
@@ -603,6 +612,7 @@ pub fn DtFilterPill(
                 max_width=popover_max_width.clone()
                 list_class=dropdown_list_class.clone()
                 content_mode=content_mode
+                flatten_anchor=true
                 anchor=anchor
             >
                 {move || content_body.get_value().run()}
@@ -628,6 +638,8 @@ pub fn DtFilterPill(
                 header_class=popover_header_class
                 footer_class=popover_footer_class
                 content_mode=content_mode
+                flatten_anchor=true
+                toggle_on_click=false
                 anchor=anchor
                 nostrip:header=header
                 nostrip:footer=footer_view

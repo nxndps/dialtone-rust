@@ -93,7 +93,7 @@
   --dt-badge-color-border-bulletin-subtle: oklch(0.7 0.25 54.01);
   --dt-badge-color-foreground-ai: oklch(0.7 0.25 54.01);
   --dt-badge-color-foreground-bulletin-subtle: oklch(0.7 0.25 54.01);
-  --dt-badge-color-foreground-success: oklch(0.7 0.25 54.01);
+  --dt-badge-color-foreground-positive: oklch(0.7 0.25 54.01);
   --dt-badge-color-background-ai: oklch(0.7 0.25 54.01);
   --dt-badge-color-background-bulletin-subtle: oklch(0.7 0.25 54.01);
   --dt-badge-color-background-critical: oklch(0.7 0.25 54.01);
@@ -529,6 +529,7 @@
   --dt-button-font-size-sm: var(--dt-font-size-125); /* Small Button text size */
   --dt-button-font-size-xs: var(--dt-font-size-100); /* Extra small Button text size */
   --dt-badge-color-foreground-bulletin: oklch(0.7 0.25 54.01);
+  --dt-badge-color-foreground-success: oklch(0.7 0.25 54.01);
   --dt-badge-color-foreground-default: oklch(0.7 0.25 54.01);
   --dt-badge-color-background-bulletin: oklch(0.7 0.25 54.01);
   --dt-badge-color-background-success: oklch(0.7 0.25 54.01);

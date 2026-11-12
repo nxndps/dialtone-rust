@@ -4,14 +4,16 @@ Leptos 0.8 ports of [Dialtone](https://dialtone.dialpad.com/) Vue components. Th
 
 `view-sync` and `dialtone-demo` are the apps in this workspace that already depend on it. The component list, Vue prop names, and porting rules are in [`AGENTS.md`](AGENTS.md).
 
-Vendored assets are Dialtone 10. See `assets/VERSION`:
+Vendored assets are Dialtone 10.11.0. See `assets/VERSION`:
 
-- `@dialpad/dialtone` 10.7.0
-- `@dialpad/dialtone-css` 9.1.1
-- `@dialpad/dialtone-icons` 5.3.0
-- `@dialpad/dialtone-tokens` 2.0.3
+- `@dialpad/dialtone` 10.11.0
+- `@dialpad/dialtone-css` 9.4.0
+- `@dialpad/dialtone-icons` 5.5.0
+- `@dialpad/dialtone-tokens` 2.1.2
 
-New ports follow tag `dialtone/v10.7.0`. Some older ports still emit Dialtone 9 class names. Both sets are in the vendored CSS.
+New ports follow tag `dialtone/v10.7.0`. `DtSlider` follows `dialtone/v10.11.0`. Some older ports still emit Dialtone 9 class names. Both sets are in the vendored CSS.
+
+`DtLoader` still follows `dialtone/v10.7.0` and draws the two-path spinner. Dialtone 10.11.0 defaults that component to four dots. The spinner animation applies only with `d-loader--spinner`, which this port does not add, so the mark does not spin. `DtMotionText` does not emit `slide-in-gradient`. That class is in the 10.11.0 CSS.
 
 ## Prerequisites
 
@@ -82,7 +84,7 @@ Import the styles in `layer(base)`, in this order. Paths match a package that si
 @source "./index.html";
 ```
 
-`illustrations.css` is only needed for `DtIllustration`. The no-layers stylesheets point font files at `fonts/` beside the built CSS. Trunk copies them there. `view-sync/index.html` and `dialtone-demo/index.html` also copy the asset tree for anything that requests `/dialtone/...`:
+`illustrations.css` is local. The published CSS package does not ship it. It is only needed for `DtIllustration` and the spot SVGs. Published artwork writes `var(--token)` with no fallback. This file matches that attribute and supplies the light-theme color. The no-layers Dialtone stylesheets point font files at `fonts/` beside the built CSS. Trunk copies them there. `view-sync/index.html` and `dialtone-demo/index.html` also copy the asset tree for anything that requests `/dialtone/...`:
 
 ```html
 <link data-trunk rel="tailwind-css" href="tailwind.css" />
@@ -90,13 +92,14 @@ Import the styles in `layer(base)`, in this order. Paths match a package that si
 <link data-trunk rel="copy-dir" href="../dialtone/assets/fonts" data-target-path="fonts" />
 ```
 
-Named icons are inline SVG. You do not fetch `assets/icons` at runtime. `DtEmoji` and `DtEmojiPicker` load JoyPixels PNGs from `static.dialpadcdn.com` unless you change the asset URL.
+The 626 icon SVGs from `@dialpad/dialtone-icons` are vendored in `assets/icons/`. Named icons are inline SVG. A component such as `DtIconPlus` has its path copied into `icon.rs`. `DtIcon` alone only emits the size class, so a name with no child path draws nothing. You do not fetch `assets/icons` at runtime. `DtEmoji` and `DtEmojiPicker` load JoyPixels PNGs from `static.dialpadcdn.com` unless you change the asset URL.
 
 ## Call-site rules
 
 Vue prop names are `camelCase`. Rust props are `snake_case`. A doc comment on the component names the Vue prop when they differ (`contentClass`, `blockEndClass`).
 
-- An optional `Option<T>` prop takes the inner value. Write `subtitle=slot` and `image_alt="Ada Lovelace".to_string()`. `Some(...)` does not type-check.
+- An optional `Option<T>` prop with `#[prop(optional)]` takes the inner value. Write `subtitle=slot` and `image_alt="Ada Lovelace".to_string()`. `Some(...)` does not type-check on those props. `#[prop(optional, into)]` on a callback accepts a closure.
+- `DtButton` `start_icon`, `end_icon`, the block icon slots, `leading`, and `trailing` keep the `Option` (`#[prop(optional_no_strip)]`). So do the matching slots on `DtSplitButton` and `DtFilterPill`. Pass `Some(icon)` or `None`. A `ViewFn` does not coerce to `Option<ViewFn>`.
 - A missing named slot is omitted. Pass `ViewFn` only when the slot has content. Call `slot.run()` is the component's job.
 - A controlled value is usually `Signal<T>` with `#[prop(into)]`, so an `RwSignal<T>` passes directly. `DtToggle` `checked` is that shape. `DtFilterPill` `filters` is not: the caller writes `filters.into()`. Read `.get()` in markup and `.get_untracked()` in an event handler.
 - `as` and `type` are keywords. The prop is `r#as` or `r#type`. The call site writes `r#as="section"` and `r#type="ordered"`.
@@ -122,14 +125,14 @@ view! {
 
 ## What you get
 
-Public components are re-exported from `src/lib.rs`. The table in [`AGENTS.md`](AGENTS.md) is the full list. It includes avatar, badge, banner, box, breadcrumbs, button, card, checkbox, chip, code block, collapsible, combobox, datepicker, description list, dropdown, emoji, empty state, filter pill, hovercard, icon, illustration, image viewer, input, item layout, keyboard shortcut, lazy show, link, list item, loader, modal, mode island, motion text, notice, pagination, popover, presence, progress circle, prose, radio, resizable, rich text editor, root layout, scroller, segmented control, select menu, skeleton, split button, stack, tabs, text, toast, toggle, tooltip, and validation messages.
+Public components are re-exported from `src/lib.rs`. The table in [`AGENTS.md`](AGENTS.md) is the full list. It includes avatar, badge, banner, box, breadcrumbs, button, card, checkbox, chip, code block, collapsible, combobox, datepicker, description list, dropdown, emoji, empty state, filter pill, hovercard, icon, illustration, image viewer, input, item layout, keyboard shortcut, lazy show, link, list item, loader, modal, mode island, motion text, notice, pagination, popover, presence, progress circle, prose, radio, resizable, rich text editor, root layout, scroller, segmented control, select menu, skeleton, slider, split button, stack, table, tabs, text, toast, toggle, tooltip, and validation messages.
 
 `DtSkeletonText`, `DtSkeletonParagraph`, `DtSkeletonShape`, and `DtSkeletonListItem` are options on `DtSkeleton`. `DtRecipeComboboxWithPopover` and `DtRecipeComboboxMultiSelect` are aliases. Placement for tooltip and popover is `dialtone::popper`. There is no Tippy.
 
 Not in this crate:
 
-- The rest of `@dialpad/dialtone-icons`. Use a named icon from the `AGENTS.md` table, or `DtIcon` with a `name` that already has a component.
-- Vue directives: `tooltip`, `scrollbar`, `mode`, `focusgroup`, `focustrap`.
+- The rest of `@dialpad/dialtone-icons`, including vendored `icons/globe.svg`. Use a named icon from the `AGENTS.md` table. `DtIcon` without a path child draws nothing.
+- Vue directives `tooltip`, `scrollbar`, `mode`, `focusgroup`, and `focustrap`. Use `DtTooltip`, `DtBox`, and `DtModeIsland` for those component forms. `DtModal` and `DtImageViewer` trap Tab themselves. There is no reusable focus group or focus trap.
 - Vue Router `to`. A link or button with `href` renders an `<a>`.
 - `DtDropdownList` as its own component.
 

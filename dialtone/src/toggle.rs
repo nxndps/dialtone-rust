@@ -30,8 +30,8 @@ fn state_of(checked: bool, indeterminate: bool) -> ToggleState {
 }
 
 /// `200` and `sm` use `d-toggle--small`. `300` and `md` add no modifier.
-/// The current docs site uses `200` and `300`. Tag `dialtone/v9.190.0` uses `sm` and `md`.
-/// Both map to the same vendored class.
+/// Tag `dialtone/v10.7.0` prefers `200` and `300`. `sm` and `md` are the
+/// deprecated aliases. Both map to the same vendored class.
 pub(crate) fn toggle_size_class(size: &str) -> &'static str {
     match size {
         "200" | "sm" => "d-toggle--small",
@@ -83,13 +83,14 @@ pub(crate) fn next_toggle_checked(state: ToggleState) -> bool {
     }
 }
 
-/// Dialtone Vue `DtToggle`.
+/// Dialtone Vue `DtToggle` (`dialtone/v10.7.0`).
 ///
 /// The [toggle page](https://dialtone.dialpad.com/components/toggle.html) is a
 /// native `button`. `checked` is `modelValue` `true` or `false`.
 /// `indeterminate` is `modelValue` `"mixed"`: role `checkbox`,
 /// `aria-checked="mixed"`, and `d-toggle--indeterminate`. A click on mixed
 /// reports `false`. `size` accepts `200` or `sm`, and `300` or `md`.
+/// The default is `300`.
 /// `show_icon` is `showIcon`. `show_label` is `showLabel`. `toggle_on_click`
 /// is `toggleOnClick`: the click still reports the next value, and the knob
 /// moves even when `checked` stays put. Enter and Space activate the button.
@@ -110,8 +111,8 @@ pub fn DtToggle(
     #[prop(optional, into)]
     aria_label: String,
     #[prop(optional)] disabled: bool,
-    /// `200`/`sm` or `300`/`md` (`size`). Default `md`.
-    #[prop(optional, default = "md")]
+    /// `200`/`sm` or `300`/`md` (`size`). Default `300`.
+    #[prop(optional, default = "300")]
     size: &'static str,
     /// Draw the check or cross inside the knob (`showIcon`).
     #[prop(optional, default = true)]

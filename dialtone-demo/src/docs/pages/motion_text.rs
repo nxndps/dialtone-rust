@@ -135,7 +135,7 @@ pub(crate) fn MotionTextPage() -> impl IntoView {
     view! {
         <section id="playground" class="docs-section">
             <h2>"Playground"</h2>
-            <p class="docs-note">"Gradient in, fade in, and slide in insert a character span on each tick. Leave them unlooped. A loop on those modes lays the line out for as long as the component is mounted. Gradient sweep and shimmer animate a CSS mask and can loop without layout. Reset returns the animation to the start and leaves it there. The default slot is used when Text is empty."</p>
+            <p class="docs-note">"Gradient in, fade in, and slide in insert a character span on each tick. Leave them unlooped. A loop on those modes lays the line out for as long as the component is mounted. Gradient sweep and shimmer animate a CSS mask and can loop without layout. Reset returns the animation to the start and leaves it there. The default slot is used when Text is empty. slide-in-gradient is in the vendored CSS and is not a mode here."</p>
             <Play
                 preview=preview
                 settings=settings

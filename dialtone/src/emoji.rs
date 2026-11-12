@@ -622,12 +622,15 @@ fn join_class(parts: impl IntoIterator<Item = impl AsRef<str>>) -> String {
         .join(" ")
 }
 
-/// Dialtone Vue `DtEmoji` (`dialtone/v9.190.0`).
+/// Dialtone Vue `DtEmoji` (`dialtone/v10.7.0`).
 ///
 /// `code` is a shortcode (`:smile:`) or a unicode character. Sizes `100` and
 /// `200` use the small asset URL. Other sizes use the large URL. Both default
 /// to JoyPixels 9.0 PNG. Set them with [`set_emoji_asset_url_small`] and
 /// [`set_emoji_asset_url_large`]. Custom emoji come from [`set_custom_emoji_json`].
+/// The root is `data-qa="dt-emoji"`. The image is `data-qa="dt-emoji-image"`.
+/// `show_skeleton` draws [`DtSkeleton`](crate::DtSkeleton) at `offset` `0`
+/// with the icon size class until the image loads or errors.
 #[component]
 pub fn DtEmoji(
     /// Shortcode or unicode (`code`).
@@ -653,7 +656,8 @@ pub fn DtEmoji(
     let size_class = icon_size_class(size);
     let root_class = join_class(["d-emoji", "d-icon", size_class]);
     let image_class = join_class(["d-icon", size_class, img_class.as_str()]);
-    let loading = RwSignal::new(emoji.is_some());
+    let skeleton_class = join_class(["d-icon", size_class]);
+    let loading = RwSignal::new(true);
     let (src, label, alt) = if let Some(emoji) = emoji {
         let label = if aria_label.is_empty() {
             emoji.name.clone()
@@ -672,10 +676,12 @@ pub fn DtEmoji(
     let title = label.clone();
     let skeleton_label = label.clone();
     view! {
-        <span class=root_class>
+        <span class=root_class data-qa="dt-emoji">
             <Show when=move || show_skeleton && loading.get()>
                 <DtSkeleton
                     aria_label=skeleton_label.clone()
+                    class=skeleton_class.clone()
+                    offset=0.0
                     shape_option=DtSkeletonShapeOption {
                         shape: DtSkeletonShapeKind::Circle,
                         size: "100%",
@@ -683,6 +689,7 @@ pub fn DtEmoji(
                 />
             </Show>
             <img
+                data-qa="dt-emoji-image"
                 class=image_class.clone()
                 alt=alt.clone()
                 aria-label=label.clone()

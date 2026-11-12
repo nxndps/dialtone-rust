@@ -490,7 +490,7 @@
   --dt-button-font-size-sm: var(--dt-font-size-125); /* Small Button text size */
   --dt-button-font-size-xs: var(--dt-font-size-100); /* Extra small Button text size */
   --dt-badge-color-foreground-bulletin: var(--dt-color-black-50);
-  --dt-badge-color-foreground-success: var(--dt-color-green-1000);
+  --dt-badge-color-foreground-positive: var(--dt-color-green-1000);
   --dt-badge-color-foreground-default: var(--dt-color-black-1000);
   --dt-badge-color-background-bulletin: var(--dt-color-surface-brand-strong);
   --dt-badge-color-background-critical: var(--dt-color-red-200);
@@ -760,6 +760,7 @@
   --dt-checkbox-color-border-unchecked-hover: var(--dt-color-border-bold);
   --dt-checkbox-color-border-unchecked: var(--dt-color-border-moderate);
   --dt-badge-color-border-default: var(--dt-color-border-subtle);
+  --dt-badge-color-foreground-success: var(--dt-badge-color-foreground-positive);
   --dt-badge-color-background-success: var(--dt-badge-color-background-positive);
   --dt-shell-presence-color-offline: var(--dt-presence-color-offline);
   --dt-shell-presence-color-unavailable: var(--dt-presence-color-unavailable);

@@ -234,6 +234,8 @@ fn family_prefixes(id: &str) -> &'static [&'static str] {
         "illustration" => &["d-illustration"],
         "image-viewer" => &["d-image-viewer", "d-modal"],
         "loader" => &["d-loader"],
+        "slider" => &["d-slider", "d-tooltip"],
+        "table" => &["d-table"],
         _ => &[],
     }
 }

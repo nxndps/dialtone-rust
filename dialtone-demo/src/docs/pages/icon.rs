@@ -23,30 +23,33 @@ fn icon_caption(name: &str) -> &'static str {
 }
 
 fn named_icon(name: &str, size: &'static str, class_name: String) -> AnyView {
-    let classed = !class_name.is_empty();
-    match name {
-        "info" => view! { <DtIconInfo size=size /> }.into_any(),
-        "bell" => view! { <DtIconBell size=size /> }.into_any(),
-        "alert" => view! { <DtIconAlertCircle size=size /> }.into_any(),
-        "chevron" => view! { <DtIconChevronDown size=size /> }.into_any(),
-        "left" => view! { <DtIconChevronLeft size=size /> }.into_any(),
-        "right" => view! { <DtIconChevronRight size=size /> }.into_any(),
-        "sparkle" => view! { <DtIconSparkle size=size /> }.into_any(),
-        "plus" => {
-            if classed {
-                view! { <DtIconPlus size=size class=class_name /> }.into_any()
-            } else {
-                view! { <DtIconPlus size=size /> }.into_any()
-            }
+    if class_name.is_empty() {
+        match name {
+            "info" => view! { <DtIconInfo size=size /> }.into_any(),
+            "bell" => view! { <DtIconBell size=size /> }.into_any(),
+            "alert" => view! { <DtIconAlertCircle size=size /> }.into_any(),
+            "chevron" => view! { <DtIconChevronDown size=size /> }.into_any(),
+            "left" => view! { <DtIconChevronLeft size=size /> }.into_any(),
+            "right" => view! { <DtIconChevronRight size=size /> }.into_any(),
+            "sparkle" => view! { <DtIconSparkle size=size /> }.into_any(),
+            "plus" => view! { <DtIconPlus size=size /> }.into_any(),
+            "check" => view! { <DtIconCheck size=size /> }.into_any(),
+            "user" => view! { <DtIconUser size=size /> }.into_any(),
+            _ => view! { <DtIconClose size=size /> }.into_any(),
         }
-        "check" => view! { <DtIconCheck size=size /> }.into_any(),
-        "user" => view! { <DtIconUser /> }.into_any(),
-        _ => {
-            if classed {
-                view! { <DtIconClose size=size class=class_name /> }.into_any()
-            } else {
-                view! { <DtIconClose size=size /> }.into_any()
-            }
+    } else {
+        match name {
+            "info" => view! { <DtIconInfo size=size class=class_name /> }.into_any(),
+            "bell" => view! { <DtIconBell size=size class=class_name /> }.into_any(),
+            "alert" => view! { <DtIconAlertCircle size=size class=class_name /> }.into_any(),
+            "chevron" => view! { <DtIconChevronDown size=size class=class_name /> }.into_any(),
+            "left" => view! { <DtIconChevronLeft size=size class=class_name /> }.into_any(),
+            "right" => view! { <DtIconChevronRight size=size class=class_name /> }.into_any(),
+            "sparkle" => view! { <DtIconSparkle size=size class=class_name /> }.into_any(),
+            "plus" => view! { <DtIconPlus size=size class=class_name /> }.into_any(),
+            "check" => view! { <DtIconCheck size=size class=class_name /> }.into_any(),
+            "user" => view! { <DtIconUser size=size class=class_name /> }.into_any(),
+            _ => view! { <DtIconClose size=size class=class_name /> }.into_any(),
         }
     }
 }
@@ -54,10 +57,9 @@ fn named_icon(name: &str, size: &'static str, class_name: String) -> AnyView {
 #[component]
 pub(crate) fn IconPage() -> impl IntoView {
     provide_context(VariantSource(include_str!("icon.rs")));
-    let size = RwSignal::new("300");
+    let size = RwSignal::new("500");
     let name = RwSignal::new("close");
     let root_class = RwSignal::new(String::new());
-    let class_off = Signal::derive(move || !matches!(name.get(), "close" | "plus"));
     let preview = ViewFn::from(move || {
         view! {
             {move || {
@@ -83,7 +85,7 @@ pub(crate) fn IconPage() -> impl IntoView {
                             </div>
                         </div>
                         <div>
-                            <p class="docs-note">"Fixed at 300"</p>
+                            <p class="docs-note">"Default 500"</p>
                             <div class="demo-icons">
                                 <div class="demo-icon"><DtIconPlus /><span>"Plus"</span></div>
                                 <div class="demo-icon"><DtIconCheck /><span>"Check"</span></div>
@@ -108,6 +110,8 @@ pub(crate) fn IconPage() -> impl IntoView {
                     ("400", "400"),
                     ("500", "500"),
                     ("600", "600"),
+                    ("700", "700"),
+                    ("800", "800"),
                 ]
             />
         }
@@ -148,19 +152,14 @@ pub(crate) fn IconPage() -> impl IntoView {
             "user" => "DtIconUser",
             _ => "DtIconClose",
         };
-        let supports_class = matches!(first, "DtIconClose" | "DtIconPlus");
-        let first_line = if first == "DtIconUser" {
-            element(first, &[], None)
-        } else if supports_class && !class_name.is_empty() {
+        let first_line = if class_name.is_empty() {
+            element(first, &[("size", token.clone())], None)
+        } else {
             element(
                 first,
                 &[("size", token.clone()), ("class", rust_string(&class_name))],
                 None,
             )
-        } else if first == "DtIconPlus" || first == "DtIconCheck" {
-            element(first, &[], None)
-        } else {
-            element(first, &[("size", token.clone())], None)
         };
         let mut lines = vec![first_line];
         for component in [
@@ -189,14 +188,14 @@ pub(crate) fn IconPage() -> impl IntoView {
     });
     let classes = class_panel(vec![ClassField {
         label: "Class",
-        hint: "Extra class on the svg. Close and plus accept it.",
+        hint: "Extra class on the svg.",
         value: root_class,
-        off: Some(class_off),
+        off: None,
     }]);
     view! {
         <section id="playground" class="docs-section">
             <h2>"Playground"</h2>
-            <p class="docs-note">"Close, info, bell, alert, and chevron icons take the size token. Plus, check, and user stay at 300."</p>
+            <p class="docs-note">"The first row uses the size token. An omitted size is 500."</p>
             <Play stack=true preview=preview settings=settings classes=classes code=code />
         </section>
         <section id="variants" class="docs-section">
@@ -221,7 +220,7 @@ pub(crate) fn IconPage() -> impl IntoView {
                         <div class="demo-icon"><DtIconMoreHorizontal /><span>"More horizontal"</span></div>
                     </div>
                 </Variant>
-                <Variant title="Fixed at 300">
+                <Variant title="Default 500">
                     <div class="demo-icons">
                         <div class="demo-icon"><DtIconRefresh /><span>"Refresh"</span></div>
                         <div class="demo-icon"><DtIconSave /><span>"Save"</span></div>

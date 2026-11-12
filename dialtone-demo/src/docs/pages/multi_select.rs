@@ -84,7 +84,7 @@ pub(crate) fn MultiSelectPage() -> impl IntoView {
     let selected_text = RwSignal::new("Voice".to_string());
     let label = RwSignal::new("Products".to_string());
     let description = RwSignal::new(String::new());
-    let size = RwSignal::new("md");
+    let size = RwSignal::new("300");
     let placeholder = RwSignal::new("Select one or start typing");
     let max_selected = RwSignal::new("0");
     let max_message = RwSignal::new(String::new());
@@ -233,7 +233,18 @@ pub(crate) fn MultiSelectPage() -> impl IntoView {
                     ("Add a product", "Add a product"),
                 ]
             />
-            <SettingSelect label="Size" value=size options=vec![("xs", "xs"), ("sm", "sm"), ("md", "md")] />
+            <SettingSelect
+                label="Size"
+                value=size
+                options=vec![
+                    ("100", "100"),
+                    ("200", "200"),
+                    ("300", "300"),
+                    ("xs", "xs"),
+                    ("sm", "sm"),
+                    ("md", "md"),
+                ]
+            />
             <SettingSelect
                 label="Max selected"
                 value=max_selected

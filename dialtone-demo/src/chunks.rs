@@ -13,9 +13,9 @@ use dialtone::{
     DtProgressCircle, DtProse, DtRadio, DtRadioGroup, DtResizable, DtResizableHandle,
     DtResizablePanel, DtRichTextEditor, DtRootLayout, DtScroller, DtScrollerItem,
     DtSegmentedControl, DtSegmentedControlItem, DtSelectMenu, DtSelectOption, DtSkeleton,
-    DtSkeletonParagraphOption, DtSplitButton, DtStack, DtTab, DtTabGroup, DtTabPanel, DtText,
-    DtTextList, DtTextListItem, DtToast, DtToggle, DtTooltip, DtValidationMessage,
-    DtValidationMessages,
+    DtSkeletonParagraphOption, DtSlider, DtSliderValue, DtSplitButton, DtStack, DtTab, DtTabGroup,
+    DtTabPanel, DtTable, DtText, DtTextList, DtTextListItem, DtToast, DtToggle, DtTooltip,
+    DtValidationMessage, DtValidationMessages,
 };
 use leptos::html;
 use leptos::prelude::*;
@@ -441,6 +441,18 @@ chunk!(
     docs = crate::docs::pages::ImageViewerPage,
     thumb = ThumbImageViewer
 );
+chunk!(
+    slider_chunk,
+    catalog = crate::catalog::SliderExample,
+    docs = crate::docs::pages::SliderPage,
+    thumb = ThumbSlider
+);
+chunk!(
+    table_chunk,
+    catalog = crate::catalog::TableExample,
+    docs = crate::docs::pages::TablePage,
+    thumb = ThumbTable
+);
 
 pub async fn load(id: &str, face: u8) -> AnyView {
     match id {
@@ -457,6 +469,7 @@ pub async fn load(id: &str, face: u8) -> AnyView {
         "chip" => chip_chunk(face).await,
         "codeblock" => codeblock_chunk(face).await,
         "description-list" => description_list_chunk(face).await,
+        "table" => table_chunk(face).await,
         "item-layout" => item_layout_chunk(face).await,
         "keyboard-shortcut" => keyboard_shortcut_chunk(face).await,
         "lazy-show" => lazy_show_chunk(face).await,
@@ -495,6 +508,7 @@ pub async fn load(id: &str, face: u8) -> AnyView {
         "radio" => radio_chunk(face).await,
         "radio-group" => radio_group_chunk(face).await,
         "select-menu" => select_chunk(face).await,
+        "slider" => slider_chunk(face).await,
         "toggle" => toggle_chunk(face).await,
         "filter-pill" => filter_pill_chunk(face).await,
         "box" => box_chunk(face).await,
@@ -762,7 +776,7 @@ fn ThumbSkeleton() -> impl IntoView {
 #[component]
 fn ThumbBanner() -> impl IntoView {
     view! {
-        <DtBanner title="Rotation updated" kind="success" hide_close=true>
+        <DtBanner header_text="Rotation updated" kind="positive" show_close=false>
             "The primary on-call changed."
         </DtBanner>
     }
@@ -1170,7 +1184,7 @@ fn ThumbModeIsland() -> impl IntoView {
 #[component]
 fn ThumbValidation() -> impl IntoView {
     view! {
-        <DtValidationMessages validation_messages=vec![DtValidationMessage::error("Choose a product")] />
+        <DtValidationMessages validation_messages=vec![DtValidationMessage::critical("Choose a product")] />
     }
 }
 
@@ -1291,5 +1305,38 @@ fn ThumbFilter() -> impl IntoView {
             label="Channel"
             on_change=move |next| filters.set(next)
         />
+    }
+}
+
+#[component]
+fn ThumbSlider() -> impl IntoView {
+    let volume = RwSignal::new(DtSliderValue::Single(40.0));
+    view! {
+        <DtSlider
+            label="Volume"
+            value=volume
+            on_input=Callback::new(move |next| volume.set(next))
+            style="inline-size: 8rem"
+        />
+    }
+}
+
+#[component]
+fn ThumbTable() -> impl IntoView {
+    view! {
+        <DtTable caption="On call" striped=true>
+            <thead>
+                <tr>
+                    <th>"Name"</th>
+                    <th>"Role"</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>"Ada"</td>
+                    <td>"Primary"</td>
+                </tr>
+            </tbody>
+        </DtTable>
     }
 }

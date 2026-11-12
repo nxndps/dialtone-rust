@@ -1,11 +1,23 @@
 use super::*;
 
+const MODAL_TITLES: &[(&str, &str)] = &[
+    ("Edit mapping", "Edit mapping"),
+    ("Confirm", "Confirm"),
+    ("Schedule", "Schedule"),
+];
+
+const MODAL_KINDS: &[(&str, &str)] = &[("default", "Default"), ("critical", "Critical")];
+
 #[component]
 pub(crate) fn ModalPage() -> impl IntoView {
     provide_context(VariantSource(include_str!("modal.rs")));
     let show = RwSignal::new(false);
     let title = RwSignal::new("Edit mapping");
-    let subtitle = RwSignal::new("Choose a Dialpad target".to_string());
+    let kind = RwSignal::new("default");
+    let modal = RwSignal::new(false);
+    let close_on_click = RwSignal::new(true);
+    let show_close = RwSignal::new(true);
+    let fullscreen = RwSignal::new(false);
     let message = RwSignal::new("This schedule is not mapped yet.".to_string());
     let footer_label = RwSignal::new("Close".to_string());
     let dialog_class = RwSignal::new(String::new());
@@ -13,18 +25,30 @@ pub(crate) fn ModalPage() -> impl IntoView {
         view! {
             <DtButton on_click=move || show.set(true)>"Open modal"</DtButton>
             {move || {
+                let header_text = title.get();
+                let kind = kind.get();
+                let modal = modal.get();
+                let close_on_click = close_on_click.get();
+                let show_close = show_close.get();
+                let fullscreen = fullscreen.get();
+                let dialog_class = dialog_class.get();
                 view! {
                     <DtModal
-                        show=show
-                        on_close=move || show.set(false)
-                        labelled_by="docs-modal-title"
-                        title=title.get()
-                        subtitle=subtitle.get()
-                        dialog_class=dialog_class.get()
+                        open=show
+                        on_open=move |next| show.set(next)
+                        labelled_by_id="docs-modal-title"
+                        header_text=header_text
+                        kind=kind
+                        modal=modal
+                        close_on_click=close_on_click
+                        show_close=show_close
+                        fullscreen=fullscreen
+                        dialog_class=dialog_class
                         footer=ViewFn::from(move || {
-                            let footer_label = footer_label.get();
                             view! {
-                                <DtButton importance="outlined" on_click=move || show.set(false)>{footer_label}</DtButton>
+                                <DtButton importance="outlined" on_click=move || show.set(false)>
+                                    {move || footer_label.get()}
+                                </DtButton>
                             }
                         })
                     >
@@ -36,25 +60,35 @@ pub(crate) fn ModalPage() -> impl IntoView {
     });
     let settings = ViewFn::from(move || {
         view! {
-            <SettingSelect
-                label="Title"
-                value=title
-                options=vec![
-                    ("Edit mapping", "Edit mapping"),
-                    ("Confirm", "Confirm"),
-                    ("Schedule", "Schedule"),
-                ]
-            />
-            <SettingText label="Subtitle" value=subtitle />
-            <SettingText label="Body" value=message />
+            <SettingSelect label="Header" value=title options=MODAL_TITLES.to_vec() />
+            <SettingSelect label="Kind" value=kind options=MODAL_KINDS.to_vec() />
+            <SettingCheck label="Modal" value=modal />
+            <SettingCheck label="Close on click" value=close_on_click />
+            <SettingCheck label="Show close" value=show_close />
+            <SettingCheck label="Fullscreen" value=fullscreen />
         }
     });
     let code = example_panel(move || {
         let mut props = Vec::new();
-        push_expr(&mut props, "show", "open");
-        push_expr(&mut props, "on_close", "move || open.set(false)");
-        push_str(&mut props, "title", title.get());
-        push_str(&mut props, "subtitle", &subtitle.get());
+        push_expr(&mut props, "open", "open");
+        push_expr(&mut props, "on_open", "move |next| open.set(next)");
+        push_str(&mut props, "header_text", title.get());
+        push_str(&mut props, "labelled_by_id", "docs-modal-title");
+        if kind.get() != "default" {
+            push_str(&mut props, "kind", kind.get());
+        }
+        if modal.get() {
+            push_bool(&mut props, "modal", true);
+        }
+        if !close_on_click.get() {
+            props.push(("close_on_click", "false".to_string()));
+        }
+        if !show_close.get() {
+            props.push(("show_close", "false".to_string()));
+        }
+        if fullscreen.get() {
+            push_bool(&mut props, "fullscreen", true);
+        }
         push_str(&mut props, "dialog_class", &dialog_class.get());
         push_expr(
             &mut props,
@@ -74,7 +108,7 @@ pub(crate) fn ModalPage() -> impl IntoView {
     view! {
         <section id="playground" class="docs-section">
             <h2>"Playground"</h2>
-            <p class="docs-note">"The dialog keeps the mapping editor width, at least 800px. The title is one of the port's static strings."</p>
+            <p class="docs-note">"The dialog is a native dialog. The default calls show(), so it is not the top layer. A backdrop click closes when the press and the release are both on the backdrop. close_on_click defaults to true. The CSS max-inline-size is the layout token."</p>
             <Play
                 preview=preview
                 settings=settings
@@ -84,7 +118,7 @@ pub(crate) fn ModalPage() -> impl IntoView {
                 })
                 classes=class_panel(vec![ClassField {
                     label: "Dialog class",
-                    hint: "Extra class on the dialog.",
+                    hint: "Extra class on the dialog panel.",
                     value: dialog_class,
                     off: None,
                 }])
@@ -95,7 +129,7 @@ pub(crate) fn ModalPage() -> impl IntoView {
             <h2>"Variants"</h2>
             <div class="docs-variants">
                 <Variant title="Closed">
-                    <p class="docs-note">"Open the dialog from the playground. Closing it uses the close button, the footer, or the overlay."</p>
+                    <p class="docs-note">"Open the dialog from the playground. The close button, the footer, and a backdrop click can close it."</p>
                 </Variant>
             </div>
         </section>

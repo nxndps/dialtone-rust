@@ -148,7 +148,7 @@ pub fn DtSplitButton(
     #[prop(optional, default = "primary")]
     importance: &'static str,
     /// `default`, `muted`, `critical`, `positive`, `inverted`, or `unstyled`.
-    /// `danger` still emits `d-btn--danger`.
+    /// `danger` warns inside `DtButton` and omits the kind class. `split_button_class` uses that same map, so `danger` adds no modifier here either.
     #[prop(optional, default = "default")]
     kind: &'static str,
     /// Disables both sides (`disabled`).
@@ -665,9 +665,9 @@ mod tests {
         );
         assert_eq!(
             split_button_class(
-                "end", "lg", "danger", "primary", false, true, false, true, ""
+                "end", "lg", "positive", "primary", false, true, false, true, ""
             ),
-            "base-button__button d-btn d-btn--primary d-btn--danger d-btn--lg d-btn--icon-only d-btn--active d-split-btn__end d-split-btn__end--lg"
+            "base-button__button d-btn d-btn--primary d-btn--positive d-btn--lg d-btn--icon-only d-btn--active d-split-btn__end d-split-btn__end--lg"
         );
         assert_eq!(
             split_button_class(

@@ -2,7 +2,11 @@ use leptos::prelude::*;
 
 use super::list_nav::join_class;
 
-const GAPS: &[&str] = &["0", "100", "200", "300", "400", "500", "600"];
+const DIRECTIONS: &[&str] = &["row", "column"];
+const GAPS: &[&str] = &[
+    "0", "1", "25", "50", "75", "100", "125", "150", "175", "200", "250", "300", "350", "400",
+    "450", "500", "525", "550", "600", "650", "700", "750", "800",
+];
 
 /// One `DtDescriptionList` row (`term` / `description`).
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -28,29 +32,29 @@ pub fn description_items_valid(items: &[DtDescriptionListItem]) -> bool {
 }
 
 pub(crate) fn description_list_classes(direction: &str, gap: &str) -> String {
-    let direction = if direction == "column" {
-        "column"
-    } else {
-        "row"
-    };
-    let gap_class = if GAPS.contains(&gap) {
-        format!("d-description-list--gap-{gap}")
-    } else {
-        String::new()
-    };
+    if !DIRECTIONS.contains(&direction) {
+        leptos::logging::warn!("DtDescriptionList direction `{direction}` is not row or column");
+    }
+    if !GAPS.contains(&gap) {
+        leptos::logging::warn!("DtDescriptionList gap `{gap}` is not a stack gap");
+    }
     join_class([
         "d-description-list",
         &format!("d-description-list--{direction}"),
-        gap_class.as_str(),
+        &format!("d-description-list--gap-{gap}"),
     ])
 }
 
-/// Dialtone Vue `DtDescriptionList`.
+/// Dialtone Vue `DtDescriptionList` (`dialtone/v10.7.0`).
 ///
-/// `direction` is `row` (default) or `column`. `row` keeps each term beside
-/// its description (`flex-flow: row wrap`). `column` stacks them
-/// (`d-description-list--column`). `gap` is a Dialtone space token. The
-/// default is `100`, matching Vue. There is no `data-qa` on this component.
+/// `direction` is `row` (default) or `column`. The template still emits
+/// `d-description-list--{direction}` for any other value, and this port warns.
+/// `d-description-list--row` is not in the vendored CSS. `.d-description-list`
+/// is already `flex-flow: row wrap`. `column` stacks the pairs
+/// (`d-description-list--column`). `gap` is a `DtStack` space token, including
+/// `50` and `1`. The default is `100`. An unknown gap warns and is still
+/// emitted. An item with an empty term or description warns. An empty list
+/// does not. There is no `data-qa`.
 #[component]
 pub fn DtDescriptionList(
     /// `row` (default) or `column`.
@@ -67,6 +71,9 @@ pub fn DtDescriptionList(
     description_class: String,
     items: Vec<DtDescriptionListItem>,
 ) -> impl IntoView {
+    if !description_items_valid(&items) {
+        leptos::logging::warn!("DtDescriptionList items need a term and a description");
+    }
     let root_class = description_list_classes(direction, gap);
     let term_class = join_class(["d-description-list__term", term_class.as_str()]);
     let description_class = join_class([
@@ -102,8 +109,12 @@ mod tests {
             "d-description-list d-description-list--column d-description-list--gap-500"
         );
         assert_eq!(
+            description_list_classes("row", "50"),
+            "d-description-list d-description-list--row d-description-list--gap-50"
+        );
+        assert_eq!(
             description_list_classes("sideways", "999"),
-            "d-description-list d-description-list--row"
+            "d-description-list d-description-list--sideways d-description-list--gap-999"
         );
     }
 

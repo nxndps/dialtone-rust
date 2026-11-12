@@ -319,7 +319,7 @@ fn uses_headline_visual(style: &TextStyle<'_>) -> bool {
     }
 }
 
-/// Dialtone `DtText` class list. Staging `Text.vue` (`a46ac063`).
+/// Dialtone `DtText` class list. `Text.vue` at `dialtone/v10.7.0`.
 pub(crate) fn text_classes(style: &TextStyle<'_>) -> String {
     let composition = composition_class(style).unwrap_or_default();
     let font_size = font_size_modifier(style).unwrap_or("");
@@ -402,6 +402,7 @@ fn text_tag(tag: &str, class_name: String, style_attr: Option<String>, body: Any
         "h4" => tag!(h4),
         "h5" => tag!(h5),
         "h6" => tag!(h6),
+        "strong" => tag!(strong),
         "label" => tag!(label),
         "div" => tag!(div),
         other => {
@@ -411,12 +412,11 @@ fn text_tag(tag: &str, class_name: String, style_attr: Option<String>, body: Any
     }
 }
 
-/// Dialtone Vue `DtText`.
+/// Dialtone Vue `DtText` (`dialtone/v10.7.0`).
 ///
-/// Source is staging `Text.vue` (`a46ac063`). Tag `dialtone/v9.190.0` has no
-/// `DtText`. `d-text*` is in the vendored Dialtone 10 CSS.
+/// `d-text*` is in the vendored Dialtone 10 CSS.
 ///
-/// `as` is the element: `span` (default), `p`, `h1`–`h6`, `label`, or `div`.
+/// `as` is the element: `span` (default), `p`, `strong`, `h1`–`h6`, `label`, or `div`.
 /// `variant` is the typography composition. `kind` is the deprecated
 /// composition and is ignored when `variant` is set. `size` is a font-size
 /// token (`50`–`800`) when `variant` is set, or the legacy kind size when
@@ -428,7 +428,7 @@ fn text_tag(tag: &str, class_name: String, style_attr: Option<String>, body: Any
 /// `textBoxTrim`.
 #[component]
 pub fn DtText(
-    /// Element (`as`). Default `span`.
+    /// Element (`as`). Default `span`. `strong` is allowed.
     #[prop(optional, default = "span")]
     r#as: &'static str,
     /// Deprecated composition (`kind`): `headline`, `body`, `label`, or `code`.

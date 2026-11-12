@@ -3,7 +3,8 @@ use leptos::prelude::*;
 fn type_class(kind: &str) -> &'static str {
     match kind {
         "info" => "d-badge--info",
-        "success" => "d-badge--success",
+        // `success` is the v9 name. v10 emits `d-badge--positive` for both.
+        "positive" | "success" => "d-badge--positive",
         "warning" => "d-badge--warning",
         "critical" => "d-badge--critical",
         "bulletin" => "d-badge--bulletin",
@@ -70,11 +71,56 @@ fn badge_classes(
     ])
 }
 
-/// Dialtone Vue `DtBadge` (`dialtone/v9.190.0`).
+/// Vue `validateProps`. The class helper stays quiet so tests can assert the alias.
+fn warn_badge(type_: &str, kind: &str, decoration: &str, subtle: bool, has_icons: bool) {
+    if type_ == "success" {
+        leptos::logging::warn!("DtBadge type `success` is deprecated. Use `positive`.");
+    } else if !matches!(
+        type_,
+        "default" | "info" | "positive" | "warning" | "critical" | "bulletin" | "ai"
+    ) {
+        leptos::logging::warn!(
+            "DtBadge type `{type_}` is not default, info, positive, warning, critical, bulletin, or ai"
+        );
+    }
+    if !matches!(kind, "label" | "count") {
+        leptos::logging::warn!("DtBadge kind `{kind}` is not label or count");
+    }
+    if type_ == "ai" && kind == "count" {
+        leptos::logging::warn!(
+            "DtBadge error: type: 'ai' with kind: 'count' is an invalid combination."
+        );
+    }
+    if type_ != "bulletin" && subtle {
+        leptos::logging::warn!("DtBadge error: subtle can only be used with type 'bulletin'");
+    }
+    if decoration.is_empty() {
+        return;
+    }
+    if kind != "label" || type_ != "default" {
+        leptos::logging::warn!(
+            "DtBadge error: decoration prop can only be used with kind: 'label' and type: 'default'."
+        );
+    }
+    if has_icons {
+        leptos::logging::warn!(
+            "DtBadge error: decoration prop cannot be used with startIcon or endIcon."
+        );
+    }
+    if decoration_class(decoration).is_empty() {
+        leptos::logging::warn!("DtBadge decoration `{decoration}` is not a badge decoration token");
+    }
+}
+
+/// Dialtone Vue `DtBadge` (`dialtone/v10.7.0`).
 ///
-/// `type` is `default`, `info`, `success`, `warning`, `critical`, `bulletin`, or `ai`.
+/// `type` is `default`, `info`, `positive`, `warning`, `critical`, `bulletin`, or `ai`.
+/// `success` is the deprecated alias of `positive` and emits `d-badge--positive`.
 /// `kind` is `label` (default) or `count`. `decoration` is a palette token such as
 /// `purple-400` and is meant for `kind: label` and `type: default` with no icons.
+/// `subtle` only applies to `bulletin`. `ai` with `count` warns.
+/// `start_icon` (`startIcon`) wins over the deprecated `left_icon` (`leftIcon`).
+/// `end_icon` (`endIcon`) wins over `right_icon` (`rightIcon`).
 /// `icon_size` is the token callers should put on slotted icons (default `"200"`).
 #[component]
 pub fn DtBadge(
@@ -96,27 +142,50 @@ pub fn DtBadge(
     /// Extra class on `.d-badge__label` (`labelClass`).
     #[prop(optional, into)]
     label_class: String,
+    /// Extra class on the start icon (`startIconClass`).
+    #[prop(optional, into)]
+    start_icon_class: String,
+    /// Extra class on the end icon (`endIconClass`).
+    #[prop(optional, into)]
+    end_icon_class: String,
     /// Subtle bulletin treatment (`subtle`).
     #[prop(optional)]
     subtle: bool,
     #[prop(optional)] outlined: bool,
-    /// Start icon (`leftIcon`).
+    /// Start icon (`startIcon`). Wins over `left_icon`.
+    #[prop(optional)]
+    start_icon: Option<ViewFn>,
+    /// Deprecated start icon (`leftIcon`).
     #[prop(optional)]
     left_icon: Option<ViewFn>,
-    /// End icon (`rightIcon`).
+    /// End icon (`endIcon`). Wins over `right_icon`.
+    #[prop(optional)]
+    end_icon: Option<ViewFn>,
+    /// Deprecated end icon (`rightIcon`).
     #[prop(optional)]
     right_icon: Option<ViewFn>,
     #[prop(optional)] children: Option<Children>,
 ) -> impl IntoView {
     let _icon_size = icon_size;
+    let start_slot = start_icon.or(left_icon);
+    let end_slot = end_icon.or(right_icon);
+    warn_badge(
+        type_,
+        kind,
+        &decoration,
+        subtle,
+        start_slot.is_some() || end_slot.is_some(),
+    );
     let root = badge_classes(type_, kind, &decoration, subtle, outlined);
     let label = join_class(["d-badge__label", label_class.as_str()]);
+    let start_class = join_class(["d-badge__icon-left", start_icon_class.as_str()]);
+    let end_class = join_class(["d-badge__icon-right", end_icon_class.as_str()]);
     let show_decoration = !decoration.is_empty();
     view! {
         <span class=root data-qa="dt-badge">
             {show_decoration.then(|| view! { <span class="d-badge__decorative"></span> })}
-            {left_icon.map(|slot| view! {
-                <span class="d-badge__icon-left">{slot.run()}</span>
+            {start_slot.map(|slot| view! {
+                <span class=start_class>{slot.run()}</span>
             })}
             <span class=label>
                 {if let Some(children) = children {
@@ -125,8 +194,8 @@ pub fn DtBadge(
                     text.into_any()
                 }}
             </span>
-            {right_icon.map(|slot| view! {
-                <span class="d-badge__icon-right">{slot.run()}</span>
+            {end_slot.map(|slot| view! {
+                <span class=end_class>{slot.run()}</span>
             })}
         </span>
     }
@@ -143,8 +212,12 @@ mod tests {
             "d-badge"
         );
         assert_eq!(
+            badge_classes("positive", "count", "", false, true),
+            "d-badge d-badge--positive d-badge--count d-badge--outlined"
+        );
+        assert_eq!(
             badge_classes("success", "count", "", false, true),
-            "d-badge d-badge--success d-badge--count d-badge--outlined"
+            "d-badge d-badge--positive d-badge--count d-badge--outlined"
         );
         assert_eq!(
             badge_classes("bulletin", "label", "", true, false),
@@ -155,5 +228,6 @@ mod tests {
             "d-badge d-badge--decorate-purple-400"
         );
         assert_eq!(decoration_class("nope"), "");
+        assert_eq!(type_class("ai"), "d-badge--ai");
     }
 }

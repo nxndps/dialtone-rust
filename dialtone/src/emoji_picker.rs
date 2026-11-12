@@ -262,9 +262,9 @@ fn category_emojis(
     }
 }
 
-/// Dialtone Vue `DtEmojiPicker` (`dialtone/v9.190.0`).
+/// Dialtone Vue `DtEmojiPicker` (`dialtone/v10.7.0`).
 ///
-/// Category data is `@dialpad/dialtone-emojis` from that tag. Images use
+/// Category data is `@dialpad/dialtone-emojis` from `dialtone/v9.190.0`. Images use
 /// `https://static.dialpadcdn.com/joypixels/png/unicode/32/`. Search waits
 /// 300ms. `skin_tone` is `Default`, `Light`, `MediumLight`, `Medium`,
 /// `MediumDark`, or `Dark`. Tab buttons show the category label. Vue draws
@@ -441,6 +441,7 @@ pub fn DtEmojiPicker(
     view! {
         <div
             class="d-emoji-picker"
+            data-qa="dt-emoji-picker"
             on:keydown=move |event: KeyboardEvent| {
                 if event.key() == "Escape" {
                     if let Some(callback) = on_close.get_value() {
@@ -449,8 +450,8 @@ pub fn DtEmojiPicker(
                 }
             }
         >
-            <div class="d-emoji-picker--header">
-                <div class="d-emoji-picker__tabset">
+            <div class="d-emoji-picker--header" data-qa="dt-emoji-picker-header">
+                <div class="d-emoji-picker__tabset" data-qa="dt-emoji-picker-tabset">
                     <div class="d-emoji-picker__tabset-list">
                     {move || {
                         let tabs = visible_tabs(!recent_now().is_empty(), !custom_now().is_empty());
@@ -494,10 +495,11 @@ pub fn DtEmojiPicker(
                     </div>
                 </div>
             </div>
-            <div class="d-emoji-picker--body">
+            <div class="d-emoji-picker--body" data-qa="dt-emoji-picker-body">
                 <Show when=move || show_search>
                     <div
                         class="d-emoji-picker__search d-emoji-picker__alignment"
+                        data-qa="dt-emoji-picker-search"
                         on:keydown=move |event: KeyboardEvent| {
                             let key = event.key();
                             if key == "ArrowUp" {
@@ -522,7 +524,6 @@ pub fn DtEmojiPicker(
                             }
                         }
                     >
-                        <DtIconSearch size="200" />
                         <DtInput
                             id=search_id.get_value()
                             value=Signal::derive(move || query.get())
@@ -534,28 +535,31 @@ pub fn DtEmojiPicker(
                             })
                             placeholder="Search..."
                             node_ref=search_ref
+                            start_icon=ViewFn::from(|| view! { <DtIconSearch size="200" /> })
+                            end_icon=ViewFn::from(move || view! {
+                                <Show when=move || !query.get().is_empty()>
+                                    <DtButton
+                                        importance="clear"
+                                        size="100"
+                                        class="d-emoji-picker__search-x-button"
+                                        circle=true
+                                        kind="muted"
+                                        aria_label="Clear search"
+                                        on_click=Callback::new(move |_| {
+                                            query.set(String::new());
+                                            debounced.set(String::new());
+                                            if let Some(input) = search_ref.get() {
+                                                let _ = input.focus();
+                                            }
+                                        })
+                                        icon=ViewFn::from(|| view! { <DtIconClose size="200" /> })
+                                    />
+                                </Show>
+                            })
                         />
-                        <Show when=move || !query.get().is_empty()>
-                            <DtButton
-                                importance="clear"
-                                size="xs"
-                                class="d-emoji-picker__search-x-button"
-                                circle=true
-                                kind="muted"
-                                aria_label="Clear search"
-                                on_click=Callback::new(move |_| {
-                                    query.set(String::new());
-                                    debounced.set(String::new());
-                                    if let Some(input) = search_ref.get() {
-                                        let _ = input.focus();
-                                    }
-                                })
-                                icon=ViewFn::from(|| view! { <DtIconClose size="200" /> })
-                            />
-                        </Show>
                     </div>
                 </Show>
-                <div class="d-emoji-picker__selector">
+                <div class="d-emoji-picker__selector" data-qa="dt-emoji-picker-selector">
                     <div
                         id=list_id.get_value()
                         node_ref=list_ref
@@ -578,12 +582,23 @@ pub fn DtEmojiPicker(
                                 let tabs = visible_tabs(!recent_now().is_empty(), !custom_now().is_empty());
                                 tabs.get(fixed_index.get()).map(|(_, label)| (*label).to_string()).unwrap_or_default()
                             };
-                            view! {
-                                <p class=move || if searching {
-                                    "d-emoji-picker__search-label d-emoji-picker__alignment".to_string()
-                                } else {
-                                    "d-emoji-picker__category d-emoji-picker__alignment".to_string()
-                                }>{label}</p>
+                            if searching {
+                                view! {
+                                    <p
+                                        class="d-emoji-picker__search-label d-emoji-picker__alignment"
+                                        data-qa="dt-emoji-picker-search-results-label"
+                                    >
+                                        {label}
+                                    </p>
+                                }
+                                .into_any()
+                            } else {
+                                view! {
+                                    <div class="d-emoji-picker__category d-emoji-picker__alignment">
+                                        <p data-qa="dt-emoji-picker-sticky-label">{label}</p>
+                                    </div>
+                                }
+                                .into_any()
                             }
                         }}
                         {move || {
@@ -603,6 +618,7 @@ pub fn DtEmojiPicker(
                                     <div
                                         id=category_id
                                         class="d-emoji-picker__alignment"
+                                        data-qa="dt-emoji-picker-group"
                                         data-emoji-category=tab_index.to_string()
                                         style:display=searching.then_some("none")
                                     >
@@ -621,6 +637,7 @@ pub fn DtEmojiPicker(
                                                     <button
                                                         id=button_id
                                                         type="button"
+                                                        data-qa="dt-emoji-picker-emoji"
                                                         aria-label=name.clone()
                                                         on:click=move |event: MouseEvent| {
                                                             select_emoji(emoji_click.clone(), event.shift_key());
@@ -695,6 +712,7 @@ pub fn DtEmojiPicker(
                                                 <button
                                                     id=button_id
                                                     type="button"
+                                                    data-qa="dt-emoji-picker-emoji"
                                                     aria-label=name.clone()
                                                     class=("hover-emoji", index == 0 && hover_first.get())
                                                     on:click=move |event: MouseEvent| {
@@ -736,7 +754,7 @@ pub fn DtEmojiPicker(
                     </div>
                 </div>
             </div>
-            <div class="d-emoji-picker--footer">
+            <div class="d-emoji-picker--footer" data-qa="dt-emoji-picker-footer">
                 <Show when=move || show_add_emoji_button && highlighted.get().is_none()>
                     <DtButton
                         importance="outlined"
@@ -751,7 +769,7 @@ pub fn DtEmojiPicker(
                         "Add emoji"
                     </DtButton>
                 </Show>
-                <div class="d-emoji-picker__data">
+                <div class="d-emoji-picker__data" data-qa="dt-emoji-picker-description">
                     {move || highlighted.get().map(|emoji| {
                         let name = emoji.name.clone();
                         let src = picker_emoji_src(&emoji);
@@ -768,7 +786,11 @@ pub fn DtEmojiPicker(
                     })}
                 </div>
                 <div data-qa="skin-selector">
-                    <div class="d-emoji-picker__skin-list" style:display=move || (!skin_open.get()).then_some("none")>
+                    <div
+                        class="d-emoji-picker__skin-list"
+                        data-qa="dt-emoji-picker-skin-list"
+                        style:display=move || (!skin_open.get()).then_some("none")
+                    >
                         {SKIN_CHOICES.iter().enumerate().map(|(index, (name, code, tone))| {
                             let tone = (*tone).to_string();
                             let tone_selected = tone.clone();
@@ -783,6 +805,7 @@ pub fn DtEmojiPicker(
                                 <button
                                     type="button"
                                     id=format!("{skin_id}-skin-{index}")
+                                    data-qa="dt-emoji-picker-skin-option"
                                     class=("selected", move || skin.get() == tone_selected)
                                     on:click=move |_| {
                                         skin.set(tone_click.clone());
@@ -826,6 +849,7 @@ pub fn DtEmojiPicker(
                                     <button
                                         type="button"
                                         id=format!("{}-skin-current", picker_id.get_value())
+                                        data-qa="dt-emoji-picker-skin-toggle"
                                         aria-label="Change default skin tone"
                                         tabindex="-1"
                                         on:click=move |_| {
@@ -835,7 +859,14 @@ pub fn DtEmojiPicker(
                                             skin_open.update(|open| *open = !*open);
                                         }
                                     >
-                                        <img class="d-icon d-icon--size-500" alt=name.clone() aria-label=name.clone() title=name.clone() src=src />
+                                        <img
+                                            class="d-icon d-icon--size-500"
+                                            alt=name.clone()
+                                            aria-label=name.clone()
+                                            title=name.clone()
+                                            src=src
+                                            data-qa="dt-emoji-picker-skin-image"
+                                        />
                                     </button>
                                 </DtTooltip>
                             }

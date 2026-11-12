@@ -34,6 +34,8 @@ pub(crate) fn summary(id: &str) -> &'static str {
         "scroller" => "Virtual list that mounts the rows near the viewport.",
         "segmented-control" => "A single-choice group of buttons.",
         "select-menu" => "A native select with a label and validation messages.",
+        "slider" => "A controlled number or range along a track.",
+        "table" => "A data table with an optional caption and striped rows.",
         "split-button" => "A main action and a second button for more actions.",
         "stack" => "A column or row of items with gap, alignment, and justification.",
         "tab" => "One v10 tab button. Outside a group, selected is its own state.",
@@ -121,6 +123,11 @@ const DOCS: &[Doc] = &[
         id: "description-list",
         name: "Description list",
         slug: Some("description-list"),
+    },
+    Doc {
+        id: "table",
+        name: "Table",
+        slug: Some("table"),
     },
     Doc {
         id: "item-layout",
@@ -313,6 +320,11 @@ const DOCS: &[Doc] = &[
         slug: Some("select-menu"),
     },
     Doc {
+        id: "slider",
+        name: "Slider",
+        slug: Some("slider"),
+    },
+    Doc {
         id: "toggle",
         name: "Toggle",
         slug: Some("toggle"),
@@ -406,6 +418,7 @@ const GROUPS: &[(&str, &[&str])] = &[
             "chip",
             "codeblock",
             "description-list",
+            "table",
             "item-layout",
             "keyboard-shortcut",
             "lazy-show",
@@ -454,6 +467,7 @@ const GROUPS: &[(&str, &[&str])] = &[
             "radio",
             "radio-group",
             "select-menu",
+            "slider",
             "toggle",
             "filter-pill",
         ],

@@ -1,6 +1,10 @@
-@dialpad/dialtone 10.7.0
-@dialpad/dialtone-css 9.1.1
-@dialpad/dialtone-icons 5.3.0
-@dialpad/dialtone-tokens 2.0.3
+@dialpad/dialtone 10.11.0
+@dialpad/dialtone-css 9.4.0
+@dialpad/dialtone-icons 5.5.0
+@dialpad/dialtone-tokens 2.1.2
 
 no-layers CSS font urls are fonts/ so a bundled stylesheet finds the woff2 files beside itself. The published package uses ../fonts/ from css/no-layers/.
+
+illustrations.css is local, in css/ and css/no-layers/. The published CSS package does not ship it. Published SVGs write var(--token) with no fallback. The local file matches that attribute and supplies the light-theme color.
+
+icons/ is 626 SVGs. icons/globe.svg is new in @dialpad/dialtone-icons 5.5.0. The other icon SVGs match the previous set.

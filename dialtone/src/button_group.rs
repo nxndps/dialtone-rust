@@ -5,7 +5,12 @@ fn alignment_class(alignment: &str) -> &'static str {
         "end" => "d-btn-group--end",
         "space-between" => "d-btn-group--space-between",
         "start" => "d-btn-group--start",
-        _ => "",
+        _ => {
+            leptos::logging::warn!(
+                "DtButtonGroup alignment `{alignment}` is not start, end, or space-between."
+            );
+            ""
+        }
     }
 }
 
@@ -22,9 +27,11 @@ fn button_group_class(alignment: &str) -> String {
     join_class(["d-btn-group", alignment_class(alignment)])
 }
 
-/// Dialtone Vue `DtButtonGroup` (`dialtone/v9.190.0`).
+/// Dialtone Vue `DtButtonGroup` (`dialtone/v10.7.0`).
 ///
-/// `alignment` is `start` (default), `end`, or `space-between`.
+/// `alignment` is `start` (default), `end`, or `space-between`. Any other
+/// value warns and omits the modifier. The root is `role="group"` and
+/// `data-qa="dt-button-group"`.
 #[component]
 pub fn DtButtonGroup(
     /// Button alignment (`alignment`).
@@ -34,7 +41,7 @@ pub fn DtButtonGroup(
 ) -> impl IntoView {
     let class_name = button_group_class(alignment);
     view! {
-        <div class=class_name role="group">
+        <div class=class_name role="group" data-qa="dt-button-group">
             {children()}
         </div>
     }

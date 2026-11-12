@@ -17,9 +17,9 @@ use dialtone::{
     DtResizable, DtResizableHandle, DtResizablePanel, DtRichTextEditor, DtRootLayout, DtScroller,
     DtScrollerItem, DtSegmentedControl, DtSegmentedControlItem, DtSelectMenu, DtSelectOption,
     DtSkeleton, DtSkeletonListItemOption, DtSkeletonParagraphOption, DtSkeletonShapeKind,
-    DtSkeletonShapeOption, DtSplitButton, DtStack, DtTab, DtTabGroup, DtTabGroupChange, DtTabPanel,
-    DtText, DtTextList, DtTextListItem, DtToast, DtToggle, DtTooltip, DtValidationMessage,
-    DtValidationMessages,
+    DtSkeletonShapeOption, DtSlider, DtSliderValue, DtSplitButton, DtStack, DtTab, DtTabGroup,
+    DtTabGroupChange, DtTabPanel, DtTable, DtText, DtTextList, DtTextListItem, DtToast, DtToggle,
+    DtTooltip, DtValidationMessage, DtValidationMessages,
 };
 use leptos::prelude::*;
 
@@ -80,7 +80,7 @@ pub(crate) fn ButtonExample() -> impl IntoView {
             code=r##"<DtButton on_click=move || clicks.update(|n| *n += 1)>
     {move || format!("Clicked {}", clicks.get())}
 </DtButton>
-<DtButton importance="outlined" kind="danger">"Remove"</DtButton>
+<DtButton importance="outlined" kind="critical">"Remove"</DtButton>
 <DtButton
     kind="positive"
     icon=ViewFn::from(|| view! { <DtIconPlus /> })
@@ -94,7 +94,7 @@ pub(crate) fn ButtonExample() -> impl IntoView {
             </DtButton>
             <DtButton importance="outlined">"Outlined"</DtButton>
             <DtButton importance="clear">"Clear"</DtButton>
-            <DtButton importance="outlined" kind="danger">"Remove"</DtButton>
+            <DtButton importance="outlined" kind="critical">"Remove"</DtButton>
             <DtButton kind="positive" icon=ViewFn::from(|| view! { <DtIconPlus /> })>
                 "Add"
             </DtButton>
@@ -212,20 +212,20 @@ pub(crate) fn BadgeExample() -> impl IntoView {
         <Example
             id="badge"
             title="Badge"
-            summary="Label and count badges. Color is the type prop: info, success, warning, critical, bulletin, or ai."
+            summary="Label and count badges. Color is the type prop: info, positive, warning, critical, bulletin, or ai."
             code=r##"<DtBadge text="Info" type_="info" />
-<DtBadge text="3" kind="count" type_="success" />
+<DtBadge text="3" kind="count" type_="positive" />
 <DtBadge text="AI" type_="ai" />"##
         >
             <DtBadge text="Default" />
             <DtBadge text="Info" type_="info" />
-            <DtBadge text="Success" type_="success" />
+            <DtBadge text="Positive" type_="positive" />
             <DtBadge text="Warning" type_="warning" />
             <DtBadge text="Critical" type_="critical" />
             <DtBadge text="Bulletin" type_="bulletin" />
             <DtBadge text="AI" type_="ai" />
             <DtBadge text="3" kind="count" type_="info" />
-            <DtBadge text="Outlined" type_="success" outlined=true />
+            <DtBadge text="Outlined" type_="positive" outlined=true />
         </Example>
     }
 }
@@ -338,7 +338,7 @@ pub(crate) fn ItemLayoutExample() -> impl IntoView {
             code=r##"<DtItemLayout
     left=ViewFn::from(|| view! { <DtAvatar full_name="Ada Lovelace" size="sm" image_src="/assets/images/person.png" image_alt="Ada Lovelace".to_string() /> })
     subtitle=ViewFn::from(|| view! { <span>"Primary"</span> })
-    right=ViewFn::from(|| view! { <DtBadge text="On call" type_="success" /> })
+    right=ViewFn::from(|| view! { <DtBadge text="On call" type_="positive" /> })
 >
     "Ada Lovelace"
 </DtItemLayout>"##
@@ -354,7 +354,7 @@ pub(crate) fn ItemLayoutExample() -> impl IntoView {
                         />
                     })
                     subtitle=ViewFn::from(|| view! { <span>"Primary"</span> })
-                    right=ViewFn::from(|| view! { <DtBadge text="On call" type_="success" /> })
+                    right=ViewFn::from(|| view! { <DtBadge text="On call" type_="positive" /> })
                 >
                     "Ada Lovelace"
                 </DtItemLayout>
@@ -529,11 +529,11 @@ pub(crate) fn BannerExample() -> impl IntoView {
         <Example
             id="banner"
             title="Banner"
-            summary="Kinds are info, success, warning, and error. A banner pins to the top of the viewport. This preview stacks them in the card. Close hides the success banner until it is shown again."
+            summary="Kinds are base, info, positive, warning, and critical. A banner pins to the top of the viewport. This preview stacks them in the card. Close hides the positive banner until it is shown again."
             stack=true
             code=r##"<DtBanner
-    title="Rotation updated"
-    kind="success"
+    header_text="Rotation updated"
+    kind="positive"
     on_close=move || open.set(false)
 >
     "The primary on-call changed."
@@ -541,8 +541,8 @@ pub(crate) fn BannerExample() -> impl IntoView {
         >
             <Show when=move || open.get()>
                 <DtBanner
-                    title="Rotation updated"
-                    kind="success"
+                    header_text="Rotation updated"
+                    kind="positive"
                     on_close=move || open.set(false)
                 >
                     "The primary on-call changed."
@@ -553,13 +553,13 @@ pub(crate) fn BannerExample() -> impl IntoView {
                     "Show banner"
                 </DtButton>
             </Show>
-            <DtBanner title="Heads up" kind="info" hide_close=true>
+            <DtBanner header_text="Heads up" kind="info" show_close=false>
                 "Changes apply on the next sync."
             </DtBanner>
-            <DtBanner title="Check the mapping" kind="warning" hide_close=true>
+            <DtBanner header_text="Check the mapping" kind="warning" show_close=false>
                 "Two schedules still need a Dialpad target."
             </DtBanner>
-            <DtBanner title="Sync failed" kind="error" hide_close=true>
+            <DtBanner header_text="Sync failed" kind="critical" show_close=false>
                 "PagerDuty returned 503."
             </DtBanner>
         </Example>
@@ -572,12 +572,13 @@ pub(crate) fn LoaderExample() -> impl IntoView {
         <Example
             id="loader"
             title="Loader"
-            summary="Spinner sized by an icon token. An omitted size uses 200."
+            summary="Indeterminate loader sized by an icon token. This port draws the v10.7 spinner and does not add d-loader--spinner, so it does not spin. An omitted size uses 500."
             code=r##"<DtLoader />
+    <DtLoader size="200" />
     <DtLoader size="500" aria_label="Loading schedules" />"##
         >
             <DtLoader />
-            <DtLoader size="400" />
+            <DtLoader size="200" />
             <DtLoader size="500" aria_label="Loading schedules" />
         </Example>
     }
@@ -684,23 +685,23 @@ pub(crate) fn ModalExample() -> impl IntoView {
         <Example
             id="modal"
             title="Modal"
-            summary="Opens over the page. This port keeps a wide dialog, at least 800px, from the mapping editor."
+            summary="A native dialog. The default calls show(), so it is not the top layer. A backdrop click closes when the press and the release are both on the backdrop. The width is the layout token."
             code=r##"<DtButton on_click=move || show.set(true)>"Open modal"</DtButton>
 <DtModal
-    show=show
-    on_close=move || show.set(false)
-    labelled_by="demo-modal-title"
-    title="Edit mapping"
+    open=show
+    on_open=move |next| show.set(next)
+    labelled_by_id="demo-modal-title"
+    header_text="Edit mapping"
 >
     <p>"Choose the Dialpad target for this schedule."</p>
 </DtModal>"##
         >
             <DtButton on_click=move || show.set(true)>"Open modal"</DtButton>
             <DtModal
-                show=show
-                on_close=move || show.set(false)
-                labelled_by="demo-modal-title"
-                title="Edit mapping"
+                open=show
+                on_open=move |next| show.set(next)
+                labelled_by_id="demo-modal-title"
+                header_text="Edit mapping"
                 footer=ViewFn::from(move || {
                     view! {
                         <DtButton importance="outlined" on_click=move || show.set(false)>
@@ -837,8 +838,8 @@ pub(crate) fn CheckboxExample() -> impl IntoView {
     checked=required
     on_change=move |next| required.set(next)
     label="Required acknowledgement"
-    validation_state="error"
-    messages=vec![DtValidationMessage::error("Select this to continue")]
+    validation_state="critical"
+    messages=vec![DtValidationMessage::critical("Select this to continue")]
 />"##
         >
             <DtCheckbox
@@ -851,8 +852,8 @@ pub(crate) fn CheckboxExample() -> impl IntoView {
                 checked=Signal::derive(move || required.get())
                 on_change=move |next| required.set(next)
                 label="Required acknowledgement"
-                validation_state="error"
-                messages=vec![DtValidationMessage::error("Select this to continue")]
+                validation_state="critical"
+                messages=vec![DtValidationMessage::critical("Select this to continue")]
             />
         </Example>
     }
@@ -1163,9 +1164,9 @@ pub(crate) fn IconExample() -> impl IntoView {
         <Example
             id="icon"
             title="Icon"
-            summary="Named icons from the port. Close, info, bell, alert, chevron, search, laptop, sun, and moon take a size token. The default is 300."
+            summary="Named icons from the port. An omitted size is 500."
             code=r##"<DtIconInfo />
-    <DtIconClose size="500" />"##
+    <DtIconClose size="200" />"##
         >
             <div class="demo-icons">
                 <IconCell name="Plus"><DtIconPlus /></IconCell>
@@ -1198,7 +1199,7 @@ pub(crate) fn IconExample() -> impl IntoView {
                 <IconCell name="Laptop"><DtIconLaptop2 /></IconCell>
                 <IconCell name="Sun"><DtIconSun /></IconCell>
                 <IconCell name="Moon"><DtIconMoon /></IconCell>
-                <IconCell name="Close 500"><DtIconClose size="500" /></IconCell>
+                <IconCell name="Close 200"><DtIconClose size="200" /></IconCell>
             </div>
         </Example>
     }
@@ -1488,26 +1489,26 @@ pub(crate) fn ValidationMessagesExample() -> impl IntoView {
         <Example
             id="validation-messages"
             title="Validation messages"
-            summary="Error wins over warning and success. Each block below is its own list, so each kind is visible."
+            summary="Critical wins over warning, positive, and info. Each block below is its own list, so each kind is visible."
             stack=true
             code=r##"<DtValidationMessages validation_messages=vec![
-    DtValidationMessage::error("Choose a product"),
+    DtValidationMessage::critical("Choose a product"),
 ] />
 <DtValidationMessages validation_messages=vec![
     DtValidationMessage::warning("This channel is quiet overnight"),
 ] />
 <DtValidationMessages validation_messages=vec![
-    DtValidationMessage::success("Saved"),
+    DtValidationMessage::positive("Saved"),
 ] />"##
         >
             <DtValidationMessages validation_messages=vec![
-                DtValidationMessage::error("Choose a product"),
+                DtValidationMessage::critical("Choose a product"),
             ] />
             <DtValidationMessages validation_messages=vec![
                 DtValidationMessage::warning("This channel is quiet overnight"),
             ] />
             <DtValidationMessages validation_messages=vec![
-                DtValidationMessage::success("Saved"),
+                DtValidationMessage::positive("Saved"),
             ] />
         </Example>
     }
@@ -1781,7 +1782,7 @@ pub(crate) fn StackExample() -> impl IntoView {
             stack=true
             code=r##"<DtStack direction="row" gap="400" align="center">
     <DtBadge text="Voice" type_="info" />
-    <DtBadge text="On call" type_="success" />
+    <DtBadge text="On call" type_="positive" />
     <DtButton size="sm" importance="outlined">"Edit"</DtButton>
 </DtStack>
 <DtStack gap="200">
@@ -1791,7 +1792,7 @@ pub(crate) fn StackExample() -> impl IntoView {
         >
             <DtStack direction="row" gap="400" align="center">
                 <DtBadge text="Voice" type_="info" />
-                <DtBadge text="On call" type_="success" />
+                <DtBadge text="On call" type_="positive" />
                 <DtButton size="sm" importance="outlined">"Edit"</DtButton>
             </DtStack>
             <DtStack gap="200">
@@ -2061,6 +2062,81 @@ pub(crate) fn FilterPillExample() -> impl IntoView {
 }
 
 #[component]
+pub(crate) fn SliderExample() -> impl IntoView {
+    let volume = RwSignal::new(DtSliderValue::Single(40.0));
+    view! {
+        <Example
+            id="slider"
+            title="Slider"
+            summary="A controlled number along a track. on_input writes the next value."
+            stack=true
+            code=r##"let volume = RwSignal::new(DtSliderValue::Single(40.0));
+<DtSlider
+    label="Volume"
+    value=volume
+    on_input=Callback::new(move |next| volume.set(next))
+/>"##
+        >
+            <DtSlider
+                label="Volume"
+                value=volume
+                on_input=Callback::new(move |next| volume.set(next))
+                style="inline-size: 16rem"
+            />
+        </Example>
+    }
+}
+
+#[component]
+pub(crate) fn TableExample() -> impl IntoView {
+    view! {
+        <Example
+            id="table"
+            title="Table"
+            summary="A captioned data table. Striped rows use d-table--striped."
+            stack=true
+            code=r##"<DtTable caption="On call" striped=true>
+    <thead>
+        <tr>
+            <th>"Name"</th>
+            <th>"Role"</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>"Ada Lovelace"</td>
+            <td>"Primary"</td>
+        </tr>
+        <tr>
+            <td>"Grace Hopper"</td>
+            <td>"Secondary"</td>
+        </tr>
+    </tbody>
+</DtTable>"##
+        >
+            <DtTable caption="On call" striped=true>
+                <thead>
+                    <tr>
+                        <th>"Name"</th>
+                        <th>"Role"</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>"Ada Lovelace"</td>
+                        <td>"Primary"</td>
+                    </tr>
+                    <tr>
+                        <td>"Grace Hopper"</td>
+                        <td>"Secondary"</td>
+                    </tr>
+                </tbody>
+            </DtTable>
+        </Example>
+    }
+}
+
+#[component]
 pub fn Catalog() -> impl IntoView {
     let sections = [
         ("breadcrumbs", "Breadcrumbs"),
@@ -2076,6 +2152,7 @@ pub fn Catalog() -> impl IntoView {
         ("chip", "Chip"),
         ("codeblock", "Code block"),
         ("description-list", "Description list"),
+        ("table", "Table"),
         ("item-layout", "Item layout"),
         ("keyboard-shortcut", "Keyboard shortcut"),
         ("lazy-show", "Lazy show"),
@@ -2114,6 +2191,7 @@ pub fn Catalog() -> impl IntoView {
         ("radio", "Radio"),
         ("radio-group", "Radio group"),
         ("select-menu", "Select menu"),
+        ("slider", "Slider"),
         ("toggle", "Toggle"),
         ("filter-pill", "Filter pill"),
         ("box", "Box"),

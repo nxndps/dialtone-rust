@@ -26,7 +26,7 @@ fn has_visible_focus(anchor: Option<HtmlElement>) -> bool {
 fn tooltip_z_index(anchor: Option<HtmlElement>) -> i32 {
     let in_overlay = anchor
         .and_then(|el| {
-            el.closest(".d-modal[aria-hidden=\"false\"], .d-modal:not([aria-hidden]), .d-zi-drawer, [aria-modal=\"true\"]")
+            el.closest(".d-modal[aria-hidden=\"false\"], .d-modal--transparent[aria-hidden=\"false\"], .d-modal[open], .d-modal--transparent[open], .d-zi-drawer, [aria-modal=\"true\"]")
                 .ok()
                 .flatten()
         })
@@ -103,10 +103,33 @@ fn parse_fallbacks(raw: &str) -> Vec<Placement> {
         .collect()
 }
 
-/// Dialtone Vue `DtTooltip`, with headless Tippy/Popper placement.
+fn tooltip_class(arrow: &str, extra: &str, inverted: bool, shown: bool, show_arrow: bool) -> String {
+    let mut parts = vec!["d-tooltip".to_string()];
+    if show_arrow && !arrow.is_empty() {
+        parts.push(arrow.to_string());
+    }
+    if !extra.trim().is_empty() {
+        parts.push(extra.trim().to_string());
+    }
+    if inverted {
+        parts.push("d-tooltip--inverted".to_string());
+    }
+    parts.push(if shown {
+        "d-tooltip--show".to_string()
+    } else {
+        "d-tooltip--hide".to_string()
+    });
+    parts.join(" ")
+}
+
+/// Dialtone Vue `DtTooltip`. Follows `dialtone/v10.7.0`.
 ///
-/// The tooltip is portaled to `document.body` (`appendTo: 'body'`) and positioned
-/// with flip + overflow shift, matching `@popperjs/core` as used by Dialtone.
+/// The tooltip is portaled to `document.body` (`appendTo: 'body'`) unless
+/// `append_to` is `parent`. `root` and an `HTMLElement` warn and use `body`.
+/// A `body` value does not look for an ancestor `dialog`. Placement uses
+/// [`super::popper`], not Tippy. `show` is Vue `open`. `inverted` is deprecated
+/// and still adds `d-tooltip--inverted`. `sticky` `reference` and `popper` are
+/// not separate; true polls. `externalAnchor` is not ported.
 #[component]
 pub fn DtTooltip(
     /// Tooltip id. Auto-generated when omitted.
@@ -118,6 +141,15 @@ pub fn DtTooltip(
     /// Extra classes on the tooltip element (`contentClass` in Vue).
     #[prop(optional, into)]
     content_class: String,
+    /// Extra class on the anchor wrapper (`anchorClass`).
+    #[prop(optional, into)]
+    anchor_class: String,
+    /// Draw the placement arrow (`showArrow`). Default true.
+    #[prop(optional, default = true)]
+    show_arrow: bool,
+    /// `body` (default) or `parent` (`appendTo`).
+    #[prop(optional, default = "body")]
+    append_to: &'static str,
     /// Inverted (light) tooltip surface.
     #[prop(optional)]
     inverted: bool,
@@ -179,6 +211,11 @@ pub fn DtTooltip(
     }));
     let content_class = StoredValue::new(content_class);
     let tooltip_id = StoredValue::new(id);
+    let warned_enabled = StoredValue::new(false);
+    if append_to != "body" && append_to != "parent" {
+        leptos::logging::warn!("DtTooltip append_to `{append_to}` is not body or parent; using body");
+    }
+    let append_inline = append_to == "parent";
 
     let clear_timer = move || {
         in_timer.try_update_value(|slot| {
@@ -218,6 +255,23 @@ pub fn DtTooltip(
 
     Effect::new(move |_| {
         if !enabled {
+            if show.get().is_some()
+                && warned_enabled
+                    .try_update_value(|warned| {
+                        if *warned {
+                            false
+                        } else {
+                            *warned = true;
+                            true
+                        }
+                    })
+                    .unwrap_or(false)
+            {
+                leptos::logging::warn!(
+                    "Tooltip: You cannot use both the enabled and open props at the same time."
+                );
+                leptos::logging::warn!("The open prop will be ignored.");
+            }
             set_shown(false);
             return;
         }
@@ -336,6 +390,53 @@ pub fn DtTooltip(
     });
 
     let flatten_style = flatten.then_some("display: contents");
+    let bubble = StoredValue::new(ViewFn::from(move || {
+        view! {
+            <div
+                node_ref=tooltip_ref
+                id=tooltip_id.get_value()
+                class=move || {
+                    let computed = coords.get();
+                    let arrow = computed
+                        .map(|c| c.placement.arrow_class())
+                        .unwrap_or(preferred.arrow_class());
+                    let extra = content_class.get_value();
+                    let visible = computed.is_some_and(|c| !c.hidden);
+                    tooltip_class(&arrow, &extra, inverted, visible, show_arrow)
+                }
+                role="tooltip"
+                data-qa="dt-tooltip"
+                attr:data-placement=move || {
+                    coords
+                        .get()
+                        .map(|c| c.placement.as_str())
+                        .unwrap_or(placement)
+                }
+                style=move || {
+                    let z = tooltip_z_index(
+                        anchor_ref.get().map(|el| el.unchecked_into::<HtmlElement>()),
+                    );
+                    let extra = style.get().unwrap_or_default();
+                    let fade = if transition {
+                        String::new()
+                    } else {
+                        "transition:none;".to_string()
+                    };
+                    match coords.get() {
+                        Some(c) => format!(
+                            "position:fixed;top:{}px;left:{}px;bottom:auto;right:auto;transform:none;z-index:{z};--dt-tooltip-arrow:{}px;{fade}{extra}",
+                            c.y, c.x, c.arrow_offset
+                        ),
+                        None => format!(
+                            "position:fixed;top:0;left:0;visibility:hidden;pointer-events:none;z-index:{z};{fade}{extra}"
+                        ),
+                    }
+                }
+            >
+                {move || tooltip_body.with_value(|body| body.run())}
+            </div>
+        }
+    }));
     view! {
         <div
             data-qa="dt-tooltip-container"
@@ -344,6 +445,7 @@ pub fn DtTooltip(
         >
             <span
                 node_ref=anchor_ref
+                class=(!anchor_class.is_empty()).then_some(anchor_class)
                 data-qa="dt-tooltip-anchor"
                 style=flatten_style
                 on:mouseenter=move |_| {
@@ -394,60 +496,31 @@ pub fn DtTooltip(
             </span>
         </div>
         <Show when=move || internal_show.get()>
-            <Portal>
-                <div
-                    node_ref=tooltip_ref
-                    id=tooltip_id.get_value()
-                    class=move || {
-                        let computed = coords.get();
-                        let arrow = computed
-                            .map(|c| c.placement.arrow_class())
-                            .unwrap_or(preferred.arrow_class());
-                        let extra = content_class.get_value();
-                        let mut class = format!("d-tooltip d-tooltip--popper {arrow} {extra}");
-                        if inverted {
-                            class.push_str(" d-tooltip--inverted");
-                        }
-                        let visible = computed.is_some_and(|c| !c.hidden);
-                        if visible {
-                            class.push_str(" d-tooltip--show");
-                        } else {
-                            class.push_str(" d-tooltip--hide");
-                        }
-                        class
-                    }
-                    role="tooltip"
-                    data-qa="dt-tooltip"
-                    attr:data-placement=move || {
-                        coords
-                            .get()
-                            .map(|c| c.placement.as_str())
-                            .unwrap_or(placement)
-                    }
-                    style=move || {
-                        let z = tooltip_z_index(
-                            anchor_ref.get().map(|el| el.unchecked_into::<HtmlElement>()),
-                        );
-                        let extra = style.get().unwrap_or_default();
-                        let fade = if transition {
-                            String::new()
-                        } else {
-                            "transition:none;".to_string()
-                        };
-                        match coords.get() {
-                            Some(c) => format!(
-                                "position:fixed;top:{}px;left:{}px;bottom:auto;right:auto;transform:none;z-index:{z};--dt-tooltip-arrow:{}px;{fade}{extra}",
-                                c.y, c.x, c.arrow_offset
-                            ),
-                            None => format!(
-                                "position:fixed;top:0;left:0;visibility:hidden;pointer-events:none;z-index:{z};{fade}{extra}"
-                            ),
-                        }
-                    }
-                >
-                    {move || tooltip_body.with_value(|body| body.run())}
-                </div>
-            </Portal>
+            {move || {
+                let bubble = bubble.get_value();
+                if append_inline {
+                    bubble.run().into_any()
+                } else {
+                    view! { <Portal>{bubble.run()}</Portal> }.into_any()
+                }
+            }}
         </Show>
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::tooltip_class;
+
+    #[test]
+    fn tooltip_class_keeps_the_arrow_until_show_arrow_is_false() {
+        assert_eq!(
+            tooltip_class("d-tooltip__arrow-tippy--top", "extra", true, true, true),
+            "d-tooltip d-tooltip__arrow-tippy--top extra d-tooltip--inverted d-tooltip--show"
+        );
+        assert_eq!(
+            tooltip_class("d-tooltip__arrow-tippy--top", "", false, false, false),
+            "d-tooltip d-tooltip--hide"
+        );
     }
 }

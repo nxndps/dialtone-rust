@@ -299,10 +299,11 @@ fn on_segment_key(
     }
 }
 
-/// Dialtone Vue `DtSegmentedControl` (staging `a46ac063`).
+/// Dialtone Vue `DtSegmentedControl` (`dialtone/v10.7.0`).
 ///
-/// Absent from tag `dialtone/v9.190.0`. `d-segmented-control*` is in the
-/// vendored Dialtone 10 CSS. `show_indicator_transition` is accepted and does not animate.
+/// `d-segmented-control*` is in the vendored Dialtone 10 CSS, including the
+/// indicator custom properties. `show_indicator_transition` is accepted and
+/// does not animate.
 ///
 /// The root is [`DtStack`] with `data-qa="dt-segmented-control"`. `value` /
 /// `on_change` are Vue `modelValue`, `update:modelValue`, and `change`.
@@ -345,7 +346,7 @@ pub fn DtSegmentedControl(
     /// Default label class for items (`labelClass`).
     #[prop(optional, into)]
     label_class: String,
-    /// Accepted. The indicator animation waits until segmented CSS is vendored (`showIndicatorTransition`).
+    /// Accepted. The `::after` indicator is not animated (`showIndicatorTransition`).
     #[prop(optional, default = true)]
     show_indicator_transition: bool,
     children: Children,
@@ -426,10 +427,12 @@ pub fn DtSegmentedControl(
     }
 }
 
-/// Dialtone Vue `DtSegmentedControlItem` (staging `a46ac063`).
+/// Dialtone Vue `DtSegmentedControlItem` (`dialtone/v10.7.0`).
 ///
 /// Renders inside [`DtSegmentedControl`]. `label` is the accessible name.
-/// Visible text is the default slot. An item outside the group still renders.
+/// Visible text is the default slot. `start_icon`, `end_icon`, `leading`, and
+/// `trailing` pass through to [`DtButton`]. An item outside the group warns
+/// and still renders.
 #[component]
 pub fn DtSegmentedControlItem(
     /// Selection value matched against the group (`value`).
@@ -524,34 +527,6 @@ pub fn DtSegmentedControlItem(
         label_class
     };
     let label_class_name = join_class(["d-segmented-control__item-label", label_extra.as_str()]);
-    let icon_position = if start_icon.is_some() {
-        "left"
-    } else if end_icon.is_some() {
-        "right"
-    } else {
-        "left"
-    };
-    let show_end_in_label = start_icon.is_some() && end_icon.is_some();
-    let icon = if start_icon.is_some() {
-        start_icon
-    } else {
-        end_icon.clone()
-    };
-    let has_label =
-        children.is_some() || leading.is_some() || trailing.is_some() || show_end_in_label;
-    let label_body = if has_label {
-        Some(
-            view! {
-                {leading.map(|slot| slot.run())}
-                {children.map(|children| children())}
-                {show_end_in_label.then(|| end_icon.map(|slot| slot.run()))}
-                {trailing.map(|slot| slot.run())}
-            }
-            .into_any(),
-        )
-    } else {
-        None
-    };
     let click = Callback::new({
         let item_value = item_value.clone();
         move |_| {
@@ -577,115 +552,59 @@ pub fn DtSegmentedControlItem(
         }
     });
 
-    macro_rules! item_button {
-        (icon = $icon:expr, label = $label:expr) => {
-            view! {
-                <DtButton
-                    class="d-segmented-control__item"
-                    kind="muted"
-                    importance="clear"
-                    size=button_size
-                    role="radio"
-                    data_qa="dt-segmented-control-item"
-                    data_value=item_value.clone()
-                    aria_label=label.clone()
-                    label_class=label_class_name.clone()
-                    icon_position=icon_position
-                    icon=$icon
-                    disabled=is_disabled
-                    active=selected
-                    aria_checked=selected
-                    aria_disabled=is_disabled
-                    tab_index=tab_index
-                    on_click=click
-                    on_focus_in=focus
-                >
-                    {$label}
-                </DtButton>
-            }
-            .into_any()
-        };
-        (label = $label:expr) => {
-            view! {
-                <DtButton
-                    class="d-segmented-control__item"
-                    kind="muted"
-                    importance="clear"
-                    size=button_size
-                    role="radio"
-                    data_qa="dt-segmented-control-item"
-                    data_value=item_value.clone()
-                    aria_label=label.clone()
-                    label_class=label_class_name.clone()
-                    icon_position=icon_position
-                    disabled=is_disabled
-                    active=selected
-                    aria_checked=selected
-                    aria_disabled=is_disabled
-                    tab_index=tab_index
-                    on_click=click
-                    on_focus_in=focus
-                >
-                    {$label}
-                </DtButton>
-            }
-            .into_any()
-        };
-        (icon = $icon:expr) => {
-            view! {
-                <DtButton
-                    class="d-segmented-control__item"
-                    kind="muted"
-                    importance="clear"
-                    size=button_size
-                    role="radio"
-                    data_qa="dt-segmented-control-item"
-                    data_value=item_value.clone()
-                    aria_label=label.clone()
-                    label_class=label_class_name.clone()
-                    icon_position=icon_position
-                    icon=$icon
-                    disabled=is_disabled
-                    active=selected
-                    aria_checked=selected
-                    aria_disabled=is_disabled
-                    tab_index=tab_index
-                    on_click=click
-                    on_focus_in=focus
-                />
-            }
-            .into_any()
-        };
-        () => {
-            view! {
-                <DtButton
-                    class="d-segmented-control__item"
-                    kind="muted"
-                    importance="clear"
-                    size=button_size
-                    role="radio"
-                    data_qa="dt-segmented-control-item"
-                    data_value=item_value.clone()
-                    aria_label=label.clone()
-                    label_class=label_class_name.clone()
-                    icon_position=icon_position
-                    disabled=is_disabled
-                    active=selected
-                    aria_checked=selected
-                    aria_disabled=is_disabled
-                    tab_index=tab_index
-                    on_click=click
-                    on_focus_in=focus
-                />
-            }
-            .into_any()
-        };
-    }
-    match (icon, label_body) {
-        (Some(icon), Some(label_body)) => item_button!(icon = icon, label = label_body),
-        (None, Some(label_body)) => item_button!(label = label_body),
-        (Some(icon), None) => item_button!(icon = icon),
-        (None, None) => item_button!(),
+    match children {
+        Some(children) => view! {
+            <DtButton
+                class="d-segmented-control__item"
+                kind="muted"
+                importance="clear"
+                size=button_size
+                role="radio"
+                data_qa="dt-segmented-control-item"
+                data_value=item_value.clone()
+                aria_label=label.clone()
+                label_class=label_class_name.clone()
+                start_icon=start_icon.clone()
+                end_icon=end_icon.clone()
+                leading=leading.clone()
+                trailing=trailing.clone()
+                disabled=is_disabled
+                active=selected
+                aria_checked=selected
+                aria_disabled=is_disabled
+                tab_index=tab_index
+                on_click=click
+                on_focus_in=focus
+            >
+                {children()}
+            </DtButton>
+        }
+        .into_any(),
+        None => view! {
+            <DtButton
+                class="d-segmented-control__item"
+                kind="muted"
+                importance="clear"
+                size=button_size
+                role="radio"
+                data_qa="dt-segmented-control-item"
+                data_value=item_value
+                aria_label=label
+                label_class=label_class_name
+                start_icon=start_icon
+                end_icon=end_icon
+                leading=leading
+                trailing=trailing
+                disabled=is_disabled
+                active=selected
+                aria_checked=selected
+                aria_disabled=is_disabled
+                tab_index=tab_index
+                on_click=click
+                on_focus_in=focus
+            />
+        }
+        .into_any(),
     }
 }
 

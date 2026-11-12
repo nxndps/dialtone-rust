@@ -3,16 +3,10 @@ use leptos::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{Element, HtmlElement, KeyboardEvent};
 
-use super::icon::{
-    DtIconAlertCircle, DtIconAlertTriangle, DtIconBell, DtIconCheckCircle, DtIconClose, DtIconInfo,
-};
+use super::notice_action::DtNoticeAction;
+use super::notice_content::DtNoticeContent;
+use super::notice_icon::DtNoticeIcon;
 use super::unique_id;
-
-/// Close button label. Dialtone `DIALTONE_CLOSE_BUTTON` in English.
-const CLOSE_LABEL: &str = "Close";
-
-/// Notice icon size in `DtNoticeIcon` (`size="400"`).
-const NOTICE_ICON_SIZE: &str = "400";
 
 const FOCUSABLE: &str = "button,[href],input,select,textarea,details,[tabindex]";
 const FOCUSABLE_ATTRS: &str =
@@ -20,12 +14,15 @@ const FOCUSABLE_ATTRS: &str =
 
 fn kind_class(kind: &str) -> &'static str {
     match kind {
-        "error" => "d-banner--error",
+        "critical" => "d-banner--critical",
         "info" => "d-banner--info",
-        "success" => "d-banner--success",
+        "positive" => "d-banner--positive",
         "warning" => "d-banner--warning",
-        "base" => "d-banner--base",
-        _ => "",
+        "base" | "" => "d-banner--base",
+        _ => {
+            leptos::logging::warn!("[DtBanner] Unknown kind \"{kind}\".");
+            ""
+        }
     }
 }
 
@@ -155,55 +152,163 @@ fn trap_tab(event: &KeyboardEvent, root: &Element) {
     }
 }
 
-fn notice_icon(kind: &str) -> AnyView {
-    match kind {
-        "info" => view! { <DtIconInfo size=NOTICE_ICON_SIZE /> }.into_any(),
-        "success" => view! { <DtIconCheckCircle size=NOTICE_ICON_SIZE /> }.into_any(),
-        "warning" => view! { <DtIconAlertTriangle size=NOTICE_ICON_SIZE /> }.into_any(),
-        "error" => view! { <DtIconAlertCircle size=NOTICE_ICON_SIZE /> }.into_any(),
-        _ => view! { <DtIconBell size=NOTICE_ICON_SIZE /> }.into_any(),
+fn active_element() -> Option<HtmlElement> {
+    web_sys::window()
+        .and_then(|window| window.document())
+        .and_then(|document| document.active_element())
+        .and_then(|element| element.dyn_into::<HtmlElement>().ok())
+}
+
+/// `DtNoticeContent.header` and `children` are optional props whose callers
+/// pass the inner value. Pass each only in the arm where it is set.
+fn render_banner_content(
+    header_text: String,
+    header_id: String,
+    content_id: String,
+    header_class: String,
+    content_class: String,
+    header: Option<ViewFn>,
+    children: Option<ChildrenFn>,
+) -> AnyView {
+    match (header, children) {
+        (Some(header), Some(children)) => view! {
+            <DtNoticeContent
+                header_text=header_text
+                header_id=header_id
+                content_id=content_id
+                header_class=header_class
+                content_class=content_class
+                header=header
+            >
+                {children()}
+            </DtNoticeContent>
+        }
+        .into_any(),
+        (Some(header), None) => view! {
+            <DtNoticeContent
+                header_text=header_text
+                header_id=header_id
+                content_id=content_id
+                header_class=header_class
+                content_class=content_class
+                header=header
+            />
+        }
+        .into_any(),
+        (None, Some(children)) => view! {
+            <DtNoticeContent
+                header_text=header_text
+                header_id=header_id
+                content_id=content_id
+                header_class=header_class
+                content_class=content_class
+            >
+                {children()}
+            </DtNoticeContent>
+        }
+        .into_any(),
+        (None, None) => view! {
+            <DtNoticeContent
+                header_text=header_text
+                header_id=header_id
+                content_id=content_id
+                header_class=header_class
+                content_class=content_class
+            />
+        }
+        .into_any(),
     }
 }
 
-fn run_close(on_close: Option<Callback<()>>) {
-    if let Some(on_close) = on_close {
-        on_close.run(());
+/// `DtNoticeAction.on_close` is an optional prop. Pass the callback only when set.
+fn render_banner_action(
+    show_action: bool,
+    show_close: bool,
+    action_class: String,
+    on_close: Option<Callback<()>>,
+    action: Option<ViewFn>,
+) -> AnyView {
+    match (action, on_close) {
+        (Some(action), Some(on_close)) => view! {
+            <DtNoticeAction
+                show_action=show_action
+                show_close=show_close
+                action_class=action_class
+                on_close=on_close
+            >
+                {action.run()}
+            </DtNoticeAction>
+        }
+        .into_any(),
+        (Some(action), None) => view! {
+            <DtNoticeAction
+                show_action=show_action
+                show_close=show_close
+                action_class=action_class
+            >
+                {action.run()}
+            </DtNoticeAction>
+        }
+        .into_any(),
+        (None, Some(on_close)) => view! {
+            <DtNoticeAction
+                show_action=show_action
+                show_close=show_close
+                action_class=action_class
+                on_close=on_close
+            />
+        }
+        .into_any(),
+        (None, None) => view! {
+            <DtNoticeAction
+                show_action=show_action
+                show_close=show_close
+                action_class=action_class
+            />
+        }
+        .into_any(),
     }
 }
 
-/// Dialtone Vue `DtBanner` (`dialtone/v9.190.0`).
+/// Dialtone Vue `DtBanner` (`dialtone/v10.7.0`).
 ///
-/// `kind` is `base` (default), `error`, `info`, `success`, or `warning`.
-/// `important` sets `role="alertdialog"` and traps Tab inside the banner.
-/// The default slot is the message. `title_override` replaces `title`.
+/// Composes [`DtNoticeIcon`](crate::DtNoticeIcon), [`DtNoticeContent`](crate::DtNoticeContent),
+/// and [`DtNoticeAction`](crate::DtNoticeAction). It does not compose `DtNotice`:
+/// the role and `aria-modal` sit on `.d-banner__dialog`. `kind` is `base`
+/// (default), `critical`, `info`, `positive`, or `warning`. An unknown kind
+/// warns and omits the kind class. `header_text` is `headerText`. The `header`
+/// slot replaces it. `show_close`, `show_icon`, and `show_action` default to
+/// true. `important` sets `role="alertdialog"`, `aria-modal="true"`, traps Tab,
+/// and restores focus on unmount. `aria-labelledby` is set only when there is
+/// a header. The close control comes from `DtNoticeAction` ("Click to close").
 #[component]
 pub fn DtBanner(
-    /// Title element id (`titleId`).
+    /// Header element id (`headerId`). Empty generates one.
     #[prop(optional, into)]
-    title_id: String,
-    /// Message element id (`contentId`).
+    header_id: String,
+    /// Message element id (`contentId`). Empty generates one.
     #[prop(optional, into)]
     content_id: String,
-    /// Header text (`title`). Empty omits the title.
+    /// Header text (`headerText`). Empty omits the title unless `header` is set.
     #[prop(optional, into)]
-    title: String,
-    /// Replaces `title` (`titleOverride`).
+    header_text: String,
+    /// Header slot (`header`). Replaces `headerText`.
     #[prop(optional)]
-    title_override: Option<ViewFn>,
+    header: Option<ViewFn>,
     #[prop(optional)] important: bool,
     #[prop(optional)] pinned: bool,
-    /// `base`, `error`, `info`, `success`, or `warning`.
+    /// `base`, `critical`, `info`, `positive`, or `warning`.
     #[prop(optional, default = "base")]
     kind: &'static str,
-    /// Hides the close button (`hideClose`).
-    #[prop(optional)]
-    hide_close: bool,
-    /// Hides the kind icon (`hideIcon`).
-    #[prop(optional)]
-    hide_icon: bool,
-    /// Hides the action slot (`hideAction`).
-    #[prop(optional)]
-    hide_action: bool,
+    /// Shows the close button (`showClose`).
+    #[prop(optional, default = true)]
+    show_close: bool,
+    /// Shows the kind icon (`showIcon`).
+    #[prop(optional, default = true)]
+    show_icon: bool,
+    /// Shows the action slot (`showAction`).
+    #[prop(optional, default = true)]
+    show_action: bool,
     /// Extra class on `.d-banner__dialog` (`dialogClass`).
     #[prop(optional, into)]
     dialog_class: String,
@@ -213,6 +318,18 @@ pub fn DtBanner(
     /// CSS `background-size` (`backgroundSize`). Default `cover`.
     #[prop(optional, default = "cover")]
     background_size: &'static str,
+    /// Extra class on the icon wrapper (`iconClass`).
+    #[prop(optional, into)]
+    icon_class: String,
+    /// Extra class on the title (`headerClass`).
+    #[prop(optional, into)]
+    header_class: String,
+    /// Extra class on the content (`contentClass`).
+    #[prop(optional, into)]
+    content_class: String,
+    /// Extra class on the actions (`actionClass`).
+    #[prop(optional, into)]
+    action_class: String,
     #[prop(optional, into)] on_close: Option<Callback<()>>,
     /// Custom icon slot (`icon`).
     #[prop(optional)]
@@ -220,12 +337,12 @@ pub fn DtBanner(
     /// Action slot (`action`).
     #[prop(optional)]
     action: Option<ViewFn>,
-    #[prop(optional)] children: Option<Children>,
+    #[prop(optional)] children: Option<ChildrenFn>,
 ) -> impl IntoView {
-    let title_id = if title_id.is_empty() {
+    let header_id = if header_id.is_empty() {
         unique_id("dt-banner-title")
     } else {
-        title_id
+        header_id
     };
     let content_id = if content_id.is_empty() {
         unique_id("dt-banner-content")
@@ -234,23 +351,28 @@ pub fn DtBanner(
     };
     let root_class = banner_class(kind, important, pinned);
     let dialog_class = join_class(["d-banner__dialog", dialog_class.as_str()]);
-    let style = background_style(&background_image, background_size).unwrap_or_default();
+    let style = background_style(&background_image, background_size);
     let role = if important { "alertdialog" } else { "status" };
-    let has_title = !title.is_empty() || title_override.is_some();
+    let has_header = !header_text.is_empty() || header.is_some();
+    let labelled_by = has_header.then(|| header_id.clone());
+    let aria_modal = important.then_some("true");
+    let icon_class_name = join_class([
+        icon_class.as_str(),
+        if has_header {
+            "d-notice__icon--has-title"
+        } else {
+            ""
+        },
+    ]);
     let node_ref = NodeRef::<html::Aside>::new();
 
-    if !hide_close {
-        let previous = web_sys::window()
-            .and_then(|window| window.document())
-            .and_then(|document| document.active_element())
-            .and_then(|element| element.dyn_into::<web_sys::HtmlElement>().ok());
+    if important {
+        let previous = active_element();
         on_cleanup(move || {
             if let Some(element) = previous {
                 let _ = element.focus();
             }
         });
-    }
-    if important {
         let node_ref = node_ref;
         request_animation_frame(move || {
             if let Some(element) = node_ref.get() {
@@ -260,12 +382,13 @@ pub fn DtBanner(
         });
     }
 
-    let close = on_close;
+    let described_by = content_id.clone();
     view! {
         <aside
             node_ref=node_ref
             class=root_class
             style=style
+            data-qa="dt-banner"
             on:keydown=move |event: KeyboardEvent| {
                 if !important {
                     return;
@@ -278,82 +401,38 @@ pub fn DtBanner(
         >
             <div
                 class=dialog_class
+                data-qa="dt-banner-dialog"
                 role=role
-                aria-labelledby=title_id.clone()
-                aria-describedby=content_id.clone()
+                aria-modal=aria_modal
+                aria-labelledby=labelled_by
+                aria-describedby=described_by
             >
-                {(!hide_icon).then(|| {
-                    view! {
-                        <div class="d-notice__icon" aria-hidden="true">
-                            {if let Some(icon) = icon {
-                                icon.run().into_any()
-                            } else {
-                                notice_icon(kind)
-                            }}
-                        </div>
-                    }
-                })}
-                <div class="d-notice__content" data-qa="notice-content">
-                    {has_title.then(|| {
+                {show_icon.then(|| {
+                    let icon_class_name = icon_class_name.clone();
+                    if let Some(icon) = icon {
                         view! {
-                            <p id=title_id.clone() class="d-notice__title" data-qa="notice-content-title">
-                                {if let Some(title_override) = title_override {
-                                    title_override.run().into_any()
-                                } else {
-                                    title.clone().into_any()
-                                }}
-                            </p>
-                        }
-                    })}
-                    <p id=content_id.clone() class="d-notice__message" data-qa="notice-content-message">
-                        {children.map(|children| children())}
-                    </p>
-                </div>
-                <div class="d-notice__actions" data-qa="notice-content-actions">
-                    {(!hide_action).then(|| action.map(|slot| slot.run()))}
-                    {if hide_close {
-                        let close = close;
-                        view! {
-                            <button
-                                type="button"
-                                class="base-button__button d-btn d-btn--primary d-vi-visible-sr"
-                                data-qa="dt-sr-only-close-button"
-                                aria-label=CLOSE_LABEL
-                                title=CLOSE_LABEL
-                                on:click=move |_| run_close(close)
-                                on:keydown=move |event: KeyboardEvent| {
-                                    if event.key() == " " || event.code() == "Space" {
-                                        event.prevent_default();
-                                        event.stop_propagation();
-                                        run_close(close);
-                                    }
-                                }
-                            >
-                                <span data-qa="dt-button-label" class="base-button__label d-btn__label">
-                                    {CLOSE_LABEL}
-                                </span>
-                            </button>
+                            <DtNoticeIcon kind=kind icon_class=icon_class_name>
+                                {icon.run()}
+                            </DtNoticeIcon>
                         }
                         .into_any()
                     } else {
-                        let close = close;
                         view! {
-                            <button
-                                type="button"
-                                class="base-button__button d-btn d-btn--sm d-btn--circle d-btn--icon-only"
-                                data-qa="dt-notice-action-close-button"
-                                aria-label=CLOSE_LABEL
-                                title=CLOSE_LABEL
-                                on:click=move |_| run_close(close)
-                            >
-                                <span data-qa="dt-button-icon" class="base-button__icon d-btn__icon d-btn__icon--left">
-                                    <DtIconClose size="200" />
-                                </span>
-                            </button>
+                            <DtNoticeIcon kind=kind icon_class=icon_class_name />
                         }
                         .into_any()
-                    }}
-                </div>
+                    }
+                })}
+                {render_banner_content(
+                    header_text,
+                    header_id,
+                    content_id,
+                    header_class,
+                    content_class,
+                    header,
+                    children,
+                )}
+                {render_banner_action(show_action, show_close, action_class, on_close, action)}
             </div>
         </aside>
     }
@@ -370,11 +449,14 @@ mod tests {
             "d-banner d-banner--base"
         );
         assert_eq!(
-            banner_class("error", true, true),
-            "d-banner d-banner--error d-banner--important d-banner--pinned"
+            banner_class("critical", true, true),
+            "d-banner d-banner--critical d-banner--important d-banner--pinned"
         );
-        assert_eq!(kind_class("success"), "d-banner--success");
-        assert_eq!(kind_class("critical"), "");
+        assert_eq!(kind_class("positive"), "d-banner--positive");
+        assert_eq!(kind_class("info"), "d-banner--info");
+        assert_eq!(kind_class("warning"), "d-banner--warning");
+        assert_eq!(kind_class("error"), "");
+        assert_eq!(kind_class("success"), "");
     }
 
     #[test]

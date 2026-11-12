@@ -2,7 +2,7 @@ use super::*;
 
 #[component]
 pub(crate) fn ValidationMessagesPage() -> impl IntoView {
-    let kind = RwSignal::new("error");
+    let kind = RwSignal::new("critical");
     let message = RwSignal::new("Choose a product".to_string());
     let id = RwSignal::new(String::new());
     let show_messages = RwSignal::new(true);
@@ -14,8 +14,9 @@ pub(crate) fn ValidationMessagesPage() -> impl IntoView {
                 let show_messages = show_messages.get();
                 let row = match kind.get() {
                     "warning" => DtValidationMessage::warning(message),
-                    "success" => DtValidationMessage::success(message),
-                    _ => DtValidationMessage::error(message),
+                    "positive" => DtValidationMessage::positive(message),
+                    "info" => DtValidationMessage::info(message),
+                    _ => DtValidationMessage::critical(message),
                 };
                 view! {
                     <DtValidationMessages
@@ -33,7 +34,12 @@ pub(crate) fn ValidationMessagesPage() -> impl IntoView {
             <SettingSelect
                 label="Kind"
                 value=kind
-                options=vec![("error", "Error"), ("warning", "Warning"), ("success", "Success")]
+                options=vec![
+                    ("critical", "Critical"),
+                    ("warning", "Warning"),
+                    ("positive", "Positive"),
+                    ("info", "Info"),
+                ]
             />
             <SettingText label="Message" value=message />
             <SettingCheck label="Show messages" value=show_messages />
@@ -44,8 +50,9 @@ pub(crate) fn ValidationMessagesPage() -> impl IntoView {
         push_str(&mut props, "id", &id.get());
         let constructor = match kind.get() {
             "warning" => "warning",
-            "success" => "success",
-            _ => "error",
+            "positive" => "positive",
+            "info" => "info",
+            _ => "critical",
         };
         let body = format!(
             "vec![DtValidationMessage::{constructor}({})]",
@@ -60,7 +67,7 @@ pub(crate) fn ValidationMessagesPage() -> impl IntoView {
     view! {
         <section id="playground" class="docs-section">
             <h2>"Playground"</h2>
-            <p class="docs-note">"When a list mixes kinds, error hides warning and success."</p>
+            <p class="docs-note">"When a list mixes kinds, critical hides warning, positive, and info."</p>
             <Play stack=true preview=preview settings=settings code=code />
         </section>
     }

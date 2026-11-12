@@ -9,17 +9,27 @@ use super::list_nav::{dropdown_padding_class, event_inside, join_class};
 use super::popover::DtPopover;
 use super::unique_id;
 
-/// Dialtone Vue `DtComboboxWithPopover`.
+fn suggestion_list_class(padding: &str, list_class: &str) -> String {
+    join_class([
+        "d-combobox-with-popover__list",
+        dropdown_padding_class(padding),
+        list_class,
+    ])
+}
+
+/// Dialtone Vue `DtComboboxWithPopover`. Follows `dialtone/v10.7.0`.
 ///
 /// `DtRecipeComboboxWithPopover` is the same component. The list renders in a
 /// [`DtPopover`] (`placement` `bottom-start`, offset 4, `padding` `none`,
-/// `modal` false). `show_list` unset opens on input focus when
-/// `has_suggestion_list` is true (the default) and stays open after a select.
-/// Set it false to open only while `value` is non-empty and to close after select.
-/// A set `show_list` signal is controlled through `on_open_change`.
+/// `modal` false, `transition` `fade`, `close_on_outside` false). `show_list`
+/// unset opens on input focus when `has_suggestion_list` is true (the default)
+/// and stays open after a select. Set it false to open only while `value` is
+/// non-empty and to close after select. A set `show_list` signal is controlled
+/// through `on_open_change`. `open_with_arrow_keys` defaults to false.
 ///
 /// The `input` slot replaces the default [`DtInput`]. [`DtCombobox`] writes the
-/// combobox ARIA attributes onto the first `input` in the anchor.
+/// combobox ARIA attributes onto the first `input` in the anchor. Header and
+/// footer slots go on the popover, not inside the list.
 #[component]
 pub fn DtComboboxWithPopover(
     label: String,
@@ -32,7 +42,18 @@ pub fn DtComboboxWithPopover(
     #[prop(optional)] show_list: Option<Signal<bool>>,
     #[prop(optional, into)] on_open_change: Option<Callback<bool>>,
     #[prop(optional, default = true)] has_suggestion_list: bool,
-    #[prop(optional, default = true)] open_with_arrow_keys: bool,
+    /// Arrow up or down opens an uncontrolled list (`openWithArrowKeys`). Default false.
+    #[prop(optional)]
+    open_with_arrow_keys: bool,
+    /// `light`, `dark`, or `invert` on the popover (`contentMode`).
+    #[prop(optional, default = "")]
+    content_mode: &'static str,
+    /// Popover `sticky`. Default false. Scroll and resize still follow the input.
+    #[prop(optional)]
+    popover_sticky: bool,
+    /// Named popover transition (`transition`). Default `fade`.
+    #[prop(optional, default = "fade")]
+    transition: &'static str,
     /// Popover distance in px. Vue offset `[0, 4]`.
     #[prop(optional, default = 4.0)]
     offset: f64,
@@ -51,6 +72,12 @@ pub fn DtComboboxWithPopover(
     /// Extra class on the list (`listClass`).
     #[prop(optional, into)]
     list_class: String,
+    /// Extra class on the header slot wrapper (`headerClass`).
+    #[prop(optional, into)]
+    header_class: String,
+    /// Extra class on the footer slot wrapper (`footerClass`).
+    #[prop(optional, into)]
+    footer_class: String,
     #[prop(optional)] loading: bool,
     #[prop(optional)] empty_list: bool,
     #[prop(optional, into)] empty_message: String,
@@ -84,11 +111,23 @@ pub fn DtComboboxWithPopover(
     let list_id = unique_id("dt-combobox-list");
     let list_id_stored = StoredValue::new(list_id.clone());
     let anchor_id_stored = StoredValue::new(anchor_id.clone());
-    let list_class = join_class([
-        "d-recipe-combobox-with-popover__list",
-        dropdown_padding_class(list_padding),
-        list_class.as_str(),
-    ]);
+    let list_class = suggestion_list_class(list_padding, list_class.as_str());
+    let header_slot = header.map(|slot| {
+        let class_name = header_class;
+        ViewFn::from(move || {
+            let slot = slot.clone();
+            let class_name = class_name.clone();
+            view! { <div class=class_name>{slot.run()}</div> }
+        })
+    });
+    let footer_slot = footer.map(|slot| {
+        let class_name = footer_class;
+        ViewFn::from(move || {
+            let slot = slot.clone();
+            let class_name = class_name.clone();
+            view! { <div class=class_name>{slot.run()}</div> }
+        })
+    });
 
     Effect::new(move |_| {
         if controlled || has_suggestion_list {
@@ -228,6 +267,9 @@ pub fn DtComboboxWithPopover(
             list_rendered_outside=true
             list_id=list_id
             on_select=Callback::new(move |index| {
+                if loading {
+                    return;
+                }
                 if let Some(callback) = on_select_stored.get_value() {
                     callback.run(index);
                 }
@@ -242,6 +284,9 @@ pub fn DtComboboxWithPopover(
                 set_open(false);
             })
             on_highlight=Callback::new(move |index| {
+                if loading {
+                    return;
+                }
                 if let Some(callback) = on_highlight_stored.get_value() {
                     callback.run(index);
                 }
@@ -264,7 +309,13 @@ pub fn DtComboboxWithPopover(
             max_height=max_height
             max_width=max_width
             dialog_class=dialog_class
+            content_mode=content_mode
+            transition=transition
+            sticky=popover_sticky
+            content_tabindex=None
             external_anchor_id=anchor_id_stored.get_value()
+            nostrip:header=header_slot
+            nostrip:footer=footer_slot
         >
             <div
                 id=list_id_stored.get_value()
@@ -272,9 +323,7 @@ pub fn DtComboboxWithPopover(
                 class=list_class.clone()
                 aria-label=label_for_list.clone()
             >
-                {header.as_ref().map(|slot| view! { <div>{slot.run()}</div> })}
                 {children.clone().map(|children| children())}
-                {footer.as_ref().map(|slot| view! { <div>{slot.run()}</div> })}
             </div>
         </DtPopover>
     }
@@ -282,3 +331,24 @@ pub fn DtComboboxWithPopover(
 
 /// Dialtone export alias `DtRecipeComboboxWithPopover`.
 pub use DtComboboxWithPopover as DtRecipeComboboxWithPopover;
+
+#[cfg(test)]
+mod tests {
+    use super::suggestion_list_class;
+
+    #[test]
+    fn list_class_uses_the_v10_dropdown_padding() {
+        assert_eq!(
+            suggestion_list_class("small", ""),
+            "d-combobox-with-popover__list d-py-0"
+        );
+        assert_eq!(
+            suggestion_list_class("large", "extra"),
+            "d-combobox-with-popover__list d-py-50 extra"
+        );
+        assert_eq!(
+            suggestion_list_class("none", ""),
+            "d-combobox-with-popover__list"
+        );
+    }
+}

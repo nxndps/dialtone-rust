@@ -4,33 +4,31 @@ use leptos::context::Provider;
 use leptos::prelude::*;
 
 use super::checkbox::CheckboxGroupContext;
-use super::validation::{validation_messages, validation_state, DtValidationMessage};
+use super::radio::{radio_legend_class, radio_message_state, radio_messages_view};
+use super::unique_id;
+use super::validation::DtValidationMessage;
 
-fn join_class(parts: impl IntoIterator<Item = impl AsRef<str>>) -> String {
-    parts
-        .into_iter()
-        .map(|part| part.as_ref().trim().to_string())
-        .filter(|part| !part.is_empty())
-        .collect::<Vec<_>>()
-        .join(" ")
-}
-
-/// Dialtone Vue `DtCheckboxGroup` (`dialtone/v9.190.0`).
+/// Dialtone Vue `DtCheckboxGroup` (`dialtone/v10.7.0`).
 ///
-/// `selected_values` is the Vue `selectedValues` model. Slotted
-/// [`DtCheckbox`](crate::DtCheckbox) items whose `value` is in that list render
-/// checked. `on_change` receives the next list. `name` is required and is
-/// copied onto a checkbox that does not set its own name. `messages` use
-/// [`DtValidationMessage`](crate::DtValidationMessage).
+/// Extends `DtInputGroup`. `selected_values` is the Vue `modelValue` array.
+/// Slotted [`DtCheckbox`](crate::DtCheckbox) items whose `value` is in that list
+/// render checked. `on_change` receives the next list (`update:modelValue`).
+/// `name` is required and is copied onto a checkbox that does not set its own
+/// name. `messages` use the v10 types `critical`, `warning`, `positive`, and
+/// `info`. An empty kind means `critical`. `aria-invalid` is `"true"` only for
+/// `critical`.
+///
+/// [`DtCheckbox`](crate::DtCheckbox) reads that state. `critical`, `warning`,
+/// and `positive` add `d-checkbox--*`. `info` adds no class.
 #[component]
 pub fn DtCheckboxGroup(
     /// Shared input name (`name`).
     #[prop(into)]
     name: String,
-    /// Selected checkbox values (`selectedValues`).
+    /// Selected checkbox values (`modelValue`).
     #[prop(into)]
     selected_values: Signal<Vec<String>>,
-    /// Called with the next selected values.
+    /// Called with the next selected values (`update:modelValue`).
     #[prop(optional, into)]
     on_change: Option<Callback<Vec<String>>>,
     /// Legend text. The `legend` slot replaces it.
@@ -62,15 +60,24 @@ pub fn DtCheckboxGroup(
     legend_slot: Option<ViewFn>,
     #[prop(optional)] children: Option<Children>,
 ) -> impl IntoView {
-    let state = validation_state(&messages).map(str::to_string);
+    if name.is_empty() {
+        leptos::logging::warn!("[DtCheckboxGroup] name is required.");
+    }
+    let has_legend = legend_slot.is_some() || !legend.is_empty();
+    if !has_legend && aria_label.is_empty() {
+        leptos::logging::warn!(
+            "It is expected that an aria-label is provided when there is no legend."
+        );
+    }
+    let state = radio_message_state(&messages).map(str::to_string);
     let context = CheckboxGroupContext {
         name: Arc::<str>::from(name),
         disabled,
-        validation_state: state,
+        validation_state: state.clone(),
         selected: selected_values,
         on_change,
     };
-    let legend_class_name = join_class(["d-label", legend_class.as_str()]);
+    let legend_class_name = radio_legend_class(&legend_class);
     let legend_body = if let Some(slot) = legend_slot {
         Some(slot.run().into_any())
     } else if !legend.is_empty() {
@@ -78,16 +85,26 @@ pub fn DtCheckboxGroup(
     } else {
         None
     };
-    let messages_view = validation_messages(
-        messages,
+    let messages_id = unique_id("dt-checkbox-group-messages");
+    let described_by = (show_messages && !messages.is_empty()).then(|| messages_id.clone());
+    let aria_invalid = (state.as_deref() == Some("critical")).then_some("true");
+    let messages_view = radio_messages_view(
+        &messages,
         show_messages,
         &messages_class,
         data_qa_group_messages,
+        &messages_id,
     );
     let aria_label = (!aria_label.is_empty()).then_some(aria_label);
 
     view! {
-        <fieldset class="d-input-group__fieldset" data-qa=data_qa_group aria-label=aria_label>
+        <fieldset
+            class="d-input-group__fieldset"
+            data-qa=data_qa_group
+            aria-label=aria_label
+            aria-invalid=aria_invalid
+            aria-describedby=described_by
+        >
             {legend_body.map(|body| view! {
                 <legend class=legend_class_name data-qa=data_qa_group_legend>
                     {body}

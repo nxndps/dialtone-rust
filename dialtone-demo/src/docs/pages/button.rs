@@ -136,8 +136,10 @@ pub(crate) fn ButtonPage() -> impl IntoView {
                 options=vec![
                     ("default", "Default"),
                     ("muted", "Muted"),
-                    ("danger", "Danger"),
+                    ("critical", "Critical"),
                     ("positive", "Positive"),
+                    ("inverted", "Inverted"),
+                    ("unstyled", "Unstyled"),
                 ]
             />
             <SettingSelect label="Size" value=size options=TSHIRT.to_vec() />
@@ -321,7 +323,7 @@ pub(crate) fn ButtonPage() -> impl IntoView {
                     <DtButton importance="clear">"Clear"</DtButton>
                 </Variant>
                 <Variant title="Kind" row=true>
-                    <DtButton kind="danger" importance="outlined">"Remove"</DtButton>
+                    <DtButton kind="critical" importance="outlined">"Remove"</DtButton>
                     <DtButton kind="positive" icon=ViewFn::from(|| view! { <DtIconPlus /> })>"Add"</DtButton>
                     <DtButton kind="muted" importance="outlined">"Muted"</DtButton>
                 </Variant>

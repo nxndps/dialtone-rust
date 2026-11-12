@@ -98,7 +98,7 @@ pub(crate) fn RootLayoutPage() -> impl IntoView {
             <SettingText label="Header" hint="Header slot." value=header_text />
             <SettingText label="Sidebar" hint="Sidebar slot." value=sidebar_text />
             <SettingText label="Default" hint="Main content." value=content_text />
-            <SettingText label="Footer" hint="Footer slot. Empty hides it." value=footer_text />
+            <SettingText label="Footer" hint="Footer slot. The footer element stays mounted." value=footer_text />
         }
     });
     let classes = class_panel(vec![

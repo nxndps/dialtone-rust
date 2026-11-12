@@ -74,7 +74,7 @@ pub(crate) fn ItemLayoutPage() -> impl IntoView {
                 });
                 let bottom_view = text_slot(block_end.get());
                 let end = show_end.get().then(|| {
-                    ViewFn::from(|| view! { <DtBadge text="On call" type_="success" /> })
+                    ViewFn::from(|| view! { <DtBadge text="On call" type_="positive" /> })
                 });
                 let selected_view = text_slot(selected_text.get());
                 macro_rules! item_layout {
@@ -184,7 +184,7 @@ pub(crate) fn ItemLayoutPage() -> impl IntoView {
             push_expr(
                 &mut props,
                 "end",
-                "ViewFn::from(|| view! { <DtBadge text=\"On call\" type_=\"success\" /> })",
+                "ViewFn::from(|| view! { <DtBadge text=\"On call\" type_=\"positive\" /> })",
             );
         }
         if !block_end.get().is_empty() {

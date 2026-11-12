@@ -1,33 +1,70 @@
 use leptos::prelude::*;
 
-fn icon_classes(name: &str, size: &str, class: &str) -> String {
-    let base = format!("d-icon d-icon--{name} d-icon--size-{size}");
-    let extra = class.trim();
-    if extra.is_empty() {
-        base
-    } else {
-        format!("{base} {extra}")
-    }
+fn icon_size_class(size: &str) -> Option<&'static str> {
+    Some(match size {
+        "100" => "d-icon--size-100",
+        "200" => "d-icon--size-200",
+        "300" => "d-icon--size-300",
+        "400" => "d-icon--size-400",
+        "500" => "d-icon--size-500",
+        "600" => "d-icon--size-600",
+        "700" => "d-icon--size-700",
+        "800" => "d-icon--size-800",
+        _ => {
+            leptos::logging::warn!("DtIcon size `{size}` is not 100 through 800");
+            return None;
+        }
+    })
 }
 
-/// Dialtone `DtIcon`: 12×12 viewBox, fill-based paths, `currentColor`.
-/// Sizing uses the Dialtone scale (`d-icon--size-300` in buttons).
-/// Vue icons default `data-qa` to `dt-icon`.
+fn icon_classes(name: &str, size: &str, class: &str) -> String {
+    let mut parts = vec![format!("d-icon d-icon--{name}")];
+    if let Some(size_class) = icon_size_class(size) {
+        parts.push(size_class.to_string());
+    }
+    let extra = class.trim();
+    if !extra.is_empty() {
+        parts.push(extra.to_string());
+    }
+    parts.join(" ")
+}
+
+fn icon_aria_hidden(aria_label: &str) -> bool {
+    aria_label.trim().is_empty()
+}
+
+/// Dialtone `DtIcon` shell from `dialtone/v10.7.0`.
+///
+/// Vue `DtIcon` `name` looks up `@dialpad/dialtone-icons`. This crate does
+/// that with the named `DtIcon*` components. `name` here is the CSS suffix
+/// (`plus` → `d-icon--plus`). `size` defaults to `"500"`. `100`–`800` add
+/// `d-icon--size-*`. An unknown size warns and omits the size class. An empty
+/// `aria_label` (`ariaLabel`) sets `aria-hidden="true"` and omits `aria-label`.
+/// A label sets `aria-hidden="false"`. `data_qa` defaults to `dt-icon`.
+/// `loaded` and `uniqueID` are not ported. These paths do not use `url(#…)`.
 #[component]
 pub fn DtIcon(
     /// CSS name, e.g. `plus` → `d-icon--plus`
     name: &'static str,
     /// Accessible `data-name`, e.g. `Plus`
     data_name: &'static str,
-    /// Dialtone size token without the prefix, e.g. `"300"`.
-    #[prop(optional, default = "300")]
+    /// Dialtone size token (`size`). Default `"500"`.
+    #[prop(optional, default = "500")]
     size: &'static str,
     /// Extra class on the svg. `DtKeyboardShortcut` passes `d-keyboard-shortcut__icon`.
     #[prop(optional, into)]
     class: String,
+    /// Accessible name (`ariaLabel`). Empty hides the icon.
+    #[prop(optional, into)]
+    aria_label: String,
+    /// `data-qa`. Default `dt-icon`.
+    #[prop(optional, default = "dt-icon")]
+    data_qa: &'static str,
     children: Children,
 ) -> impl IntoView {
     let class_name = icon_classes(name, size, &class);
+    let hidden = icon_aria_hidden(&aria_label);
+    let label = (!hidden).then_some(aria_label);
     view! {
         <svg
             class=class_name
@@ -36,10 +73,11 @@ pub fn DtIcon(
             viewBox="0 0 12 12"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
+            aria-hidden=if hidden { "true" } else { "false" }
+            aria-label=label
             focusable="false"
             role="img"
-            data-qa="dt-icon"
+            data-qa=data_qa
             attr:data-name=data_name
         >
             {children()}
@@ -49,11 +87,13 @@ pub fn DtIcon(
 
 #[component]
 pub fn DtIconPlus(
-    #[prop(optional, default = "300")] size: &'static str,
+    #[prop(optional, default = "500")] size: &'static str,
     #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
 ) -> impl IntoView {
     view! {
-        <DtIcon name="plus" data_name="Plus" size=size class=class>
+        <DtIcon name="plus" data_name="Plus" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 d="M6 2a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 1 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 6 2Z"
@@ -63,9 +103,14 @@ pub fn DtIconPlus(
 }
 
 #[component]
-pub fn DtIconRefresh() -> impl IntoView {
+pub fn DtIconRefresh(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="refresh" data_name="Refresh">
+        <DtIcon name="refresh" data_name="Refresh" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -77,9 +122,14 @@ pub fn DtIconRefresh() -> impl IntoView {
 }
 
 #[component]
-pub fn DtIconSave() -> impl IntoView {
+pub fn DtIconSave(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="save" data_name="Save">
+        <DtIcon name="save" data_name="Save" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -91,9 +141,14 @@ pub fn DtIconSave() -> impl IntoView {
 }
 
 #[component]
-pub fn DtIconMoreVertical(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconMoreVertical(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="more-vertical" data_name="More Vertical" size=size>
+        <DtIcon name="more-vertical" data_name="More Vertical" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -106,13 +161,15 @@ pub fn DtIconMoreVertical(#[prop(optional, default = "300")] size: &'static str)
 
 #[component]
 pub fn DtIconClose(
-    #[prop(optional, default = "300")] size: &'static str,
+    #[prop(optional, default = "500")] size: &'static str,
     /// Extra class on the svg. `DtImageViewer` passes `d-image-viewer__close-button`.
     #[prop(optional, into)]
     class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
 ) -> impl IntoView {
     view! {
-        <DtIcon name="close" data_name="Close" size=size class=class>
+        <DtIcon name="close" data_name="Close" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -124,9 +181,14 @@ pub fn DtIconClose(
 }
 
 #[component]
-pub fn DtIconXCircle(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconXCircle(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="x-circle" data_name="X Circle" size=size>
+        <DtIcon name="x-circle" data_name="X Circle" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -142,9 +204,14 @@ pub fn DtIconXCircle(#[prop(optional, default = "300")] size: &'static str) -> i
 }
 
 #[component]
-pub fn DtIconSatisfied(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconSatisfied(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="satisfied" data_name="Satisfied" size=size>
+        <DtIcon name="satisfied" data_name="Satisfied" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -156,9 +223,14 @@ pub fn DtIconSatisfied(#[prop(optional, default = "300")] size: &'static str) ->
 }
 
 #[component]
-pub fn DtIconVerySatisfied(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconVerySatisfied(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="very-satisfied" data_name="Very Satisfied" size=size>
+        <DtIcon name="very-satisfied" data_name="Very Satisfied" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -170,9 +242,14 @@ pub fn DtIconVerySatisfied(#[prop(optional, default = "300")] size: &'static str
 }
 
 #[component]
-pub fn DtIconCheck(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconCheck(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="check" data_name="Check" size=size>
+        <DtIcon name="check" data_name="Check" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -184,9 +261,14 @@ pub fn DtIconCheck(#[prop(optional, default = "300")] size: &'static str) -> imp
 }
 
 #[component]
-pub fn DtIconArrowLeftRight() -> impl IntoView {
+pub fn DtIconArrowLeftRight(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="arrow-left-right" data_name="Arrow Left Right">
+        <DtIcon name="arrow-left-right" data_name="Arrow Left Right" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -198,9 +280,14 @@ pub fn DtIconArrowLeftRight() -> impl IntoView {
 }
 
 #[component]
-pub fn DtIconConnectionApi() -> impl IntoView {
+pub fn DtIconConnectionApi(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="connection-api" data_name="Connection Api">
+        <DtIcon name="connection-api" data_name="Connection Api" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -212,9 +299,14 @@ pub fn DtIconConnectionApi() -> impl IntoView {
 }
 
 #[component]
-pub fn DtIconInfo(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconInfo(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="info" data_name="Info" size=size>
+        <DtIcon name="info" data_name="Info" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -226,9 +318,14 @@ pub fn DtIconInfo(#[prop(optional, default = "300")] size: &'static str) -> impl
 }
 
 #[component]
-pub fn DtIconBell(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconBell(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="bell" data_name="Bell" size=size>
+        <DtIcon name="bell" data_name="Bell" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -240,9 +337,14 @@ pub fn DtIconBell(#[prop(optional, default = "300")] size: &'static str) -> impl
 }
 
 #[component]
-pub fn DtIconAlertCircle(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconAlertCircle(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="alert-circle" data_name="Alert Circle" size=size>
+        <DtIcon name="alert-circle" data_name="Alert Circle" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -254,9 +356,14 @@ pub fn DtIconAlertCircle(#[prop(optional, default = "300")] size: &'static str) 
 }
 
 #[component]
-pub fn DtIconAlertTriangle(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconAlertTriangle(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="alert-triangle" data_name="Alert Triangle" size=size>
+        <DtIcon name="alert-triangle" data_name="Alert Triangle" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -274,9 +381,14 @@ pub fn DtIconAlertTriangle(#[prop(optional, default = "300")] size: &'static str
 }
 
 #[component]
-pub fn DtIconCheckCircle(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconCheckCircle(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="check-circle" data_name="Check Circle" size=size>
+        <DtIcon name="check-circle" data_name="Check Circle" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -288,9 +400,14 @@ pub fn DtIconCheckCircle(#[prop(optional, default = "300")] size: &'static str) 
 }
 
 #[component]
-pub fn DtIconUser() -> impl IntoView {
+pub fn DtIconUser(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="user" data_name="User">
+        <DtIcon name="user" data_name="User" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -302,9 +419,14 @@ pub fn DtIconUser() -> impl IntoView {
 }
 
 #[component]
-pub fn DtIconUsers() -> impl IntoView {
+pub fn DtIconUsers(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="users" data_name="Users">
+        <DtIcon name="users" data_name="Users" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -316,9 +438,14 @@ pub fn DtIconUsers() -> impl IntoView {
 }
 
 #[component]
-pub fn DtIconPhone(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconPhone(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="phone" data_name="Phone" size=size>
+        <DtIcon name="phone" data_name="Phone" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -330,9 +457,16 @@ pub fn DtIconPhone(#[prop(optional, default = "300")] size: &'static str) -> imp
 }
 
 #[component]
-pub fn DtIconChevronDown(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconChevronDown(
+    #[prop(optional, default = "500")] size: &'static str,
+    /// Extra class on the svg. `DtCollapsible` passes `d-collapsible__icon`.
+    #[prop(optional, into)]
+    class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="chevron-down" data_name="Chevron Down" size=size>
+        <DtIcon name="chevron-down" data_name="Chevron Down" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -344,9 +478,14 @@ pub fn DtIconChevronDown(#[prop(optional, default = "300")] size: &'static str) 
 }
 
 #[component]
-pub fn DtIconChevronLeft(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconChevronLeft(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="chevron-left" data_name="Chevron Left" size=size>
+        <DtIcon name="chevron-left" data_name="Chevron Left" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -359,10 +498,13 @@ pub fn DtIconChevronLeft(#[prop(optional, default = "300")] size: &'static str) 
 
 #[component]
 pub fn DtIconMoreHorizontal(
-    #[prop(optional, default = "300")] size: &'static str,
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
 ) -> impl IntoView {
     view! {
-        <DtIcon name="more-horizontal" data_name="More Horizontal" size=size>
+        <DtIcon name="more-horizontal" data_name="More Horizontal" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -374,9 +516,16 @@ pub fn DtIconMoreHorizontal(
 }
 
 #[component]
-pub fn DtIconChevronRight(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconChevronRight(
+    #[prop(optional, default = "500")] size: &'static str,
+    /// Extra class on the svg. `DtCollapsible` passes `d-collapsible__icon`.
+    #[prop(optional, into)]
+    class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="chevron-right" data_name="Chevron Right" size=size>
+        <DtIcon name="chevron-right" data_name="Chevron Right" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -388,9 +537,14 @@ pub fn DtIconChevronRight(#[prop(optional, default = "300")] size: &'static str)
 }
 
 #[component]
-pub fn DtIconChevronsLeft(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconChevronsLeft(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="chevrons-left" data_name="Chevrons Left" size=size>
+        <DtIcon name="chevrons-left" data_name="Chevrons Left" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -408,9 +562,14 @@ pub fn DtIconChevronsLeft(#[prop(optional, default = "300")] size: &'static str)
 }
 
 #[component]
-pub fn DtIconChevronsRight(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconChevronsRight(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="chevrons-right" data_name="Chevrons Right" size=size>
+        <DtIcon name="chevrons-right" data_name="Chevrons Right" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -428,9 +587,14 @@ pub fn DtIconChevronsRight(#[prop(optional, default = "300")] size: &'static str
 }
 
 #[component]
-pub fn DtIconSearch(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconSearch(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="search" data_name="Search" size=size>
+        <DtIcon name="search" data_name="Search" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -442,9 +606,14 @@ pub fn DtIconSearch(#[prop(optional, default = "300")] size: &'static str) -> im
 }
 
 #[component]
-pub fn DtIconLaptop2(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconLaptop2(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="laptop-2" data_name="Laptop 2" size=size>
+        <DtIcon name="laptop-2" data_name="Laptop 2" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -456,9 +625,14 @@ pub fn DtIconLaptop2(#[prop(optional, default = "300")] size: &'static str) -> i
 }
 
 #[component]
-pub fn DtIconSun(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconSun(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="sun" data_name="Sun" size=size>
+        <DtIcon name="sun" data_name="Sun" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -470,9 +644,14 @@ pub fn DtIconSun(#[prop(optional, default = "300")] size: &'static str) -> impl 
 }
 
 #[component]
-pub fn DtIconMoon(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconMoon(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="moon" data_name="Moon" size=size>
+        <DtIcon name="moon" data_name="Moon" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -484,9 +663,14 @@ pub fn DtIconMoon(#[prop(optional, default = "300")] size: &'static str) -> impl
 }
 
 #[component]
-pub fn DtIconSparkle(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconSparkle(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="sparkle" data_name="Sparkle" size=size>
+        <DtIcon name="sparkle" data_name="Sparkle" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 d="M9.264 1c.05 0 .093.034.107.082.23.745.81 1.335 1.545 1.572a.12.12 0 0 1 .084.113.12.12 0 0 1-.084.114 2.39 2.39 0 0 0-1.529 1.522.131.131 0 0 1-.123.092.131.131 0 0 1-.124-.092 2.392 2.392 0 0 0-1.509-1.516.127.127 0 0 1-.087-.12c0-.055.036-.103.087-.12a2.393 2.393 0 0 0 1.525-1.565A.114.114 0 0 1 9.264 1Zm0 6.505c.05 0 .093.034.108.081.23.746.81 1.335 1.544 1.572a.12.12 0 0 1 .084.114.12.12 0 0 1-.084.114 2.39 2.39 0 0 0-1.529 1.522.131.131 0 0 1-.123.092.131.131 0 0 1-.124-.092 2.393 2.393 0 0 0-1.509-1.516.127.127 0 0 1-.087-.12c0-.055.036-.103.087-.12a2.393 2.393 0 0 0 1.525-1.566.114.114 0 0 1 .108-.081ZM4.503 9.239v.27l-.082-.014a.267.267 0 0 1-.13-.097l-.038-.075c-.021-.064-.046-.127-.07-.19l.32.106Zm.25.084-.038.075a.262.262 0 0 1-.212.11v-.27l.318-.105a4.902 4.902 0 0 0-.068.19Zm-.251-4.926A5.882 5.882 0 0 1 2.918 5.99a5.882 5.882 0 0 1 1.584 1.595 5.885 5.885 0 0 1 1.585-1.596 5.883 5.883 0 0 1-1.585-1.592ZM7.7 6.279a4.87 4.87 0 0 0-2.879 2.854l-.318.106-.32-.106a4.875 4.875 0 0 0-2.738-2.802l-.267-.098A.258.258 0 0 1 1 5.99c0-.111.073-.209.178-.243a4.872 4.872 0 0 0 3.106-3.19.231.231 0 0 1 .219-.165c.1 0 .188.068.218.165A4.873 4.873 0 0 0 7.868 5.76c.1.032.169.124.17.23 0 .105-.07.198-.17.23l-.168.06Z"
@@ -496,9 +680,14 @@ pub fn DtIconSparkle(#[prop(optional, default = "300")] size: &'static str) -> i
 }
 
 #[component]
-pub fn DtIconExternalLink(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconExternalLink(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="external-link" data_name="External Link" size=size>
+        <DtIcon name="external-link" data_name="External Link" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -514,9 +703,14 @@ pub fn DtIconExternalLink(#[prop(optional, default = "300")] size: &'static str)
 }
 
 #[component]
-pub fn DtIconLock(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconLock(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="lock" data_name="Lock" size=size>
+        <DtIcon name="lock" data_name="Lock" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -528,9 +722,14 @@ pub fn DtIconLock(#[prop(optional, default = "300")] size: &'static str) -> impl
 }
 
 #[component]
-pub fn DtIconShare(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconShare(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="share" data_name="Share" size=size>
+        <DtIcon name="share" data_name="Share" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -546,9 +745,14 @@ pub fn DtIconShare(#[prop(optional, default = "300")] size: &'static str) -> imp
 }
 
 #[component]
-pub fn DtIconShare2(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconShare2(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="share-2" data_name="Share 2" size=size>
+        <DtIcon name="share-2" data_name="Share 2" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -560,9 +764,14 @@ pub fn DtIconShare2(#[prop(optional, default = "300")] size: &'static str) -> im
 }
 
 #[component]
-pub fn DtIconStar(#[prop(optional, default = "300")] size: &'static str) -> impl IntoView {
+pub fn DtIconStar(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="star" data_name="Star" size=size>
+        <DtIcon name="star" data_name="Star" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -575,11 +784,13 @@ pub fn DtIconStar(#[prop(optional, default = "300")] size: &'static str) -> impl
 
 #[component]
 pub fn DtIconCommand(
-    #[prop(optional, default = "300")] size: &'static str,
+    #[prop(optional, default = "500")] size: &'static str,
     #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
 ) -> impl IntoView {
     view! {
-        <DtIcon name="command" data_name="Command" size=size class=class>
+        <DtIcon name="command" data_name="Command" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -592,11 +803,13 @@ pub fn DtIconCommand(
 
 #[component]
 pub fn DtIconOption(
-    #[prop(optional, default = "300")] size: &'static str,
+    #[prop(optional, default = "500")] size: &'static str,
     #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
 ) -> impl IntoView {
     view! {
-        <DtIcon name="option" data_name="Option" size=size class=class>
+        <DtIcon name="option" data_name="Option" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -609,11 +822,13 @@ pub fn DtIconOption(
 
 #[component]
 pub fn DtIconLayoutGrid(
-    #[prop(optional, default = "300")] size: &'static str,
+    #[prop(optional, default = "500")] size: &'static str,
     #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
 ) -> impl IntoView {
     view! {
-        <DtIcon name="layout-grid" data_name="Layout Grid" size=size class=class>
+        <DtIcon name="layout-grid" data_name="Layout Grid" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -626,11 +841,13 @@ pub fn DtIconLayoutGrid(
 
 #[component]
 pub fn DtIconArrowUp(
-    #[prop(optional, default = "300")] size: &'static str,
+    #[prop(optional, default = "500")] size: &'static str,
     #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
 ) -> impl IntoView {
     view! {
-        <DtIcon name="arrow-up" data_name="Arrow Up" size=size class=class>
+        <DtIcon name="arrow-up" data_name="Arrow Up" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -643,11 +860,13 @@ pub fn DtIconArrowUp(
 
 #[component]
 pub fn DtIconArrowDown(
-    #[prop(optional, default = "300")] size: &'static str,
+    #[prop(optional, default = "500")] size: &'static str,
     #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
 ) -> impl IntoView {
     view! {
-        <DtIcon name="arrow-down" data_name="Arrow Down" size=size class=class>
+        <DtIcon name="arrow-down" data_name="Arrow Down" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -660,11 +879,13 @@ pub fn DtIconArrowDown(
 
 #[component]
 pub fn DtIconArrowLeft(
-    #[prop(optional, default = "300")] size: &'static str,
+    #[prop(optional, default = "500")] size: &'static str,
     #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
 ) -> impl IntoView {
     view! {
-        <DtIcon name="arrow-left" data_name="Arrow Left" size=size class=class>
+        <DtIcon name="arrow-left" data_name="Arrow Left" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -677,11 +898,13 @@ pub fn DtIconArrowLeft(
 
 #[component]
 pub fn DtIconArrowRight(
-    #[prop(optional, default = "300")] size: &'static str,
+    #[prop(optional, default = "500")] size: &'static str,
     #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
 ) -> impl IntoView {
     view! {
-        <DtIcon name="arrow-right" data_name="Arrow Right" size=size class=class>
+        <DtIcon name="arrow-right" data_name="Arrow Right" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -693,9 +916,14 @@ pub fn DtIconArrowRight(
 }
 
 #[component]
-pub fn DtIconTrash() -> impl IntoView {
+pub fn DtIconTrash(
+    #[prop(optional, default = "500")] size: &'static str,
+    #[prop(optional, into)] class: String,
+    #[prop(optional, into)] aria_label: String,
+    #[prop(optional, default = "dt-icon")] data_qa: &'static str,
+) -> impl IntoView {
     view! {
-        <DtIcon name="trash" data_name="Trash">
+        <DtIcon name="trash" data_name="Trash" size=size class=class aria_label=aria_label data_qa=data_qa>
             <path
                 fill="currentColor"
                 fill-rule="evenodd"
@@ -709,6 +937,25 @@ pub fn DtIconTrash() -> impl IntoView {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn default_size_is_500_and_unknown_size_is_omitted() {
+        assert_eq!(
+            icon_classes("accessibility", "500", ""),
+            "d-icon d-icon--accessibility d-icon--size-500"
+        );
+        assert_eq!(
+            icon_classes("accessibility", "800", ""),
+            "d-icon d-icon--accessibility d-icon--size-800"
+        );
+        assert_eq!(
+            icon_classes("accessibility", "nope", "extra"),
+            "d-icon d-icon--accessibility extra"
+        );
+        assert!(icon_aria_hidden(""));
+        assert!(icon_aria_hidden("  "));
+        assert!(!icon_aria_hidden("icon description"));
+    }
 
     #[test]
     fn size_and_extra_class_follow_the_vue_icon() {

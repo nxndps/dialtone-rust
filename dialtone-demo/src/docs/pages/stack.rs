@@ -53,7 +53,7 @@ fn sample_children() -> String {
             "DtBadge",
             &[
                 ("text", rust_string("On call")),
-                ("type_", rust_string("success")),
+                ("type_", rust_string("positive")),
             ],
             None,
         ),
@@ -103,7 +103,7 @@ pub(crate) fn StackPage() -> impl IntoView {
                             class=class_name.clone()
                         >
                             <DtBadge text="Voice" type_="info" />
-                            <DtBadge text="On call" type_="success" />
+                            <DtBadge text="On call" type_="positive" />
                             <DtButton size="sm" importance="outlined">"Edit"</DtButton>
                         </DtStack>
                     }

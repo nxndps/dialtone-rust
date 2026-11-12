@@ -1,7 +1,24 @@
 use leptos::context::Provider;
+use leptos::html;
 use leptos::prelude::*;
 
 use super::text::known_text_tone;
+
+fn warn_direct_children(element: &web_sys::Node) {
+    let children = element.child_nodes();
+    for index in 0..children.length() {
+        let Some(child) = children.item(index) else {
+            continue;
+        };
+        if child.node_type() != web_sys::Node::ELEMENT_NODE {
+            continue;
+        }
+        if child.node_name() != "LI" {
+            warn_list("Use DtTextListItem or a native li as the direct child of DtTextList.");
+            break;
+        }
+    }
+}
 
 #[derive(Clone, Copy)]
 struct TextListContext {
@@ -65,7 +82,7 @@ pub(crate) fn text_list_role(marker: &str) -> Option<&'static str> {
     (marker == "none").then_some("list")
 }
 
-/// Dialtone `DtTextList` classes. Staging `TextList.vue` (`a46ac063`).
+/// Dialtone `DtTextList` classes. `TextList.vue` at `dialtone/v10.7.0`.
 pub(crate) fn text_list_classes(
     type_name: &str,
     gap: &str,
@@ -154,10 +171,10 @@ fn warn_ordered_only(type_name: &str, start: Option<i32>, reversed: bool) {
     }
 }
 
-/// Dialtone Vue `DtTextList`.
+/// Dialtone Vue `DtTextList` (`dialtone/v10.7.0`).
 ///
-/// Source is staging `TextList.vue` (`a46ac063`). Tag `dialtone/v9.190.0` has
-/// no `DtTextList`. `d-text-list*` is in the vendored Dialtone 10 CSS.
+/// `d-text-list*` is in the vendored Dialtone 10 CSS. A direct child that is
+/// not an `li` warns after mount.
 ///
 /// `type` is `unordered` (default, `ul`) or `ordered` (`ol`). `gap` is `0`,
 /// `1`, `25`, `50`, `75`, `100`, `125`, `150`, `175`, `200`, `250`, `300`,
@@ -199,8 +216,11 @@ pub fn DtTextList(
     };
     if ordered {
         let reversed_attr = reversed.then_some(true);
+        let list_ref = NodeRef::<html::Ol>::new();
+        list_ref.on_load(|element| warn_direct_children(&element));
         view! {
             <ol
+                node_ref=list_ref
                 data-qa="dt-text-list"
                 class=class_name
                 role=role
@@ -212,8 +232,10 @@ pub fn DtTextList(
         }
         .into_any()
     } else {
+        let list_ref = NodeRef::<html::Ul>::new();
+        list_ref.on_load(|element| warn_direct_children(&element));
         view! {
-            <ul data-qa="dt-text-list" class=class_name role=role>
+            <ul node_ref=list_ref data-qa="dt-text-list" class=class_name role=role>
                 {body}
             </ul>
         }
@@ -221,7 +243,7 @@ pub fn DtTextList(
     }
 }
 
-/// Dialtone Vue `DtTextListItem`.
+/// Dialtone Vue `DtTextListItem` (`dialtone/v10.7.0`).
 ///
 /// `value` is the native `li` value and is set only when the parent
 /// `DtTextList` `type` is `ordered`. `marker` replaces the list marker.

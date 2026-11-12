@@ -23,8 +23,12 @@ pub(crate) fn CheckboxPage() -> impl IntoView {
         view! {
             {move || {
                 let state = state.get();
-                let messages = if state == "error" {
-                    vec![DtValidationMessage::error("Select this to continue")]
+                let messages = if state == "critical" {
+                    vec![DtValidationMessage::critical("Select this to continue")]
+                } else if state == "warning" {
+                    vec![DtValidationMessage::warning("Check this before you continue")]
+                } else if state == "positive" {
+                    vec![DtValidationMessage::positive("This choice is saved")]
                 } else {
                     vec![]
                 };
@@ -55,7 +59,7 @@ pub(crate) fn CheckboxPage() -> impl IntoView {
                         validation_state=state
                         show_messages=show_messages
                         messages=messages
-                        root_class=root_class
+                        class=root_class
                         input_class=input_class
                         label_class=label_class
                         description_class=description_class
@@ -74,7 +78,7 @@ pub(crate) fn CheckboxPage() -> impl IntoView {
                         validation_state=state
                         show_messages=show_messages
                         messages=messages
-                        root_class=root_class
+                        class=root_class
                         input_class=input_class
                         label_class=label_class
                         description_class=description_class
@@ -95,7 +99,13 @@ pub(crate) fn CheckboxPage() -> impl IntoView {
             <SettingSelect
                 label="Validation"
                 value=state
-                options=vec![("", "None"), ("error", "Error"), ("warning", "Warning"), ("success", "Success")]
+                options=vec![
+                    ("", "None"),
+                    ("warning", "Warning"),
+                    ("critical", "Critical"),
+                    ("positive", "Positive"),
+                    ("info", "Info"),
+                ]
             />
             <SettingCheck label="Checked" value=alerts />
             <SettingCheck label="Indeterminate" value=indeterminate />
@@ -117,17 +127,20 @@ pub(crate) fn CheckboxPage() -> impl IntoView {
         if !show_messages.get() {
             props.push(("show_messages", "false".to_string()));
         }
-        push_str(&mut props, "root_class", &root_class.get());
+        push_str(&mut props, "class", &root_class.get());
         push_str(&mut props, "input_class", &input_class.get());
         push_str(&mut props, "label_class", &label_class.get());
         push_str(&mut props, "description_class", &description_class.get());
         push_str(&mut props, "messages_class", &messages_class.get());
-        if state.get() == "error" {
-            push_expr(
-                &mut props,
-                "messages",
-                "vec![DtValidationMessage::error(\"Select this to continue\")]",
-            );
+        if let Some(messages) = match state.get() {
+            "warning" => {
+                Some("vec![DtValidationMessage::warning(\"Check this before you continue\")]")
+            }
+            "critical" => Some("vec![DtValidationMessage::critical(\"Select this to continue\")]"),
+            "positive" => Some("vec![DtValidationMessage::positive(\"This choice is saved\")]"),
+            _ => None,
+        } {
+            push_expr(&mut props, "messages", messages);
         }
         push_span_slot(&mut props, "description_slot", &slot_description.get());
         let body = if slot_label.get().is_empty() {
@@ -140,7 +153,7 @@ pub(crate) fn CheckboxPage() -> impl IntoView {
     view! {
         <section id="playground" class="docs-section">
             <h2>"Playground"</h2>
-            <p class="docs-note">"on_change writes the checked signal. An error state includes a validation message."</p>
+            <p class="docs-note">"on_change writes the checked signal. Warning, critical, and positive include a validation message."</p>
             <Play
                 stack=true
                 preview=preview
@@ -166,11 +179,11 @@ pub(crate) fn CheckboxPage() -> impl IntoView {
             <div class="docs-variants">
                 <Variant title="Validation">
                     <DtCheckbox label="Warning" validation_state="warning" />
-                    <DtCheckbox label="Success" validation_state="success" />
+                    <DtCheckbox label="Positive" validation_state="positive" />
                     <DtCheckbox
-                        label="Error"
-                        validation_state="error"
-                        messages=vec![DtValidationMessage::error("Select this to continue")]
+                        label="Critical"
+                        validation_state="critical"
+                        messages=vec![DtValidationMessage::critical("Select this to continue")]
                     />
                 </Variant>
             </div>

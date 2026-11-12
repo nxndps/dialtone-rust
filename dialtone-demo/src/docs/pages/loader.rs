@@ -37,7 +37,7 @@ pub(crate) fn LoaderPage() -> impl IntoView {
     view! {
         <section id="playground" class="docs-section">
             <h2>"Playground"</h2>
-            <p class="docs-note">"An omitted size uses 200. The library default in Vue is 500."</p>
+            <p class="docs-note">"An omitted size uses 500. This playground passes size. This port draws the v10.7 spinner paths and does not add d-loader--spinner, so the vendored spin does not run. Dialtone 10.11.0 defaults the loader to four dots."</p>
             <Play preview=preview settings=settings classes=classes code=code />
         </section>
         <section id="variants" class="docs-section">

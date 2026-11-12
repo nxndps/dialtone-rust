@@ -2,8 +2,8 @@ use leptos::prelude::*;
 
 const DIRECTIONS: &[&str] = &["default", "column", "row", "row-reverse", "column-reverse"];
 const GAPS: &[&str] = &[
-    "0", "50", "100", "200", "300", "350", "400", "450", "500", "525", "550", "600", "625", "650",
-    "700",
+    "0", "1", "25", "50", "75", "100", "125", "150", "175", "200", "250", "300", "350", "400",
+    "450", "500", "525", "550", "600", "650", "700", "750", "800",
 ];
 const ALIGNS: &[&str] = &["start", "center", "end", "stretch", "baseline"];
 const JUSTIFIES: &[&str] = &[
@@ -199,6 +199,16 @@ fn responsive_listed(
         .collect()
 }
 
+/// `wrap` inserts `d-stack--wrap` immediately after `d-stack`.
+fn stack_root_class(classes: String, wrap: bool, extra: &str) -> String {
+    let with_wrap = if wrap {
+        classes.replacen("d-stack", "d-stack d-stack--wrap", 1)
+    } else {
+        classes
+    };
+    join_class([with_wrap, extra.to_string()])
+}
+
 /// Class string for `DtStack`, in the Vue computed order.
 pub(crate) fn stack_classes(
     direction: StackAt,
@@ -232,13 +242,16 @@ pub(crate) fn stack_classes(
     join_class(parts)
 }
 
-/// Dialtone Vue `DtStack` (`dialtone/v9.190.0`).
+/// Dialtone Vue `DtStack` (`dialtone/v10.7.0`).
 ///
-/// `direction` defaults to `column`, which emits no direction class. `gap`
-/// defaults to `0` (`d-stack--gap-0`). `justify` defaults to `start`. `align`
-/// is unset unless passed. `d-stack--gap-0` is in the vendored CSS.
-/// `d-stack--column` is not. `.d-stack` already defaults to column and zero gap.
-/// `as` is the root element (`div` by default).
+/// `direction` defaults to `column`, which emits no direction class. The
+/// string `default` emits `d-stack--column`. `gap` defaults to `0`
+/// (`d-stack--gap-0`). `justify` defaults to `start`. `align` is unset unless
+/// passed. `wrap` adds `d-stack--wrap`. `space-around`, `space-between`, and
+/// `space-evenly` emit the shorthand suffixes. `around`, `between`, and
+/// `evenly` still do. `d-stack--column` is not in the vendored CSS. `.d-stack`
+/// already defaults to column and zero gap. `as` is the root element (`div`
+/// by default).
 #[component]
 pub fn DtStack(
     /// Root element (`as`).
@@ -256,6 +269,9 @@ pub fn DtStack(
     /// Main-axis distribution (`justify`). A string applies at every breakpoint.
     #[prop(optional, into, default = StackAt::all("start"))]
     justify: StackAt,
+    /// Wrap items (`wrap`).
+    #[prop(optional)]
+    wrap: bool,
     /// Extra classes appended after the stack classes.
     #[prop(optional, into)]
     class: String,
@@ -277,7 +293,7 @@ pub fn DtStack(
     #[prop(optional)] on_keydown: Option<Callback<web_sys::KeyboardEvent>>,
     children: Children,
 ) -> impl IntoView {
-    let class_name = join_class([stack_classes(direction, gap, align, justify), class]);
+    let class_name = stack_root_class(stack_classes(direction, gap, align, justify), wrap, &class);
     let id_attr = (!id.is_empty()).then_some(id);
     let role_attr = (!role.is_empty()).then_some(role);
     let aria_label_attr = (!aria_label.is_empty()).then_some(aria_label);
@@ -345,6 +361,15 @@ mod tests {
             ),
             "d-stack d-stack--gap-0 d-stack--justify-start"
         );
+        assert_eq!(
+            stack_classes(
+                StackAt::all("column"),
+                StackAt::all("150"),
+                None,
+                StackAt::all("start")
+            ),
+            "d-stack d-stack--gap-150 d-stack--justify-start"
+        );
     }
 
     #[test]
@@ -398,6 +423,50 @@ mod tests {
                 ),
             ),
             "d-stack d-stack--sm-column d-stack--md-row-reverse d-stack--lg-column-reverse d-stack--xl-row d-stack--sm-gap-200 d-stack--md-gap-400 d-stack--lg-gap-500 d-stack--xl-gap-600 d-stack--sm-align-center d-stack--md-align-end d-stack--lg-align-stretch d-stack--xl-align-baseline d-stack--sm-justify-center d-stack--md-justify-end d-stack--lg-justify-between d-stack--xl-justify-around"
+        );
+    }
+
+    #[test]
+    fn wrap_follows_the_root_and_v10_gaps_replace_625() {
+        assert_eq!(
+            stack_root_class(
+                stack_classes(
+                    StackAt::all("row"),
+                    StackAt::all("25"),
+                    None,
+                    StackAt::all("start")
+                ),
+                true,
+                "extra"
+            ),
+            "d-stack d-stack--wrap d-stack--row d-stack--gap-25 d-stack--justify-start extra"
+        );
+        assert_eq!(
+            stack_classes(
+                StackAt::all("column"),
+                StackAt::all("800"),
+                None,
+                StackAt::all("start")
+            ),
+            "d-stack d-stack--gap-800 d-stack--justify-start"
+        );
+        assert_eq!(
+            stack_classes(
+                StackAt::all("column"),
+                StackAt::all("1"),
+                None,
+                StackAt::all("start")
+            ),
+            "d-stack d-stack--gap-1 d-stack--justify-start"
+        );
+        assert_eq!(
+            stack_classes(
+                StackAt::all("column"),
+                StackAt::all("625"),
+                None,
+                StackAt::all("start")
+            ),
+            "d-stack d-stack--justify-start"
         );
     }
 

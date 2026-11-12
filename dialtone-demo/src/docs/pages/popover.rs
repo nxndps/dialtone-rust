@@ -40,12 +40,15 @@ fn static_or(value: &str, fallback: &'static str) -> &'static str {
 }
 
 fn offset_px(raw: &str) -> f64 {
+    if raw.trim().is_empty() {
+        return 4.0;
+    }
     raw.split(',')
         .map(str::trim)
         .filter(|part| !part.is_empty())
         .last()
         .and_then(|token| token.parse().ok())
-        .unwrap_or(0.0)
+        .unwrap_or(4.0)
 }
 
 fn rust_f64(value: f64) -> String {
@@ -188,7 +191,7 @@ pub(crate) fn PopoverPage() -> impl IntoView {
             <SettingText label="Role" hint="Empty uses dialog." value=role_text />
             <SettingSelect label="Content width" value=content_width options=CONTENT_WIDTHS.to_vec() />
             <SettingText label="Id" hint="Empty generates one." value=id_text />
-            <SettingText label="Offset" hint="Distance in px, or skid, distance. Empty uses 0." value=offset_text />
+            <SettingText label="Offset" hint="Distance in px, or skid, distance. Empty uses 4." value=offset_text />
             <SettingCheck label="Focus trap" value=focus_trap />
             <SettingText label="Fallback placements" hint="Comma-separated. Empty uses auto." value=fallback_text />
             <SettingCheck label="Tether" value=tether />
@@ -213,7 +216,7 @@ pub(crate) fn PopoverPage() -> impl IntoView {
         push_str(&mut props, "content_width", content_width.get());
         push_str(&mut props, "id", &id_text.get());
         let offset = offset_px(&offset_text.get());
-        if offset != 0.0 {
+        if (offset - 4.0).abs() > f64::EPSILON {
             push_expr(&mut props, "offset", rust_f64(offset));
         }
         push_bool(&mut props, "focus_trap", focus_trap.get());

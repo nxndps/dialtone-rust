@@ -3,22 +3,34 @@
 use wasm_bindgen::JsCast;
 use web_sys::{Element, EventTarget, HtmlElement, MouseEvent, Node};
 
-/// Dialtone `DROPDOWN_PADDING_CLASSES` (`dialtone/v9.190.0`).
+/// Dialtone `DROPDOWN_PADDING_CLASSES` at `dialtone/v10.7.0`.
 pub(crate) fn dropdown_padding_class(padding: &str) -> &'static str {
     match padding {
-        "large" => "d-py4",
+        "large" => "d-py-50",
         "none" => "",
-        _ => "d-py0",
+        "small" | "" => "d-py-0",
+        _ => {
+            leptos::logging::warn!(
+                "list padding `{padding}` is not none, small, or large; using small"
+            );
+            "d-py-0"
+        }
     }
 }
 
-/// Dialtone popover padding (`none` / `small` / `medium` / `large`).
+/// Dialtone `POPOVER_PADDING_CLASSES` at `dialtone/v10.7.0`.
 pub(crate) fn popover_padding_class(padding: &str) -> &'static str {
     match padding {
-        "small" => "d-p4",
-        "medium" => "d-p8",
-        "large" => "d-p16",
-        _ => "",
+        "small" => "d-p-50",
+        "medium" => "d-p-100",
+        "large" => "d-p-200",
+        "none" | "" => "",
+        _ => {
+            leptos::logging::warn!(
+                "DtPopover padding `{padding}` is not none, small, medium, or large"
+            );
+            ""
+        }
     }
 }
 
@@ -134,18 +146,20 @@ mod tests {
 
     #[test]
     fn dropdown_padding_matches_vue() {
-        assert_eq!(dropdown_padding_class("small"), "d-py0");
-        assert_eq!(dropdown_padding_class("large"), "d-py4");
+        assert_eq!(dropdown_padding_class("small"), "d-py-0");
+        assert_eq!(dropdown_padding_class("large"), "d-py-50");
         assert_eq!(dropdown_padding_class("none"), "");
-        assert_eq!(dropdown_padding_class(""), "d-py0");
+        assert_eq!(dropdown_padding_class(""), "d-py-0");
+        assert_eq!(dropdown_padding_class("medium"), "d-py-0");
     }
 
     #[test]
     fn popover_padding_matches_vue() {
         assert_eq!(popover_padding_class("none"), "");
-        assert_eq!(popover_padding_class("small"), "d-p4");
-        assert_eq!(popover_padding_class("medium"), "d-p8");
-        assert_eq!(popover_padding_class("large"), "d-p16");
+        assert_eq!(popover_padding_class("small"), "d-p-50");
+        assert_eq!(popover_padding_class("medium"), "d-p-100");
+        assert_eq!(popover_padding_class("large"), "d-p-200");
+        assert_eq!(popover_padding_class("xl"), "");
     }
 
     #[test]

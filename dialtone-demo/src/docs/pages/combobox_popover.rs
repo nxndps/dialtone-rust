@@ -64,7 +64,7 @@ pub(crate) fn ComboboxPopoverPage() -> impl IntoView {
     let max_height = RwSignal::new(String::new());
     let max_width = RwSignal::new(String::new());
     let content_width = RwSignal::new("");
-    let arrow_keys = RwSignal::new(true);
+    let arrow_keys = RwSignal::new(false);
     let suggestions = RwSignal::new(true);
     let loading = RwSignal::new(false);
     let input_text = RwSignal::new(String::new());
@@ -186,8 +186,8 @@ pub(crate) fn ComboboxPopoverPage() -> impl IntoView {
         push_str(&mut props, "max_height", &max_height.get());
         push_str(&mut props, "max_width", &max_width.get());
         push_str(&mut props, "content_width", content_width.get());
-        if !arrow_keys.get() {
-            push_flag(&mut props, "open_with_arrow_keys", false);
+        if arrow_keys.get() {
+            push_flag(&mut props, "open_with_arrow_keys", true);
         }
         if !suggestions.get() {
             push_flag(&mut props, "has_suggestion_list", false);

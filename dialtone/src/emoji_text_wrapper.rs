@@ -6,7 +6,7 @@ const ELEMENTS: &[&str] = &[
     "div", "span", "p", "section", "article", "header", "footer", "li", "label",
 ];
 
-/// Dialtone Vue `DtEmojiTextWrapper` (`dialtone/v9.190.0`).
+/// Dialtone Vue `DtEmojiTextWrapper` (`dialtone/v10.7.0`).
 ///
 /// `text` is the default slot's text. `:smile:` and unicode emoji become
 /// [`DtEmoji`](crate::DtEmoji). Invalid shortcodes stay text. Vue also walks

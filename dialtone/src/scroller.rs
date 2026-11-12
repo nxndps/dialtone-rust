@@ -148,8 +148,10 @@ pub(crate) fn position_diff_skips(scroll: f64, last: f64, threshold: f64) -> boo
 
 /// User-position events for one scroll, in Vue order, plus the position left active.
 ///
-/// The previous position starts as `top` and is not emitted until a scroll.
-/// A zero-size layout emits `middle`, then `top`, then `bottom`.
+/// The previous position starts as `blockStart` and is not emitted until a scroll.
+/// A zero-size layout emits `middle`, then `blockStart` and `top`, then
+/// `blockEnd` and `bottom`. The stored position is `blockStart` or `blockEnd`.
+/// `top` and `bottom` are the deprecated names and are still emitted.
 pub(crate) fn user_position_events(
     previous: &str,
     scroll: f64,
@@ -163,11 +165,13 @@ pub(crate) fn user_position_events(
         events.push("middle");
     }
     if scroll == 0.0 {
-        current = "top".to_string();
+        current = "blockStart".to_string();
+        events.push("blockStart");
         events.push("top");
     }
     if scroll + client == scroll_size {
-        current = "bottom".to_string();
+        current = "blockEnd".to_string();
+        events.push("blockEnd");
         events.push("bottom");
     }
     (events, current)
@@ -372,13 +376,17 @@ fn axis_extent(element: &web_sys::Element, vertical: bool) -> f64 {
     }
 }
 
-/// Dialtone Vue `DtScroller` (`dialtone/v9.190.0`).
+/// Dialtone Vue `DtScroller` (`dialtone/v10.7.0`).
 ///
 /// Fixed-size mode uses `item_size`. Dynamic mode uses each item's `size`, or
-/// `min_item_size` when that is empty. Rendered rows are not measured. The
-/// window is capped at 1000 items. `scroll_to_index` sets the scroll offset to
+/// `min_item_size` when that is empty. Rendered rows are not measured. Vue's
+/// dynamic scroller writes sizes from a `ResizeObserver`. The window is capped
+/// at 1000 items. `scroll_to_index` sets the scroll offset to
 /// `index * item_size` in fixed mode (the previous item's end in dynamic mode)
-/// and does not itself emit `on_user_position`.
+/// and does not itself emit `on_user_position`. `on_user_position` emits
+/// `middle`, then `blockStart` and `top`, or `blockEnd` and `bottom`. Vue's
+/// `handleScroll` reads `scrollTop` in both directions. This port uses the
+/// active axis. `enable_hover` is `enableHover`.
 #[component]
 pub fn DtScroller(
     /// Rows (`items`). Pass `Signal::stored(vec)` or a read signal.
@@ -414,9 +422,9 @@ pub fn DtScroller(
     /// Extra class on each row (`itemClass`).
     #[prop(optional, into)]
     item_class: String,
-    /// Skip the `hover` class (`skipHover`).
-    #[prop(optional)]
-    skip_hover: bool,
+    /// Hover class and mouse events (`enableHover`).
+    #[prop(optional, default = true)]
+    enable_hover: bool,
     /// Viewport width (`scrollerWidth`).
     #[prop(optional, into)]
     scroller_width: CssLength,
@@ -463,7 +471,7 @@ pub fn DtScroller(
     let client_px = RwSignal::new(0.0);
     let ready = RwSignal::new(false);
     let hover = RwSignal::new(None::<String>);
-    let position = RwSignal::new("top".to_string());
+    let position = RwSignal::new("blockStart".to_string());
     let last_update = StoredValue::new(0.0);
     let ignore_position = StoredValue::new(false);
     let limit_warned = StoredValue::new(false);
@@ -627,7 +635,7 @@ pub fn DtScroller(
             let class_name = move || {
                 scroller_item_class(
                     &extra,
-                    !skip_hover && hover.get().as_deref() == Some(hover_key.as_str()),
+                    enable_hover && hover.get().as_deref() == Some(hover_key.as_str()),
                 )
             };
             let transform = ready.get().then(|| item_transform(vertical, position));
@@ -638,12 +646,12 @@ pub fn DtScroller(
                         style=transform
                         data-qa="dt-scroller-item"
                         on:mouseenter=move |_| {
-                            if !skip_hover {
+                            if enable_hover {
                                 hover.set(Some(key.clone()));
                             }
                         }
                         on:mouseleave=move |_| {
-                            if !skip_hover {
+                            if enable_hover {
                                 hover.set(None);
                             }
                         }
@@ -660,12 +668,12 @@ pub fn DtScroller(
                         style=transform
                         data-qa="dt-scroller-item"
                         on:mouseenter=move |_| {
-                            if !skip_hover {
+                            if enable_hover {
                                 hover.set(Some(key.clone()));
                             }
                         }
                         on:mouseleave=move |_| {
-                            if !skip_hover {
+                            if enable_hover {
                                 hover.set(None);
                             }
                         }
@@ -682,12 +690,12 @@ pub fn DtScroller(
                         style=transform
                         data-qa="dt-scroller-item"
                         on:mouseenter=move |_| {
-                            if !skip_hover {
+                            if enable_hover {
                                 hover.set(Some(key.clone()));
                             }
                         }
                         on:mouseleave=move |_| {
-                            if !skip_hover {
+                            if enable_hover {
                                 hover.set(None);
                             }
                         }
@@ -856,15 +864,19 @@ mod tests {
     }
 
     #[test]
-    fn user_position_on_a_zero_layout_emits_middle_then_top_then_bottom() {
-        let (events, next) = user_position_events("top", 0.0, 0.0, 0.0);
-        assert_eq!(events, ["middle", "top", "bottom"]);
-        assert_eq!(next, "bottom");
+    fn user_position_on_a_zero_layout_emits_block_start_and_block_end() {
+        let (events, next) = user_position_events("blockStart", 0.0, 0.0, 0.0);
+        assert_eq!(events, ["middle", "blockStart", "top", "blockEnd", "bottom"]);
+        assert_eq!(next, "blockEnd");
         let (events, next) = user_position_events("middle", 10.0, 60.0, 600.0);
         assert!(events.is_empty());
         assert_eq!(next, "middle");
-        let (events, _) = user_position_events("middle", 0.0, 60.0, 600.0);
-        assert_eq!(events, ["top"]);
+        let (events, next) = user_position_events("middle", 0.0, 60.0, 600.0);
+        assert_eq!(events, ["blockStart", "top"]);
+        assert_eq!(next, "blockStart");
+        let (events, next) = user_position_events("middle", 540.0, 60.0, 600.0);
+        assert_eq!(events, ["blockEnd", "bottom"]);
+        assert_eq!(next, "blockEnd");
     }
 
     #[test]

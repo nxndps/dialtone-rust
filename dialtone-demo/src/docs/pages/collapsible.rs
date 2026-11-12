@@ -90,7 +90,7 @@ pub(crate) fn CollapsiblePage() -> impl IntoView {
     view! {
         <section id="playground" class="docs-section">
             <h2>"Playground"</h2>
-            <p class="docs-note">"The open signal is controlled. The anchor click and the setting both write it."</p>
+            <p class="docs-note">"The open signal is controlled. The default anchor does not toggle it. The Open setting does. on_open_change runs after the height transition."</p>
             <Play stack=true preview=preview settings=settings slots=slots classes=classes code=code />
         </section>
         <section id="variants" class="docs-section">
@@ -107,13 +107,25 @@ pub(crate) fn CollapsiblePage() -> impl IntoView {
 #[component]
 fn ClosedDetails() -> impl IntoView {
     let open = RwSignal::new(false);
+    let expanded = Signal::derive(move || open.get());
     view! {
         <DtCollapsible
-            anchor_text="More"
-            open=Signal::derive(move || open.get())
+            open=expanded
             on_open_change=move |next| open.set(next)
+            anchor=ViewFn::from(move || {
+                view! {
+                    <DtButton
+                        importance="clear"
+                        kind="muted"
+                        aria_expanded=expanded
+                        on_click=move |_| open.set(!open.get_untracked())
+                    >
+                        "More"
+                    </DtButton>
+                }
+            })
         >
-            <p class="m-0 text-sm">"Hidden until the anchor is pressed."</p>
+            <p class="m-0 text-sm">"Hidden until this button is pressed."</p>
         </DtCollapsible>
     }
 }

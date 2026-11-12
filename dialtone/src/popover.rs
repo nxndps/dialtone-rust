@@ -1,5 +1,6 @@
 use std::cell::Cell;
 use std::rc::Rc;
+use std::time::Duration;
 
 use leptos::html;
 use leptos::portal::Portal;
@@ -16,8 +17,8 @@ use super::popper::{
 };
 use super::unique_id;
 
-/// Distance from the anchor when the caller does not pass one. Combobox passes 4.
-const DEFAULT_OFFSET: f64 = 0.0;
+/// Vue `offset: [0, 4]`. The skid stays 0.
+const DEFAULT_OFFSET: f64 = 4.0;
 const VIEWPORT_PADDING: f64 = 8.0;
 
 fn element_rect(element: &HtmlElement) -> Rect {
@@ -226,19 +227,36 @@ fn focus_first(dialog: &HtmlElement) {
     }
 }
 
-/// Dialtone Vue `DtPopover` shell used by `DtDropdown` and `DtComboboxWithPopover`.
+/// `POPOVER_HEADER_FOOTER_PADDING_CLASSES` at `dialtone/v10.7.0`.
+fn popover_edge_padding(padding: &str) -> &'static str {
+    match padding {
+        "small" => "d-pis-50",
+        "medium" => "d-pis-100",
+        "large" => "d-pis-200",
+        _ => "",
+    }
+}
+
+fn known_popover_role(role: &str) -> bool {
+    matches!(role, "dialog" | "menu" | "listbox" | "tree" | "grid")
+}
+
+/// Dialtone Vue `DtPopover`. Follows `dialtone/v10.7.0`.
 ///
-/// This is the subset those components pass: placement, offset, padding, role,
-/// `appendTo` `body` or `parent`, modal, max height/width, `contentWidth` `anchor`,
-/// header/footer slots, escape, and outside `mousedown`. Positioning uses
-/// [`super::popper`], not Tippy. While open, scroll and resize recompute that
-/// position. `open` unset toggles from the anchor click. A set `open` signal is
-/// controlled through `on_open_change`. `open_on_context` (`openOnContext`)
-/// opens from the pointer and ignores the left click. The anchor wrapper
-/// gets `tabindex="0"`. `tether` defaults to
-/// false here so existing popovers keep shifting into the viewport. Vue's
-/// default is true. `DtDropdown` passes true. `toggle_on_click` defaults to
-/// true. `data_qa` empty keeps this DOM. `focus_trap` defaults to false.
+/// Positioning uses [`super::popper`], not Tippy. While open, scroll and resize
+/// recompute that position. `sticky` true also polls the rects. `open` unset
+/// toggles from the anchor click. A set `open` signal is controlled through
+/// `on_open_change`. `open_on_context` (`openOnContext`) opens from the pointer
+/// and ignores the left click. The anchor wrapper gets `tabindex="0"` only then.
+/// `tether` defaults to false here so existing popovers keep shifting into the
+/// viewport. Vue's default is true. `DtDropdown` passes true. `initial_focus`
+/// stays `none`. Vue's default is `first`, which would focus the visually
+/// hidden close button inside a modal `DtDropdown`. `transition` stays empty.
+/// Vue's default is `fade`. `toggle_on_click` defaults to true. `data_qa` empty
+/// keeps the fragment DOM. Vue always wraps `.d-popover`. Those classes are not
+/// in the vendored CSS. `focus_trap` stays independent of `modal`. Vue also
+/// traps when `modal` is true. `appendTo` `root` and an `HTMLElement` warn and
+/// use `body`. The modal scrim is not ported.
 #[component]
 pub fn DtPopover(
     /// Popover id. Generated when empty.
@@ -253,15 +271,15 @@ pub fn DtPopover(
     /// Fired after open or close (`opened`).
     #[prop(optional, into)]
     on_opened: Option<Callback<bool>>,
-    #[prop(optional, default = "bottom")] placement: &'static str,
+    #[prop(optional, default = "bottom-end")] placement: &'static str,
     /// Comma-separated fallbacks. Default `auto`.
     #[prop(optional, default = "auto")]
     fallback_placements: &'static str,
     /// Skidding is 0. This is the distance in px (`offset` `[0, distance]`).
     #[prop(optional, default = DEFAULT_OFFSET)]
     offset: f64,
-    /// `none` (default), `small`, `medium`, or `large`.
-    #[prop(optional, default = "none")]
+    /// `none`, `small`, `medium`, or `large` (default).
+    #[prop(optional, default = "large")]
     padding: &'static str,
     /// Dialog role. Default `dialog`.
     #[prop(optional, default = "dialog")]
@@ -273,9 +291,18 @@ pub fn DtPopover(
     /// Close on outside `mousedown` (`hideOnClick`).
     #[prop(optional, default = true)]
     close_on_outside: bool,
-    /// `none` (default), `dialog`, or `first`.
+    /// `none` (default), `dialog`, `first`, or `#id` (`initialFocusElement`).
     #[prop(optional, default = "none")]
     initial_focus: &'static str,
+    /// Dialog tabindex (`contentTabindex`). Default `-1`. `None` omits it.
+    #[prop(default = Some(-1))]
+    content_tabindex: Option<i32>,
+    /// Arrow up or down on the anchor opens an uncontrolled popover (`openWithArrowKeys`).
+    #[prop(optional)]
+    open_with_arrow_keys: bool,
+    /// Poll the anchor rect while open (`sticky`). Scroll and resize always do.
+    #[prop(optional)]
+    sticky: bool,
     /// `anchor` matches the dialog width to the anchor (`contentWidth`).
     #[prop(optional, default = "")]
     content_width: &'static str,
@@ -402,13 +429,24 @@ pub fn DtPopover(
     let coords = RwSignal::new(None::<ComputedPosition>);
     let anchor_width = RwSignal::new(None::<f64>);
     let preferred = Placement::parse(placement);
+    if !known_popover_role(role) {
+        leptos::logging::warn!(
+            "DtPopover role `{role}` is not dialog, menu, listbox, tree, or grid"
+        );
+    }
+    if append_to != "body" && append_to != "parent" {
+        leptos::logging::warn!(
+            "DtPopover append_to `{append_to}` is not body or parent; using body"
+        );
+    }
+    let edge_padding = popover_edge_padding(padding);
     let content_class = join_class([
         "d-popover__content",
         popover_padding_class(padding),
         content_class.as_str(),
     ]);
-    let header_class = join_class(["d-popover__header", header_class.as_str()]);
-    let footer_class = join_class(["d-popover__footer", footer_class.as_str()]);
+    let header_class = join_class(["d-popover__header", edge_padding, header_class.as_str()]);
+    let footer_class = join_class(["d-popover__footer", edge_padding, footer_class.as_str()]);
     let dialog_class = join_class([
         "d-popover__dialog",
         modal.then_some("d-popover__dialog--modal").unwrap_or(""),
@@ -556,6 +594,17 @@ pub fn DtPopover(
     });
 
     Effect::new(move |_| {
+        if !shown() || !sticky {
+            return;
+        }
+        if let Ok(handle) =
+            set_interval_with_handle(move || reposition(), Duration::from_millis(50))
+        {
+            on_cleanup(move || handle.clear());
+        }
+    });
+
+    Effect::new(move |_| {
         if !shown() {
             return;
         }
@@ -570,6 +619,22 @@ pub fn DtPopover(
                     let _ = dialog.focus();
                 }
                 "first" => focus_first(&dialog),
+                _ if mode.starts_with('#') => {
+                    let selector = mode.to_string();
+                    let found = dialog
+                        .query_selector(&selector)
+                        .ok()
+                        .flatten()
+                        .and_then(|element| element.dyn_into::<HtmlElement>().ok());
+                    if let Some(element) = found {
+                        let _ = element.focus();
+                    } else {
+                        leptos::logging::warn!(
+                            "Could not find the element specified in dt-popover prop \"initialFocusElement\". Defaulting to focusing the dialog."
+                        );
+                        let _ = dialog.focus();
+                    }
+                }
                 _ => {}
             }
         });
@@ -632,7 +697,7 @@ pub fn DtPopover(
                     class=dialog_class.clone()
                     data-qa=qa_dialog.clone()
                     role=role
-                    tabindex="-1"
+                    tabindex=content_tabindex.map(|index| index.to_string())
                     aria-modal=modal.then_some("true")
                     data-dt-mode=resolved_content_mode(content_mode, &root_mode()).map(str::to_string)
                     data-dt-contrast=resolved_content_mode(content_mode, &root_mode()).map(|_| root_contrast())
@@ -762,6 +827,23 @@ pub fn DtPopover(
                     layout_epoch.update(|epoch| *epoch = epoch.wrapping_add(1));
                     set_shown(true);
                 }
+                on:keydown=move |event: KeyboardEvent| {
+                    let key = event.key();
+                    if key == "Escape" {
+                        if shown_untracked() {
+                            set_shown(false);
+                        }
+                        return;
+                    }
+                    if key != "ArrowUp" && key != "ArrowDown" {
+                        return;
+                    }
+                    if !open_with_arrow_keys || controlled || shown_untracked() {
+                        return;
+                    }
+                    event.prevent_default();
+                    set_shown(true);
+                }
             >
                 {slot.run()}
             </span>
@@ -825,5 +907,24 @@ mod tests {
         );
         assert_eq!(super::popover_motion_style("none", true), "");
         assert_eq!(super::popover_motion_style("", true), "");
+    }
+
+    #[test]
+    fn header_and_footer_padding_follows_the_content_size() {
+        assert_eq!(super::popover_edge_padding("none"), "");
+        assert_eq!(super::popover_edge_padding("small"), "d-pis-50");
+        assert_eq!(super::popover_edge_padding("medium"), "d-pis-100");
+        assert_eq!(super::popover_edge_padding("large"), "d-pis-200");
+        assert_eq!(super::popover_edge_padding("xl"), "");
+    }
+
+    #[test]
+    fn roles_include_tree_and_grid() {
+        assert!(super::known_popover_role("dialog"));
+        assert!(super::known_popover_role("menu"));
+        assert!(super::known_popover_role("listbox"));
+        assert!(super::known_popover_role("tree"));
+        assert!(super::known_popover_role("grid"));
+        assert!(!super::known_popover_role("tooltip"));
     }
 }

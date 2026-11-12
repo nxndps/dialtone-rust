@@ -79,7 +79,7 @@ pub(crate) fn BadgePage() -> impl IntoView {
                 options=vec![
                     ("default", "Default"),
                     ("info", "Info"),
-                    ("success", "Success"),
+                    ("positive", "Positive"),
                     ("warning", "Warning"),
                     ("critical", "Critical"),
                     ("bulletin", "Bulletin"),
@@ -140,7 +140,7 @@ pub(crate) fn BadgePage() -> impl IntoView {
                 <Variant title="Types" row=true>
                     <DtBadge text="Default" />
                     <DtBadge text="Info" type_="info" />
-                    <DtBadge text="Success" type_="success" />
+                    <DtBadge text="Positive" type_="positive" />
                     <DtBadge text="Warning" type_="warning" />
                     <DtBadge text="Critical" type_="critical" />
                     <DtBadge text="Bulletin" type_="bulletin" />

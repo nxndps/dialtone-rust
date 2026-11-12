@@ -30,11 +30,22 @@ fn button_kind_class(kind: &str) -> &'static str {
     match kind {
         "muted" => "d-btn--muted",
         "critical" => "d-btn--critical",
-        "danger" => "d-btn--danger",
         "positive" => "d-btn--positive",
         "inverted" => "d-btn--inverted",
         _ => "",
     }
+}
+
+fn warn_button_kind(kind: &str) {
+    if matches!(
+        kind,
+        "default" | "muted" | "critical" | "positive" | "inverted" | "unstyled" | ""
+    ) {
+        return;
+    }
+    leptos::logging::warn!(
+        "DtButton kind `{kind}` is not default, muted, critical, positive, inverted, or unstyled."
+    );
 }
 
 fn warn_button_combination(circle: bool, kind: &str, importance: &str) {
@@ -64,26 +75,77 @@ fn button_importance_class(importance: &str) -> &'static str {
     }
 }
 
+/// Dialtone `getLinkKindModifier` at `dialtone/v10.7.0`.
 fn link_kind_class(kind: &str, inverted: bool) -> &'static str {
     if inverted {
         return match kind {
             "" | "default" => "d-link--inverted",
+            "critical" => "d-link--inverted-critical",
             "warning" => "d-link--inverted-warning",
-            "danger" => "d-link--inverted-danger",
-            "success" => "d-link--inverted-success",
+            "positive" => "d-link--inverted-positive",
+            "info" => "d-link--inverted-info",
             "muted" => "d-link--inverted-muted",
             "mention" => "d-link--inverted-mention",
             _ => "",
         };
     }
     match kind {
+        "critical" => "d-link--critical",
         "warning" => "d-link--warning",
-        "danger" => "d-link--danger",
-        "success" => "d-link--success",
+        "positive" => "d-link--positive",
+        "info" => "d-link--info",
         "muted" => "d-link--muted",
         "mention" => "d-link--mention",
         _ => "",
     }
+}
+
+fn warn_link_kind(kind: &str) {
+    if matches!(
+        kind,
+        "" | "default" | "critical" | "warning" | "positive" | "info" | "muted" | "mention"
+    ) {
+        return;
+    }
+    leptos::logging::warn!(
+        "DtButton link_kind `{kind}` is not default, critical, warning, positive, info, muted, or mention."
+    );
+}
+
+fn known_icon_position(position: &str) -> bool {
+    matches!(
+        position,
+        "start" | "end" | "blockStart" | "blockEnd" | "left" | "right" | "top" | "bottom"
+    )
+}
+
+/// `d-link--no-underline` when a link button turns the underline off.
+fn link_underline_class(link: bool, underline: bool) -> &'static str {
+    if link && !underline {
+        "d-link--no-underline"
+    } else {
+        ""
+    }
+}
+
+fn show_legacy_icon(has_icon: bool, has_new: bool, link: bool) -> bool {
+    has_icon && !has_new && !link
+}
+
+fn button_icon_only(has_new: bool, legacy: bool, has_label: bool) -> bool {
+    (has_new || legacy) && !has_label
+}
+
+/// Block-start or block-end icons stack when a label is present.
+/// Legacy `top` and `bottom` do the same when no new icon slot is set.
+fn button_vertical(icon_only: bool, has_block: bool, has_new: bool, position: &str) -> bool {
+    if icon_only {
+        return false;
+    }
+    if has_block {
+        return true;
+    }
+    !has_new && matches!(position, "top" | "bottom")
 }
 
 fn icon_position_class(position: &str) -> &'static str {
@@ -153,14 +215,15 @@ pub(crate) fn button_classes(
     join_class(["base-button__button", modifiers.as_str()])
 }
 
-fn icon_class(kind: &str, position: &str) -> String {
+fn icon_span_class(kind: &str, position: &str, extra: &str) -> String {
     if kind == "unstyled" {
-        "base-button__icon".to_string()
+        join_class(["base-button__icon", extra])
     } else {
         join_class([
             "base-button__icon",
             "d-btn__icon",
             icon_position_class(position),
+            extra,
         ])
     }
 }
@@ -183,23 +246,29 @@ fn live_value(assertive: bool, focused: bool, fallback: &str) -> Option<String> 
     }
 }
 
-/// Dialtone Vue `DtButton`.
+/// Dialtone Vue `DtButton` (`dialtone/v10.7.0`).
 ///
-/// `kind` is `default`, `muted`, `critical`, `danger`, `positive`, `inverted`,
-/// or `unstyled`. `critical` is `d-btn--critical`. `danger` stays `d-btn--danger`.
-/// `importance` is `clear`, `outlined`, or `primary` (default). Size is `100`–`500`
-/// or the t-shirt aliases `xs`–`xl`. `300` and `md` add no size class. `link`
-/// renders link classes instead of button classes. A non-empty `href` renders
-/// an `<a>`. Vue Router `to` is not ported. `start_icon` (`startIcon`) and
-/// `end_icon` (`endIcon`) hide the legacy `icon` slot. `leading` and `trailing`
-/// use `d-btn__leading` and `d-btn__trailing`. Size a slotted icon with
-/// [`button_icon_size`].
+/// `kind` is `default`, `muted`, `critical`, `positive`, `inverted`, or
+/// `unstyled`. `critical` is `d-btn--critical`. `danger` warns and omits the
+/// kind class. `importance` is `clear`, `outlined`, or `primary` (default).
+/// Size is `100`–`500` (default `300`) or the t-shirt aliases `xs`–`xl`.
+/// `300` and `md` add no size class. `link` renders link classes instead of
+/// button classes. Link kinds are `default`, `critical`, `warning`, `positive`,
+/// `muted`, `info`, and `mention`. `link_underline` (`linkUnderline`) defaults
+/// to true. Deprecated `underline` wins when it is set. False adds
+/// `d-link--no-underline`. A non-empty `href` renders an `<a>`. Vue Router `to`
+/// is not ported. `start_icon`, `end_icon`, `block_start_icon`, and
+/// `block_end_icon` hide the legacy `icon` slot. A block icon with a label adds
+/// `d-btn--vertical`. Icon-only and vertical are exclusive. `leading` and
+/// `trailing` use `d-btn__leading` and `d-btn__trailing`. The loading label is
+/// `DIALTONE_LOADING` in en-US, "loading". Size a slotted icon with
+/// [`button_icon_size`]. A Leptos slot does not receive the Vue `icon-size` prop.
 #[component]
 pub fn DtButton(
     #[prop(optional)] circle: bool,
-    /// Icon slot position (`iconPosition`): `left`, `right`, `top`, `bottom`,
-    /// `start`, `end`, `blockStart`, or `blockEnd`.
-    #[prop(optional, default = "left")]
+    /// Deprecated icon slot position (`iconPosition`). `start` (default), `end`,
+    /// `blockStart`, `blockEnd`, `left`, `right`, `top`, or `bottom`.
+    #[prop(optional, default = "start")]
     icon_position: &'static str,
     /// `clear`, `outlined`, or `primary` (default).
     #[prop(optional, default = "primary")]
@@ -210,9 +279,15 @@ pub fn DtButton(
     /// Link color (`linkKind`).
     #[prop(optional, default = "default")]
     link_kind: &'static str,
-    /// Inverted link color (`linkInverted`).
+    /// Inverted link color (`linkInverted`). Deprecated. Prefer `v-dt-mode`.
     #[prop(optional)]
     link_inverted: bool,
+    /// Underline on a link button (`linkUnderline`). Default true.
+    #[prop(optional, default = true)]
+    link_underline: bool,
+    /// Deprecated underline (`underline`). When set, it wins over `link_underline`.
+    #[prop(optional)]
+    underline: Option<bool>,
     /// `disabled`. A signal updates the attribute after the first render.
     #[prop(optional, into)]
     disabled: MaybeProp<bool>,
@@ -222,12 +297,27 @@ pub fn DtButton(
     /// CSS width (`width`). Empty omits the style.
     #[prop(optional, into)]
     width: String,
-    /// `100`–`500`, or `xs`, `sm`, `md` (default), `lg`, `xl`.
-    #[prop(optional, default = "md")]
+    /// `100`–`500` (default `300`), or `xs`, `sm`, `md`, `lg`, `xl`.
+    #[prop(optional, default = "300")]
     size: &'static str,
     /// Extra class on the label (`labelClass`).
     #[prop(optional, into)]
     label_class: String,
+    /// Extra class on the legacy icon (`iconClass`).
+    #[prop(optional, into)]
+    icon_class: String,
+    /// Extra class on the start icon (`startIconClass`).
+    #[prop(optional, into)]
+    start_icon_class: String,
+    /// Extra class on the end icon (`endIconClass`).
+    #[prop(optional, into)]
+    end_icon_class: String,
+    /// Extra class on the block-start icon (`blockStartIconClass`).
+    #[prop(optional, into)]
+    block_start_icon_class: String,
+    /// Extra class on the block-end icon (`blockEndIconClass`).
+    #[prop(optional, into)]
+    block_end_icon_class: String,
     /// Extra class on the leading wrapper (`leadingClass`).
     #[prop(optional, into)]
     leading_class: String,
@@ -235,7 +325,7 @@ pub fn DtButton(
     #[prop(optional, into)]
     trailing_class: String,
     #[prop(optional)] loading: bool,
-    /// `default`, `muted`, `critical`, `danger`, `positive`, `inverted`, or `unstyled`.
+    /// `default`, `muted`, `critical`, `positive`, `inverted`, or `unstyled`.
     #[prop(optional, default = "default")]
     kind: &'static str,
     /// Sets `aria-live="assertive"` while the button is focused (`assertiveOnFocus`).
@@ -306,17 +396,22 @@ pub fn DtButton(
     #[prop(optional, into)] on_click: Option<Callback<()>>,
     #[prop(optional, into)] on_focus_in: Option<Callback<()>>,
     #[prop(optional, into)] on_focus_out: Option<Callback<()>>,
-    /// Icon slot (`icon`). Hidden when `link` is set, or when `start_icon` or
-    /// `end_icon` is set.
+    /// Deprecated icon slot (`icon`). Hidden when `link` is set, or when a new
+    /// icon slot is set.
     #[prop(optional)]
     icon: Option<ViewFn>,
+    /// Icon above the label (`blockStartIcon`). Pass `None` or omit it.
+    #[prop(optional_no_strip)]
+    block_start_icon: Option<ViewFn>,
     /// Icon at the start (`startIcon`). Pass `None` or omit it.
     #[prop(optional_no_strip)]
     start_icon: Option<ViewFn>,
-    /// Icon at the end (`endIcon`). Pass `None` or omit it. With `start_icon`,
-    /// `icon_position` is ignored.
+    /// Icon at the end (`endIcon`). Pass `None` or omit it.
     #[prop(optional_no_strip)]
     end_icon: Option<ViewFn>,
+    /// Icon below the label (`blockEndIcon`). Pass `None` or omit it.
+    #[prop(optional_no_strip)]
+    block_end_icon: Option<ViewFn>,
     /// Content before the label (`leading`). Pass `None` or omit it.
     #[prop(optional_no_strip)]
     leading: Option<ViewFn>,
@@ -326,13 +421,26 @@ pub fn DtButton(
     #[prop(optional)] children: Option<Children>,
 ) -> impl IntoView {
     warn_button_combination(circle, kind, importance);
-    let has_new_icons = start_icon.is_some() || end_icon.is_some();
-    let show_legacy_icon = icon.is_some() && !has_new_icons && !link;
+    warn_button_kind(kind);
+    if circle && link {
+        leptos::logging::warn!("You cannot enable circle and link at the same time");
+    }
+    if link {
+        warn_link_kind(link_kind);
+    }
+    if !known_icon_position(icon_position) {
+        leptos::logging::warn!(
+            "DtButton icon_position `{icon_position}` is not start, end, blockStart, blockEnd, left, right, top, or bottom."
+        );
+    }
+    let has_block = block_start_icon.is_some() || block_end_icon.is_some();
+    let has_new_icons =
+        has_block || start_icon.is_some() || end_icon.is_some();
+    let legacy = show_legacy_icon(icon.is_some(), has_new_icons, link);
     let show_label = children.is_some();
-    let icon_only = (has_new_icons || show_legacy_icon) && !show_label;
-    let vertical = !icon_only
-        && !has_new_icons
-        && matches!(icon_position, "top" | "bottom" | "blockStart" | "blockEnd");
+    let icon_only = button_icon_only(has_new_icons, legacy, show_label);
+    let vertical = button_vertical(icon_only, has_block, has_new_icons, icon_position);
+    let resolved_underline = underline.unwrap_or(link_underline);
     let extra_class = StoredValue::new(class);
     let class_name = move || {
         join_class([
@@ -350,6 +458,7 @@ pub fn DtButton(
                 active.get().unwrap_or(false),
             )
             .as_str(),
+            link_underline_class(link, resolved_underline),
             extra_class.get_value().as_str(),
             class_signal.get().unwrap_or_default().as_str(),
         ])
@@ -374,9 +483,11 @@ pub fn DtButton(
             .get()
             .map(|expanded| if expanded { "true" } else { "false" })
     };
-    let icon_class_name = icon_class(kind, icon_position);
-    let start_icon_class = icon_class(kind, "left");
-    let end_icon_class = icon_class(kind, "right");
+    let legacy_icon_class = icon_span_class(kind, icon_position, &icon_class);
+    let start_class = icon_span_class(kind, "left", &start_icon_class);
+    let end_class = icon_span_class(kind, "right", &end_icon_class);
+    let block_start_class = icon_span_class(kind, "top", &block_start_icon_class);
+    let block_end_class = icon_span_class(kind, "bottom", &block_end_icon_class);
     let leading_class_name = join_class(["d-btn__leading", leading_class.as_str()]);
     let trailing_class_name = join_class(["d-btn__trailing", trailing_class.as_str()]);
     let label_class_name = label_classes(kind, &label_class);
@@ -408,16 +519,21 @@ pub fn DtButton(
         {show_loader.then(|| view! {
             <DtLoader class="d-btn__loader" size=loader_size aria_hidden=true />
         })}
-        {leading.filter(|_| !link).map(|slot| view! {
+        {leading.map(|slot| view! {
             <span class=leading_class_name.clone()>{slot.run()}</span>
         })}
-        {start_icon.filter(|_| !link).map(|slot| view! {
-            <span data-qa="dt-button-start-icon" class=start_icon_class.clone()>
+        {block_start_icon.map(|slot| view! {
+            <span data-qa="dt-button-block-start-icon" class=block_start_class.clone()>
                 {slot.run()}
             </span>
         })}
-        {icon.filter(|_| show_legacy_icon).map(|slot| view! {
-            <span data-qa="dt-button-icon" class=icon_class_name>
+        {start_icon.map(|slot| view! {
+            <span data-qa="dt-button-start-icon" class=start_class.clone()>
+                {slot.run()}
+            </span>
+        })}
+        {icon.filter(|_| legacy).map(|slot| view! {
+            <span data-qa="dt-button-icon" class=legacy_icon_class>
                 {slot.run()}
             </span>
         })}
@@ -426,12 +542,17 @@ pub fn DtButton(
                 {children()}
             </span>
         })}
-        {end_icon.filter(|_| !link).map(|slot| view! {
-            <span data-qa="dt-button-end-icon" class=end_icon_class.clone()>
+        {end_icon.map(|slot| view! {
+            <span data-qa="dt-button-end-icon" class=end_class.clone()>
                 {slot.run()}
             </span>
         })}
-        {trailing.filter(|_| !link).map(|slot| view! {
+        {block_end_icon.map(|slot| view! {
+            <span data-qa="dt-button-block-end-icon" class=block_end_class.clone()>
+                {slot.run()}
+            </span>
+        })}
+        {trailing.map(|slot| view! {
             <span class=trailing_class_name.clone()>{slot.run()}</span>
         })}
     };
@@ -574,9 +695,13 @@ mod tests {
             "base-button__button d-btn d-btn--primary"
         );
         assert_eq!(
-            button_classes(false, "default", false, "danger", "outlined", "sm", true, true, true, false, true),
-            "base-button__button d-btn d-btn--outlined d-btn--danger d-btn--sm d-btn--circle d-btn--loading d-btn--icon-only d-btn--active"
+            button_classes(
+                false, "default", false, "positive", "outlined", "sm", true, true, true, false, true
+            ),
+            "base-button__button d-btn d-btn--outlined d-btn--positive d-btn--sm d-btn--circle d-btn--loading d-btn--icon-only d-btn--active"
         );
+        assert_eq!(button_kind_class("danger"), "");
+        assert_eq!(button_kind_class("critical"), "d-btn--critical");
         assert_eq!(
             button_classes(
                 false, "default", false, "unstyled", "primary", "lg", true, true, true, true, true
@@ -585,10 +710,25 @@ mod tests {
         );
         assert_eq!(
             button_classes(
-                true, "danger", true, "default", "primary", "lg", true, false, false, true, false
+                true, "critical", true, "default", "primary", "lg", true, false, false, true, false
             ),
-            "base-button__button d-link d-link--inverted-danger d-btn--lg"
+            "base-button__button d-link d-link--inverted-critical d-btn--lg"
         );
+        assert_eq!(link_kind_class("positive", false), "d-link--positive");
+        assert_eq!(link_kind_class("info", false), "d-link--info");
+        assert_eq!(link_kind_class("danger", true), "");
+        assert_eq!(link_underline_class(true, false), "d-link--no-underline");
+        assert_eq!(link_underline_class(true, true), "");
+        assert_eq!(link_underline_class(false, false), "");
+        assert!(button_vertical(false, true, true, "start"));
+        assert!(!button_vertical(true, true, true, "start"));
+        assert!(button_vertical(false, false, false, "top"));
+        assert!(!button_vertical(false, false, false, "blockStart"));
+        assert!(show_legacy_icon(true, false, false));
+        assert!(!show_legacy_icon(true, true, false));
+        assert!(!show_legacy_icon(true, false, true));
+        assert!(button_icon_only(true, false, false));
+        assert!(!button_icon_only(true, false, true));
         assert_eq!(
             button_classes(
                 false, "default", false, "muted", "clear", "xs", false, false, false, true, false
