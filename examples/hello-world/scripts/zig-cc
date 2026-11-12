@@ -1,0 +1,39 @@
+#!/bin/bash
+# Host C linker for Rust proc-macros and build scripts.
+# Zig supplies the macOS libc, so this build does not need Xcode or xcrun.
+set -euo pipefail
+
+case "$(uname -m)" in
+  arm64 | aarch64) zig_target=aarch64-macos ;;
+  x86_64) zig_target=x86_64-macos ;;
+  *)
+    echo "zig-cc: unsupported machine $(uname -m)" >&2
+    exit 1
+    ;;
+esac
+
+if ! command -v zig >/dev/null 2>&1; then
+  echo "zig-cc: zig is not on PATH. Install it with: brew install zig" >&2
+  exit 1
+fi
+
+args=()
+skip=0
+for arg in "$@"; do
+  if [[ "$skip" -eq 1 ]]; then
+    skip=0
+    continue
+  fi
+  case "$arg" in
+    # rustc passes these for clang. zig cc takes -target instead.
+    -arch | -isysroot)
+      skip=1
+      ;;
+    -mmacosx-version-min=*) ;;
+    *)
+      args+=("$arg")
+      ;;
+  esac
+done
+
+exec zig cc -target "$zig_target" "${args[@]}"

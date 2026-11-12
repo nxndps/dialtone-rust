@@ -1,0 +1,76 @@
+#!/bin/bash
+# Host linker for the Trunk UI and the Tauri shell.
+# Zig supplies the link. -isysroot stays when rustc passes it.
+# rustc omits -undefined dynamic_lookup when the linker name contains zig.
+# Proc-macro and cdylib links need that flag, so this script adds it back.
+# Zig 0.16 does not search the macOS SDK for -liconv or for -framework.
+# Every link gets the SDK usr/lib directory. Framework links also get
+# System/Library/Frameworks. Do not set SDKROOT=/.
+set -euo pipefail
+
+case "$(uname -m)" in
+  arm64 | aarch64) zig_target=aarch64-macos ;;
+  x86_64) zig_target=x86_64-macos ;;
+  *)
+    echo "zig-cc: unsupported machine $(uname -m)" >&2
+    exit 1
+    ;;
+esac
+
+if ! command -v zig >/dev/null 2>&1; then
+  echo "zig-cc: zig is not on PATH. Install it with: brew install zig" >&2
+  exit 1
+fi
+
+args=()
+next=""
+dylib=0
+framework=0
+sysroot=""
+for arg in "$@"; do
+  if [[ -n "$next" ]]; then
+    case "$next" in
+      # rustc passes -arch for clang. zig cc takes -target instead.
+      arch) ;;
+      sysroot)
+        sysroot="$arg"
+        args+=("-isysroot" "$arg")
+        ;;
+    esac
+    next=""
+    continue
+  fi
+  case "$arg" in
+    -arch) next=arch ;;
+    -isysroot) next=sysroot ;;
+    -dynamiclib)
+      dylib=1
+      args+=("$arg")
+      ;;
+    -framework)
+      framework=1
+      args+=("$arg")
+      ;;
+    *)
+      args+=("$arg")
+      ;;
+  esac
+done
+
+if [[ "$dylib" -eq 1 ]]; then
+  args+=("-undefined" "dynamic_lookup")
+fi
+
+# Build scripts pass -liconv with no -isysroot. Zig 0.16 then searches nowhere.
+if [[ -z "$sysroot" ]]; then
+  if ! sysroot="$(xcrun --sdk macosx --show-sdk-path)"; then
+    echo "zig-cc: xcrun could not find the macOS SDK. Install Xcode." >&2
+    exit 1
+  fi
+fi
+args+=("-L${sysroot}/usr/lib")
+if [[ "$framework" -eq 1 ]]; then
+  args+=("-F${sysroot}/System/Library/Frameworks")
+fi
+
+exec zig cc -target "$zig_target" "${args[@]}"

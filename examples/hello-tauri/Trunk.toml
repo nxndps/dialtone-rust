@@ -1,0 +1,16 @@
+[build]
+target = "index.html"
+dist = "dist"
+public_url = "/"
+
+[watch]
+watch = ["src", "index.html", "tailwind.css", "favicon.svg"]
+ignore = ["src-tauri"]
+
+[tools]
+tailwindcss = "4.1.10"
+
+[serve]
+addresses = ["127.0.0.1"]
+port = 1420
+open = false

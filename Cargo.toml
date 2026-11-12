@@ -1,5 +1,12 @@
 [workspace]
-members = ["dialtone", "dialtone-demo", "dialtone-demo/split-tool"]
+members = [
+    "dialtone",
+    "dialtone-demo",
+    "dialtone-demo/split-tool",
+    "examples/hello-world",
+    "examples/hello-tauri",
+    "examples/hello-tauri/src-tauri",
+]
 resolver = "2"
 
 [workspace.package]

@@ -1,0 +1,4 @@
+#!/bin/bash
+# cargo tauri runs from src-tauri. The linker path is relative to that directory.
+here="$(cd "$(dirname "$0")" && pwd)"
+exec "$here/../../scripts/zig-cc" "$@"

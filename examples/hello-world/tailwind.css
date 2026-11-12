@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@import "../../dialtone/assets/css/no-layers/dialtone-default-theme.min.css" layer(base);
+@import "../../dialtone/assets/tokens/layered/tokens-base-colors.css" layer(base);
+@import "../../dialtone/assets/tokens/layered/tokens-dp-colors.css" layer(base);
+@import "../../dialtone/assets/css/no-layers/illustrations.css" layer(base);
+
+@source "./src/**/*.rs";
+@source "../../dialtone/src/**/*.rs";
+@source "./index.html";
+
+/*
+ * Dialtone sets html and body to 10px, so 1rem is 10px.
+ * Rescale Tailwind so p-6 stays 24px.
+ */
+@theme {
+  --spacing: 0.4rem;
+  --text-xs: 1.2rem;
+  --text-xs--line-height: 1.33;
+  --text-sm: 1.4rem;
+  --text-sm--line-height: 1.43;
+  --text-base: 1.6rem;
+  --text-base--line-height: 1.5;
+  --text-lg: 1.8rem;
+  --text-lg--line-height: 1.33;
+  --text-xl: 2rem;
+  --text-xl--line-height: 1.3;
+}

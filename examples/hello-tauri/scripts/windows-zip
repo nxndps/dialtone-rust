@@ -1,0 +1,49 @@
+#!/bin/bash
+# Cross-compile the Windows executable and zip it as Hello-Dialtone.zip.
+# cargo-xwin downloads the Microsoft CRT and Windows SDK.
+set -euo pipefail
+
+here="$(cd "$(dirname "$0")" && pwd)"
+root="$(cd "$here/../../.." && pwd)"
+cd "$here/.."
+
+export PATH="/opt/homebrew/opt/llvm/bin:/opt/homebrew/opt/lld/bin:/usr/bin:/bin:/opt/homebrew/bin:${HOME}/.cargo/bin:${PATH}"
+unset NO_COLOR CARGO_TERM_COLOR SDKROOT
+unset CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER
+unset CARGO_TARGET_X86_64_APPLE_DARWIN_LINKER
+export XWIN_CACHE_DIR="${XWIN_CACHE_DIR:-${HOME}/.cache/xwin}"
+
+if ! command -v cargo-xwin >/dev/null 2>&1; then
+  echo "windows-zip: cargo-xwin is not on PATH." >&2
+  echo "Download cargo-xwin 0.23.1 for macOS from https://github.com/rust-cross/cargo-xwin/releases/tag/v0.23.1" >&2
+  exit 1
+fi
+if ! command -v llvm-rc >/dev/null 2>&1 || ! command -v clang-cl >/dev/null 2>&1 || ! command -v lld-link >/dev/null 2>&1; then
+  echo "windows-zip: llvm-rc, clang-cl, and lld-link must be on PATH." >&2
+  echo "Install them with: brew install llvm lld" >&2
+  exit 1
+fi
+if ! rustup target list --installed | grep -qx 'x86_64-pc-windows-msvc'; then
+  echo "windows-zip: install the Windows target with: rustup target add x86_64-pc-windows-msvc" >&2
+  exit 1
+fi
+
+cargo tauri build --runner cargo-xwin --target x86_64-pc-windows-msvc --no-bundle
+
+exe="$root/target/x86_64-pc-windows-msvc/release/hello-tauri.exe"
+if [[ ! -f "$exe" ]]; then
+  echo "windows-zip: missing $exe" >&2
+  exit 1
+fi
+
+stage="$(mktemp -d /tmp/hello-dialtone-win.XXXXXX)"
+cp "$exe" "$stage/Hello-Dialtone.exe"
+out_dir="$root/target/release/bundle/windows"
+mkdir -p "$out_dir"
+rm -f "$out_dir/Hello-Dialtone.zip"
+(
+  cd "$stage"
+  zip -X -q "$out_dir/Hello-Dialtone.zip" Hello-Dialtone.exe
+)
+rm -rf "$stage"
+echo "$out_dir/Hello-Dialtone.zip"

@@ -1,6 +1,15 @@
 # dialtone
 
-Leptos 0.8 ports of [Dialtone](https://dialtone.dialpad.com/) Vue components. The crate emits Dialtone class names (`d-btn`, `d-card`, `d-item-layout`). It does not ship CSS. Your app loads the styles from `assets/`.
+Leptos 0.8 ports of [Dialtone](https://dialtone.dialpad.com/) components for a Rust wasm app. Use the crate when the interface should match Dialpad and stay on Dialtone's styles.
+
+The crate emits Dialtone class names (`d-btn`, `d-card`, `d-item-layout`). It does not ship CSS. Your app loads the styles from `assets/`.
+
+## Why use it
+
+- Components follow Dialtone Vue: the same roles, the same class names, and props renamed to `snake_case`.
+- Color, type, and spacing come from the vendored Dialtone stylesheets in `assets/`.
+- Call sites are Leptos views. A controlled value is a `Signal`. A slot is a `ViewFn`. The crate renders on the client.
+- `dialtone-demo` shows every port with a live preview, so you can check a component before you wire it into an app. Start that app from the repository [quickstart](../README.md#quickstart).
 
 `view-sync` and `dialtone-demo` are the apps in this workspace that already depend on it. The component list, Vue prop names, and porting rules are in [`AGENTS.md`](AGENTS.md).
 
@@ -17,16 +26,18 @@ New ports follow tag `dialtone/v10.7.0`. `DtSlider` and `DtLoader` follow `dialt
 
 ## Prerequisites
 
-- Rust, edition 2021, and Cargo. This crate is `publish = false`. Depend on it by path. It is not on crates.io.
+- Rust, edition 2021, and Cargo. This crate is `publish = false`. Depend on it by path. It is not on crates.io. The repository is private. Check it out with `git clone git@github.com:nxndps/dialtone-rust.git`.
 - The `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`.
-- Leptos 0.8 with the `csr` feature. This crate is client-side. It uses `web-sys` and is not an SSR or hydrate renderer.
-- Trunk, if you build the same way `view-sync` and `dialtone-demo` do. Another wasm bundler is fine when it compiles that target and serves the CSS below.
+- Leptos 0.8 with the `csr` feature. This crate renders on the client. It uses `web-sys`.
+- Trunk, if you build the same way `dialtone-demo` and `examples/hello-world` do. Another wasm bundler is fine when it compiles that target and serves the CSS below.
 - Tailwind CSS v4, if you follow the existing apps. Dialtone classes come from the vendored stylesheets. Tailwind still has to see `dialtone/src/**/*.rs`, or a utility class written in a component is purged.
-- On Apple Silicon, this workspace links host build scripts with `scripts/zig-cc` (`.cargo/config.toml`). That avoids Xcode `cc`. Leave `CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER` unset. A crate outside this workspace needs its own working host linker for proc-macros and build scripts.
+- Zig 0.13 or newer on `PATH` (`brew install zig`). Host proc-macros and build scripts link with Zig instead of Xcode's `cc`. You do not install Xcode for that link. The wasm target still uses Rust's `rust-lld`. [`examples/hello-world/scripts/zig-cc`](../examples/hello-world/scripts/zig-cc) is the linker, and [`examples/hello-world/.cargo/config.toml`](../examples/hello-world/.cargo/config.toml) selects it. That config sets `SDKROOT=/` so `rustc` does not call `xcrun`. Leave `CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER` unset. Copy both files into an app and run Cargo from that app's directory.
 
 `html, body` in the vendored CSS set `font-size: 10px`, so `1rem` is 10px. `dialtone-demo/tailwind.css` rescales Tailwind so `p-4` stays 16px. Copy that `@theme` block if your utilities should keep their usual sizes.
 
 ## Add the crate
+
+[`examples/hello-world`](../examples/hello-world/README.md) is a complete app: private checkout, Zig linker, Trunk, and a button that opens a card. Start there. [`examples/hello-tauri`](../examples/hello-tauri/README.md) is a desktop app with that page. Its Trunk UI and shell are in that folder.
 
 From a package inside this workspace, next to `dialtone/`:
 

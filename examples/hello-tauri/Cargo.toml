@@ -1,0 +1,12 @@
+[package]
+name = "hello-tauri-ui"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+description = "Trunk UI for the Hello Dialtone Tauri app"
+
+[dependencies]
+dialtone = { path = "../../dialtone" }
+console_error_panic_hook = "0.1"
+getrandom = { workspace = true, features = ["wasm_js"] }
+leptos = { version = "0.8", features = ["csr"] }

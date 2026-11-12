@@ -1,0 +1,13 @@
+# Zig is the host linker for the Trunk UI and the Tauri shell.
+# Cargo loads this file when a command runs from examples/hello-tauri.
+# cargo tauri builds from src-tauri and walks up to this file.
+# The linker string is relative to the current directory, so both
+# scripts/zig-cc and src-tauri/scripts/zig-cc have to exist.
+# Do not set SDKROOT=/. Tauri's build script calls xcrun for the macOS SDK.
+# Leave CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER unset.
+
+[target.aarch64-apple-darwin]
+linker = "scripts/zig-cc"
+
+[target.x86_64-apple-darwin]
+linker = "scripts/zig-cc"
