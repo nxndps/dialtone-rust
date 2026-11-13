@@ -90,7 +90,7 @@ pub(crate) fn CollapsiblePage() -> impl IntoView {
     view! {
         <section id="playground" class="docs-section">
             <h2>"Playground"</h2>
-            <p class="docs-note">"The open signal is controlled. The default anchor does not toggle it. The Open setting does. on_open_change runs after the height transition."</p>
+            <p class="docs-note">"The open signal is controlled. The default anchor calls on_open_change and leaves local state alone. This page applies that request, so the anchor toggles. on_open_change also runs after the block-size transition."</p>
             <Play stack=true preview=preview settings=settings slots=slots classes=classes code=code />
         </section>
         <section id="variants" class="docs-section">

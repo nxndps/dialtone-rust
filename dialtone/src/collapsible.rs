@@ -22,12 +22,15 @@ pub(crate) fn collapsible_element_tag(prop: &str, element_type: &str) -> &'stati
 /// Dialtone Vue `DtCollapsible` (`dialtone/v10.7.0`).
 ///
 /// `open` unset is uncontrolled and starts expanded. The default anchor toggles
-/// that local state. A set `open` is controlled: the default anchor does
-/// nothing, and the parent drives visibility. `on_open_change` (`update:open`)
-/// and `on_opened` (`opened`) run after the height transition, and only while
-/// the component is still mounted. `on_open_change` runs only when `open` is
-/// set. Vue's `opened` also passes the content element. This callback is
-/// `bool` only.
+/// that local state. A set `open` is controlled: the default anchor calls
+/// `on_open_change` with the requested state and leaves local state alone.
+/// The parent drives visibility and may refuse the change. `on_open_change`
+/// (`update:open`) also runs after the block-size transition, and only while
+/// the component is still mounted. Parent handlers have to accept that second
+/// call with the same value. `on_open_change` runs only when `open` is set.
+/// `on_opened` (`opened`) runs after the transition, and only while the
+/// component is still mounted. Vue's `opened` also passes the content element.
+/// This callback is `bool` only.
 ///
 /// `element_type` (`elementType`) and `content_element_type`
 /// (`contentElementType`) other than `div` warn and still render a `div`.
@@ -71,7 +74,8 @@ pub fn DtCollapsible(
     /// Controlled open state (`open`). Unset starts open and toggles locally.
     #[prop(optional)]
     open: Option<Signal<bool>>,
-    /// `update:open`. Fired after the height transition when `open` is set.
+    /// `update:open`. The default anchor calls this with the requested state when
+    /// `open` is set. It runs again after the block-size transition.
     #[prop(optional, into)]
     on_open_change: Option<Callback<bool>>,
     /// `opened`. Fired with the next open state after the height transition.
@@ -128,7 +132,7 @@ pub fn DtCollapsible(
     let height_style = RwSignal::new(if initial_open {
         String::new()
     } else {
-        "height:0px;overflow:hidden;".to_string()
+        "block-size:0px;overflow:hidden;".to_string()
     });
     let content_ref = NodeRef::<html::Div>::new();
     // The height frames are queued on the window. Cleanup has to ignore them
@@ -150,7 +154,7 @@ pub fn DtCollapsible(
             if open_now {
                 height_style.set(String::new());
             } else {
-                height_style.set("height:0px;overflow:hidden;".to_string());
+                height_style.set("block-size:0px;overflow:hidden;".to_string());
             }
             if let Some(on_opened) = on_opened.as_ref() {
                 on_opened.run(open_now);
@@ -186,25 +190,25 @@ pub fn DtCollapsible(
             }
             if open_now {
                 phase.set("enter");
-                height_style.set("height:0px;overflow:hidden;".to_string());
+                height_style.set("block-size:0px;overflow:hidden;".to_string());
                 let alive = Arc::clone(&alive);
                 request_animation_frame(move || {
                     if !alive.load(Ordering::Relaxed) {
                         return;
                     }
                     let height = element.scroll_height();
-                    height_style.set(format!("height:{height}px;overflow:hidden;"));
+                    height_style.set(format!("block-size:{height}px;overflow:hidden;"));
                 });
             } else {
                 let height = element.offset_height();
                 phase.set("leave");
-                height_style.set(format!("height:{height}px;overflow:hidden;"));
+                height_style.set(format!("block-size:{height}px;overflow:hidden;"));
                 let alive = Arc::clone(&alive);
                 request_animation_frame(move || {
                     if !alive.load(Ordering::Relaxed) {
                         return;
                     }
-                    height_style.set("height:0px;overflow:hidden;".to_string());
+                    height_style.set("block-size:0px;overflow:hidden;".to_string());
                 });
             }
         });
@@ -245,10 +249,16 @@ pub fn DtCollapsible(
                         aria_expanded=open_now
                         start_icon=Some(start_icon)
                         on_click=Callback::new(move |_| {
+                            let next = !is_open.get_untracked();
                             if controlled {
+                                // The parent may keep the section open, so local
+                                // state stays put until `open` changes.
+                                if let Some(on_open_change) = on_open_change.as_ref() {
+                                    on_open_change.run(next);
+                                }
                                 return;
                             }
-                            is_open.set(!is_open.get_untracked());
+                            is_open.set(next);
                         })
                     >
                         <span class="d-collapsible__anchor-text" title=title>{text}</span>
